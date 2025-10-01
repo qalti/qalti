@@ -1,0 +1,11 @@
+Open the Syncups app
+Tap on "Engineering"
+Tap "Start meeting"
+If some permissions are requested, grant them.
+Tap "End meeting"
+Tap "Save and end"
+Verify that a window with the Engineering title opens and that the Past Meeting is displayed with the current date
+Tap on "Daily Sync-ups" and then on "Engineering" to reopen this window
+Verify again that a window with the Engineering title opens and that the Past Meeting is displayed with the current date
+Tap on the last meeting in PAST MEETINGS
+Verify that the Attendees list is displayed

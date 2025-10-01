@@ -1,0 +1,8 @@
+// Steps: start a meeting, end it, and verify it appears in Past Meetings.
+Open the Syncups app
+Tap "Design"
+Tap "Start meeting"
+If some permissions are requestsed, do not grant them.
+Tap "Save and End". This will return you back on previous screen. Wait for the screen to update with new meeting.
+Verify that the new meeting is present in PAST MEETINGS
+Swipe the meeting fully left from the right edge of the row (from the > arrow) to remove it

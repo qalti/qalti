@@ -1,0 +1,60 @@
+name: Qalti E2E Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: [self-hosted, macOS, ARM64]
+    env:
+      QALTI_TOKEN: ${{ secrets.QALTI_TOKEN }}
+      QAMETA_TOKEN: ${{ secrets.QAMETA_TOKEN }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: eu-north-1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up runner
+        run: bash scripts/setup_runner.sh
+
+      - name: Run Qalti test on real device
+        run: |
+          /Applications/Qalti.app/Contents/MacOS/Qalti cli ./tests/syncups_save_and_end_meeting.test \
+          --app-path SyncUps-real-device.zip \
+          --type real --udid 00008120-000E25E80CF8C01E
+
+      - name: Run Qalti tests (simulator, 4 workers)
+        run: |
+          /Applications/Qalti.app/Contents/Resources/QaltiScheduler \
+            --tests "./tests" \
+            --device-name "iPhone 16" \
+            --os "18.3" \
+            --workers 4 \
+            --model gpt-4.1 \
+            --token "$QALTI_TOKEN" \
+            --app-path SyncUps-simulator.zip \
+            --allure-dir "./reports/allure"
+
+      - name: Upload Allure results to TestOps Cloud
+        run: |
+          ./allurectl upload \
+            --endpoint "https://aiqa.testops.cloud" \
+            --token "$QAMETA_TOKEN" \
+            --project-id 133 \
+            "./reports/allure"
+        continue-on-error: true
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qalti-reports-${{ github.run_id }}
+          path: ./reports/

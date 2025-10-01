@@ -1,0 +1,11 @@
+Switch to syncups app
+Tap “Design”
+Tap “Edit”
+Tap “Theme”
+Tap “Yellow”
+Tap “Done”
+Verify that “Yellow” is selected as the theme
+Tap “Daily Sync-ups”
+Verify that the Design sync-up is displayed in “Yellow”
+Change the theme back to “Orange” and return to the Daily Sync-ups page
+Verify that the Design sync-up is displayed in orange, as at the beginning of the test
