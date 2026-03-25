@@ -1,0 +1,1983 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 90;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0432CD6D2DF8539500FACA06 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 0432CD6C2DF8539500FACA06 /* Supabase */; };
+		044083EF2F1D0BD600B78EEB /* AWSS3 in Frameworks */ = {isa = PBXBuildFile; productRef = D0A5B2C42F12345600ABCDEF /* AWSS3 */; };
+		044083F02F1D0BD600B78EEB /* AWSSDKIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = D0A5B2C62F12345600ABCDEF /* AWSSDKIdentity */; };
+		04AFE6782DF8521A00F5D54D /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 04AFE6772DF8521A00F5D54D /* PostgREST */; };
+		1A1E5C252EBB5D920034C911 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C242EBB5D920034C911 /* Atomics */; };
+		1A1E5C282EBB5E430034C911 /* NIO in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C272EBB5E430034C911 /* NIO */; };
+		1A1E5C2A2EBB60AB0034C911 /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C292EBB60AB0034C911 /* NIOCore */; };
+		1A1E5C2C2EBB60C00034C911 /* NIOHTTP1 in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C2B2EBB60C00034C911 /* NIOHTTP1 */; };
+		1A1E5C312EBB68110034C911 /* NIOSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C302EBB68110034C911 /* NIOSSL */; };
+		1A1E5C332EBB68C70034C911 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = 1A1E5C322EBB68C70034C911 /* GRPC */; };
+		1A1E5C4B2EBB8FF70034C911 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1E5C4A2EBB8FF70034C911 /* XCTest.framework */; };
+		1A1E5C4C2EBB8FF70034C911 /* XCTest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A1E5C4A2EBB8FF70034C911 /* XCTest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1AAF29EE2EBBA16600706CBF /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29ED2EBBA16600706CBF /* SwiftProtobuf */; };
+		1AAF29F02EBBA17000706CBF /* NIOCore in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29EF2EBBA17000706CBF /* NIOCore */; };
+		1AAF29F22EBBA17700706CBF /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29F12EBBA17700706CBF /* NIOPosix */; };
+		1AAF29F42EBBA18200706CBF /* NIOPosix in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29F32EBBA18200706CBF /* NIOPosix */; };
+		1AAF29F62EBBA18E00706CBF /* NIOConcurrencyHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29F52EBBA18E00706CBF /* NIOConcurrencyHelpers */; };
+		1AAF29F82EBBA19300706CBF /* NIOConcurrencyHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29F72EBBA19300706CBF /* NIOConcurrencyHelpers */; };
+		1AAF29FB2EBBA2D500706CBF /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29FA2EBBA2D500706CBF /* Logging */; };
+		1AAF29FD2EBBA2DD00706CBF /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29FC2EBBA2DD00706CBF /* Logging */; };
+		1AAF2A002EBBA30B00706CBF /* NIOHTTP2 in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF29FF2EBBA30B00706CBF /* NIOHTTP2 */; };
+		1AAF2A022EBBA31D00706CBF /* NIOHTTP2 in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF2A012EBBA31D00706CBF /* NIOHTTP2 */; };
+		1AD3C5C72EBB998C00A9E796 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 1AD3C5C62EBB998C00A9E796 /* SwiftProtobuf */; };
+		1AD3C5C92EBB9AD800A9E796 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 1AD3C5C82EBB9AD800A9E796 /* Yams */; };
+		D0113FF22E4D14070079D0AA /* QaltiRunnerLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */; };
+		D0113FF32E4D14070079D0AA /* QaltiRunnerLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D01901EA2DDF798E00CAD9E1 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = D01901E92DDF798E00CAD9E1 /* OpenAI */; };
+		D0571AB72D7F67BA008558B4 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = D0571AB62D7F67BA008558B4 /* GRPC */; };
+		D0621CDC2E27E23D009FC73C /* IOSurfaceBroker.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D08BBAB82E4FA78300118115 /* XcodeProj in Frameworks */ = {isa = PBXBuildFile; productRef = D08BBAB72E4FA78300118115 /* XcodeProj */; };
+		D09961692E5CEAF700EE1023 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D09961682E5CEAF700EE1023 /* ArgumentParser */; };
+		D099616B2E5E006100EE1023 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D099616A2E5E006100EE1023 /* ArgumentParser */; };
+		D0996BCF2E62257500EE1023 /* QaltiScheduler in Resources */ = {isa = PBXBuildFile; fileRef = D099615E2E5C9FFF00EE1023 /* QaltiScheduler */; };
+		D0B017CA2DFADBE400D41636 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = D0B017C92DFADBE400D41636 /* MarkdownUI */; };
+		D0C580C52D6620B300642AAE /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = D0C580C42D6620B300642AAE /* Yams */; };
+		D0F0F0F22F00000100AA0001 /* Puppy in Frameworks */ = {isa = PBXBuildFile; productRef = D0F0F0F12F00000100AA0001 /* Puppy */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1AC5D6DD2EBB489200EBB19C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D09E3E382CFF95850087E580;
+			remoteInfo = Qalti;
+		};
+		D0113FEF2E4D12FB0079D0AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0113FE22E4D12B50079D0AA;
+			remoteInfo = QaltiRunnerLib;
+		};
+		D0113FF42E4D14070079D0AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0113FE22E4D12B50079D0AA;
+			remoteInfo = QaltiRunnerLib;
+		};
+		D0621CDA2E27E23D009FC73C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0621CD02E27E23D009FC73C;
+			remoteInfo = IOSurfaceBroker;
+		};
+		D0996BCD2E62255200EE1023 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D099615D2E5C9FFF00EE1023;
+			remoteInfo = QaltiScheduler;
+		};
+		D0B10B5B2E168B0B005B5AB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0B10B4F2E16824F005B5AB4;
+			remoteInfo = QaltiRunner;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1A1E5C4D2EBB8FF80034C911 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Frameworks;
+			files = (
+				1A1E5C4C2EBB8FF70034C911 /* XCTest.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+		};
+		D0113FF62E4D14070079D0AA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Frameworks;
+			files = (
+				D0113FF32E4D14070079D0AA /* QaltiRunnerLib.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+		};
+		D0621CE12E27E23D009FC73C /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolder = Product;
+			files = (
+				D0621CDC2E27E23D009FC73C /* IOSurfaceBroker.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+		};
+		D099615C2E5C9FFF00EE1023 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolder = None;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1A1E5C4A2EBB8FF70034C911 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		1AC5D6D92EBB489200EBB19C /* QaltiUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QaltiUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QaltiRunnerLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = IOSurfaceBroker.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		D099615E2E5C9FFF00EE1023 /* QaltiScheduler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = QaltiScheduler; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09E3E392CFF95850087E580 /* Qalti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Qalti.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09E3E532CFF95870087E580 /* QaltiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QaltiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0B10B502E16824F005B5AB4 /* QaltiRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QaltiRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0D814B32D037D6A002B398E /* Qalti.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Qalti.xctestplan; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		043E91DE2EA69E2800AAEE6D /* Exceptions for "Qalti" folder in "IOSurfaceBroker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Views/Targets/DevicePlaceholderView.swift,
+			);
+			target = D0621CD02E27E23D009FC73C /* IOSurfaceBroker */;
+		};
+		1A1E5C492EBB8ED20034C911 /* Exceptions for "QaltiUnitTests" folder in "QaltiUnitTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				QaltiUnitTests.swift,
+			);
+			target = 1AC5D6D82EBB489200EBB19C /* QaltiUnitTests */;
+		};
+		D0621CE02E27E23D009FC73C /* Exceptions for "IOSurfaceBroker" folder in "IOSurfaceBroker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D0621CD02E27E23D009FC73C /* IOSurfaceBroker */;
+		};
+		D0CE6EE02D8B57A1006A0186 /* Exceptions for "Qalti" folder in "Qalti" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D09E3E382CFF95850087E580 /* Qalti */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1AC5D6DA2EBB489200EBB19C /* QaltiUnitTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1A1E5C492EBB8ED20034C911 /* Exceptions for "QaltiUnitTests" folder in "QaltiUnitTests" target */,
+			);
+			path = QaltiUnitTests;
+			sourceTree = "<group>";
+		};
+		D0113FE42E4D12B50079D0AA /* QaltiRunnerLib */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QaltiRunnerLib;
+			sourceTree = "<group>";
+		};
+		D0621CD22E27E23D009FC73C /* IOSurfaceBroker */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D0621CE02E27E23D009FC73C /* Exceptions for "IOSurfaceBroker" folder in "IOSurfaceBroker" target */,
+			);
+			path = IOSurfaceBroker;
+			sourceTree = "<group>";
+		};
+		D099615F2E5C9FFF00EE1023 /* QaltiScheduler */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QaltiScheduler;
+			sourceTree = "<group>";
+		};
+		D09E3E3B2CFF95850087E580 /* Qalti */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D0CE6EE02D8B57A1006A0186 /* Exceptions for "Qalti" folder in "Qalti" target */,
+				043E91DE2EA69E2800AAEE6D /* Exceptions for "Qalti" folder in "IOSurfaceBroker" target */,
+			);
+			explicitFolders = (
+				Resources/simulatorbinaries,
+			);
+			path = Qalti;
+			sourceTree = "<group>";
+		};
+		D09E3E562CFF95870087E580 /* QaltiUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QaltiUITests;
+			sourceTree = "<group>";
+		};
+		D0B10B512E16824F005B5AB4 /* QaltiRunner */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = QaltiRunner;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1AC5D6D62EBB489200EBB19C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				1A1E5C2A2EBB60AB0034C911 /* NIOCore in Frameworks */,
+				1AD3C5C92EBB9AD800A9E796 /* Yams in Frameworks */,
+				1A1E5C4B2EBB8FF70034C911 /* XCTest.framework in Frameworks */,
+				1A1E5C312EBB68110034C911 /* NIOSSL in Frameworks */,
+				1AAF2A002EBBA30B00706CBF /* NIOHTTP2 in Frameworks */,
+				1AAF29F62EBBA18E00706CBF /* NIOConcurrencyHelpers in Frameworks */,
+				1AD3C5C72EBB998C00A9E796 /* SwiftProtobuf in Frameworks */,
+				1AAF29FB2EBBA2D500706CBF /* Logging in Frameworks */,
+				1AAF29F42EBBA18200706CBF /* NIOPosix in Frameworks */,
+				1A1E5C332EBB68C70034C911 /* GRPC in Frameworks */,
+				1A1E5C252EBB5D920034C911 /* Atomics in Frameworks */,
+				1A1E5C282EBB5E430034C911 /* NIO in Frameworks */,
+				1A1E5C2C2EBB60C00034C911 /* NIOHTTP1 in Frameworks */,
+			);
+		};
+		D0113FE02E4D12B50079D0AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D0621CCE2E27E23D009FC73C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		D099615B2E5C9FFF00EE1023 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				D09961692E5CEAF700EE1023 /* ArgumentParser in Frameworks */,
+			);
+		};
+		D09E3E362CFF95850087E580 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				044083F02F1D0BD600B78EEB /* AWSSDKIdentity in Frameworks */,
+				044083EF2F1D0BD600B78EEB /* AWSS3 in Frameworks */,
+				D08BBAB82E4FA78300118115 /* XcodeProj in Frameworks */,
+				1AAF2A022EBBA31D00706CBF /* NIOHTTP2 in Frameworks */,
+				04AFE6782DF8521A00F5D54D /* PostgREST in Frameworks */,
+				D0571AB72D7F67BA008558B4 /* GRPC in Frameworks */,
+				D099616B2E5E006100EE1023 /* ArgumentParser in Frameworks */,
+				1AAF29F02EBBA17000706CBF /* NIOCore in Frameworks */,
+				D0F0F0F22F00000100AA0001 /* Puppy in Frameworks */,
+				1AAF29F82EBBA19300706CBF /* NIOConcurrencyHelpers in Frameworks */,
+				0432CD6D2DF8539500FACA06 /* Supabase in Frameworks */,
+				1AAF29F22EBBA17700706CBF /* NIOPosix in Frameworks */,
+				1AAF29EE2EBBA16600706CBF /* SwiftProtobuf in Frameworks */,
+				D01901EA2DDF798E00CAD9E1 /* OpenAI in Frameworks */,
+				D0C580C52D6620B300642AAE /* Yams in Frameworks */,
+				1AAF29FD2EBBA2DD00706CBF /* Logging in Frameworks */,
+				D0B017CA2DFADBE400D41636 /* MarkdownUI in Frameworks */,
+			);
+		};
+		D09E3E502CFF95870087E580 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				D0113FF22E4D14070079D0AA /* QaltiRunnerLib.framework in Frameworks */,
+			);
+		};
+		D0B10B4D2E16824F005B5AB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D0113FF12E4D14070079D0AA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A1E5C4A2EBB8FF70034C911 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D09E3E302CFF95850087E580 = {
+			isa = PBXGroup;
+			children = (
+				D0D814B32D037D6A002B398E /* Qalti.xctestplan */,
+				D09E3E3B2CFF95850087E580 /* Qalti */,
+				D09E3E562CFF95870087E580 /* QaltiUITests */,
+				D0B10B512E16824F005B5AB4 /* QaltiRunner */,
+				D0621CD22E27E23D009FC73C /* IOSurfaceBroker */,
+				D0113FE42E4D12B50079D0AA /* QaltiRunnerLib */,
+				D099615F2E5C9FFF00EE1023 /* QaltiScheduler */,
+				1AC5D6DA2EBB489200EBB19C /* QaltiUnitTests */,
+				D0113FF12E4D14070079D0AA /* Frameworks */,
+				D09E3E3A2CFF95850087E580 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D09E3E3A2CFF95850087E580 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D09E3E392CFF95850087E580 /* Qalti.app */,
+				D09E3E532CFF95870087E580 /* QaltiUITests.xctest */,
+				D0B10B502E16824F005B5AB4 /* QaltiRunner.app */,
+				D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */,
+				D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */,
+				D099615E2E5C9FFF00EE1023 /* QaltiScheduler */,
+				1AC5D6D92EBB489200EBB19C /* QaltiUnitTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D0113FDE2E4D12B50079D0AA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			files = (
+			);
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1AC5D6D82EBB489200EBB19C /* QaltiUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AC5D6E12EBB489200EBB19C /* Build configuration list for PBXNativeTarget "QaltiUnitTests" */;
+			buildPhases = (
+				1AC5D6D52EBB489200EBB19C /* Sources */,
+				1AC5D6D62EBB489200EBB19C /* Frameworks */,
+				1AC5D6D72EBB489200EBB19C /* Resources */,
+				1A1E5C4D2EBB8FF80034C911 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1AC5D6DE2EBB489200EBB19C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1AC5D6DA2EBB489200EBB19C /* QaltiUnitTests */,
+			);
+			name = QaltiUnitTests;
+			packageProductDependencies = (
+				1A1E5C242EBB5D920034C911 /* Atomics */,
+				1A1E5C272EBB5E430034C911 /* NIO */,
+				1A1E5C292EBB60AB0034C911 /* NIOCore */,
+				1A1E5C2B2EBB60C00034C911 /* NIOHTTP1 */,
+				1A1E5C302EBB68110034C911 /* NIOSSL */,
+				1A1E5C322EBB68C70034C911 /* GRPC */,
+				1AD3C5C62EBB998C00A9E796 /* SwiftProtobuf */,
+				1AD3C5C82EBB9AD800A9E796 /* Yams */,
+				1AAF29F32EBBA18200706CBF /* NIOPosix */,
+				1AAF29F52EBBA18E00706CBF /* NIOConcurrencyHelpers */,
+				1AAF29FA2EBBA2D500706CBF /* Logging */,
+				1AAF29FF2EBBA30B00706CBF /* NIOHTTP2 */,
+			);
+			productName = QaltiUnitTests;
+			productReference = 1AC5D6D92EBB489200EBB19C /* QaltiUnitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0113FEB2E4D12B50079D0AA /* Build configuration list for PBXNativeTarget "QaltiRunnerLib" */;
+			buildPhases = (
+				D0113FDE2E4D12B50079D0AA /* Headers */,
+				D0113FDF2E4D12B50079D0AA /* Sources */,
+				D0113FE02E4D12B50079D0AA /* Frameworks */,
+				D0113FE12E4D12B50079D0AA /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				D0113FE42E4D12B50079D0AA /* QaltiRunnerLib */,
+			);
+			name = QaltiRunnerLib;
+			productName = QaltiRunnerLib;
+			productReference = D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D0621CD02E27E23D009FC73C /* IOSurfaceBroker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0621CDD2E27E23D009FC73C /* Build configuration list for PBXNativeTarget "IOSurfaceBroker" */;
+			buildPhases = (
+				D0621CCD2E27E23D009FC73C /* Sources */,
+				D0621CCE2E27E23D009FC73C /* Frameworks */,
+				D0621CCF2E27E23D009FC73C /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				D0621CD22E27E23D009FC73C /* IOSurfaceBroker */,
+			);
+			name = IOSurfaceBroker;
+			productName = IOSurfaceBroker;
+			productReference = D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
+		D099615D2E5C9FFF00EE1023 /* QaltiScheduler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D09961642E5C9FFF00EE1023 /* Build configuration list for PBXNativeTarget "QaltiScheduler" */;
+			buildPhases = (
+				D099615A2E5C9FFF00EE1023 /* Sources */,
+				D099615B2E5C9FFF00EE1023 /* Frameworks */,
+				D099615C2E5C9FFF00EE1023 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				D099615F2E5C9FFF00EE1023 /* QaltiScheduler */,
+			);
+			name = QaltiScheduler;
+			packageProductDependencies = (
+				D09961682E5CEAF700EE1023 /* ArgumentParser */,
+			);
+			productName = QaltiScheduler;
+			productReference = D099615E2E5C9FFF00EE1023 /* QaltiScheduler */;
+			productType = "com.apple.product-type.tool";
+		};
+		D09E3E382CFF95850087E580 /* Qalti */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D09E3E5D2CFF95870087E580 /* Build configuration list for PBXNativeTarget "Qalti" */;
+			buildPhases = (
+				D09E3E352CFF95850087E580 /* Sources */,
+				D09E3E362CFF95850087E580 /* Frameworks */,
+				D09E3E372CFF95850087E580 /* Resources */,
+				D0621CE12E27E23D009FC73C /* Embed XPC Services */,
+				D08BBBDC2E538BBE00118115 /* Build & Embed QaltiRunnerLib */,
+				D0A4A7D42F12295C00416453 /* Embed Pre-built Simulator Runner */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D0996BCE2E62255200EE1023 /* PBXTargetDependency */,
+				D0621CDB2E27E23D009FC73C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D09E3E3B2CFF95850087E580 /* Qalti */,
+			);
+			name = Qalti;
+			packageProductDependencies = (
+				D0C580C42D6620B300642AAE /* Yams */,
+				D0571AB62D7F67BA008558B4 /* GRPC */,
+				D01901E92DDF798E00CAD9E1 /* OpenAI */,
+				04AFE6772DF8521A00F5D54D /* PostgREST */,
+				0432CD6C2DF8539500FACA06 /* Supabase */,
+				D0B017C92DFADBE400D41636 /* MarkdownUI */,
+				D08BBAB72E4FA78300118115 /* XcodeProj */,
+				D099616A2E5E006100EE1023 /* ArgumentParser */,
+				1AAF29ED2EBBA16600706CBF /* SwiftProtobuf */,
+				1AAF29EF2EBBA17000706CBF /* NIOCore */,
+				1AAF29F12EBBA17700706CBF /* NIOPosix */,
+				1AAF29F72EBBA19300706CBF /* NIOConcurrencyHelpers */,
+				1AAF29FC2EBBA2DD00706CBF /* Logging */,
+				1AAF2A012EBBA31D00706CBF /* NIOHTTP2 */,
+				D0F0F0F12F00000100AA0001 /* Puppy */,
+				D0A5B2C42F12345600ABCDEF /* AWSS3 */,
+				D0A5B2C62F12345600ABCDEF /* AWSSDKIdentity */,
+			);
+			productName = Qalti;
+			productReference = D09E3E392CFF95850087E580 /* Qalti.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D09E3E522CFF95870087E580 /* QaltiUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D09E3E632CFF95870087E580 /* Build configuration list for PBXNativeTarget "QaltiUITests" */;
+			buildPhases = (
+				D09E3E4F2CFF95870087E580 /* Sources */,
+				D09E3E502CFF95870087E580 /* Frameworks */,
+				D09E3E512CFF95870087E580 /* Resources */,
+				D0113FF62E4D14070079D0AA /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D0113FF02E4D12FB0079D0AA /* PBXTargetDependency */,
+				D0B10B5C2E168B0B005B5AB4 /* PBXTargetDependency */,
+				D0113FF52E4D14070079D0AA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D09E3E562CFF95870087E580 /* QaltiUITests */,
+			);
+			name = QaltiUITests;
+			productName = QaltiUITests;
+			productReference = D09E3E532CFF95870087E580 /* QaltiUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		D0B10B4F2E16824F005B5AB4 /* QaltiRunner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0B10B5A2E168251005B5AB4 /* Build configuration list for PBXNativeTarget "QaltiRunner" */;
+			buildPhases = (
+				D0B10B4C2E16824F005B5AB4 /* Sources */,
+				D0B10B4D2E16824F005B5AB4 /* Frameworks */,
+				D0B10B4E2E16824F005B5AB4 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				D0B10B512E16824F005B5AB4 /* QaltiRunner */,
+			);
+			name = QaltiRunner;
+			productName = QaltiRunner;
+			productReference = D0B10B502E16824F005B5AB4 /* QaltiRunner.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D09E3E312CFF95850087E580 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					1AC5D6D82EBB489200EBB19C = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = D09E3E382CFF95850087E580;
+					};
+					D0113FE22E4D12B50079D0AA = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					D0621CD02E27E23D009FC73C = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					D099615D2E5C9FFF00EE1023 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					D09E3E382CFF95850087E580 = {
+						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1620;
+					};
+					D09E3E522CFF95870087E580 = {
+						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1620;
+						TestTargetID = D0B10B4F2E16824F005B5AB4;
+					};
+					D0B10B4F2E16824F005B5AB4 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = D09E3E342CFF95850087E580 /* Build configuration list for PBXProject "Qalti" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D09E3E302CFF95850087E580;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D0C580C32D6620B300642AAE /* XCRemoteSwiftPackageReference "Yams" */,
+				D03A8C122D79DAEE0023D78A /* XCRemoteSwiftPackageReference "grpc-swift" */,
+				D01901E82DDF798E00CAD9E1 /* XCRemoteSwiftPackageReference "OpenAI" */,
+				04AFE6722DF850CC00F5D54D /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				D0B017C82DFADBE400D41636 /* XCRemoteSwiftPackageReference "MarkdownUI" */,
+				D08BBAB62E4FA78300118115 /* XCRemoteSwiftPackageReference "XcodeProj" */,
+				D09961672E5CEAF700EE1023 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				1A1E5C232EBB5D920034C911 /* XCRemoteSwiftPackageReference "swift-atomics" */,
+				1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */,
+				1A1E5C2F2EBB68110034C911 /* XCRemoteSwiftPackageReference "swift-nio-ssl" */,
+				1AD3C5C52EBB998C00A9E796 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				1AAF29F92EBBA2D500706CBF /* XCRemoteSwiftPackageReference "swift-log" */,
+				1AAF29FE2EBBA30B00706CBF /* XCRemoteSwiftPackageReference "swift-nio-http2" */,
+				D0F0F0F02F00000100AA0001 /* XCRemoteSwiftPackageReference "Puppy" */,
+				D0A5B2C32F12345600ABCDEF /* XCRemoteSwiftPackageReference "aws-sdk-swift" */,
+			);
+			preferredProjectObjectVersion = 90;
+			productRefGroup = D09E3E3A2CFF95850087E580 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D09E3E382CFF95850087E580 /* Qalti */,
+				D09E3E522CFF95870087E580 /* QaltiUITests */,
+				D0B10B4F2E16824F005B5AB4 /* QaltiRunner */,
+				D0621CD02E27E23D009FC73C /* IOSurfaceBroker */,
+				D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */,
+				D099615D2E5C9FFF00EE1023 /* QaltiScheduler */,
+				1AC5D6D82EBB489200EBB19C /* QaltiUnitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1AC5D6D72EBB489200EBB19C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		D0113FE12E4D12B50079D0AA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		D0621CCF2E27E23D009FC73C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		D09E3E372CFF95850087E580 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				D0996BCF2E62257500EE1023 /* QaltiScheduler in Resources */,
+			);
+		};
+		D09E3E512CFF95870087E580 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		D0B10B4E2E16824F005B5AB4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		D08BBBDC2E538BBE00118115 /* Build & Embed QaltiRunnerLib */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			inputPaths = (
+				"$(PROJECT_FILE_PATH)",
+			);
+			name = "Build & Embed QaltiRunnerLib";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/simulatorbinaries/QaltiRunnerLib.tar.bz2",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"#!/usr/bin/env sh",
+				"# Build + embed QaltiRunnerLib as an XCFramework (iOS + iOS Simulator)",
+				"# Reuses a STABLE DerivedData under .cache/xcode. Packs as .tar.bz2 into Resources/simulatorbinaries/",
+				"# POSIX sh version (no bashisms) + explicit unsign of outputs.",
+				"",
+				"set -eu",
+				"",
+				"# Set the locale to UTF-8 to prevent character encoding errors in tools like xcpretty.",
+				"export LANG=en_US.UTF-8",
+				"export LC_ALL=en_US.UTF-8",
+				"",
+				"# 0) Only run for macOS app builds",
+				"if [ \"${PLATFORM_NAME:-}\" != \"macosx\" ]; then",
+				"  echo \"Skipping: not a macOS build (PLATFORM_NAME=${PLATFORM_NAME:-unset}).\"",
+				"  exit 0",
+				"fi",
+				"",
+				"# 1) Config (override via target User-Defined settings if desired)",
+				"QALTI_LIB_SCHEME=\"${QALTI_LIB_SCHEME:-QaltiRunnerLib}\"    # exact scheme name",
+				"QALTI_LIB_FRAMEWORK_NAME=\"${QALTI_LIB_FRAMEWORK_NAME:-$QALTI_LIB_SCHEME}\"",
+				"QALTI_LIB_CONFIG=\"${QALTI_LIB_CONFIG:-Release}\"           # or set to $(CONFIGURATION)",
+				"",
+				"APP_RES_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"",
+				"DEST_DIR=\"${APP_RES_DIR}/simulatorbinaries\"",
+				"TAR_NAME=\"${QALTI_LIB_FRAMEWORK_NAME}.tar.bz2\"",
+				"OUT_TAR=\"${DEST_DIR}/${TAR_NAME}\"",
+				"",
+				"# 2) Stable cache roots under repo .cache/xcode",
+				"XCODE_VER=\"${XCODE_VERSION_ACTUAL:-unknown}\"",
+				"REPO_ROOT=\"${SRCROOT%/xcodeproject}\"",
+				"[ \"$REPO_ROOT\" = \"$SRCROOT\" ] && REPO_ROOT=\"${SRCROOT}/..\"",
+				"QALTI_NESTED_BUILD_CACHE_DIR=\"${QALTI_NESTED_BUILD_CACHE_DIR:-${REPO_ROOT}/.cache/xcode}\"",
+				"STABLE_TMP_ROOT=\"${QALTI_NESTED_BUILD_CACHE_DIR}\"",
+				"DERIVED=\"${STABLE_TMP_ROOT}/DerivedData/${QALTI_LIB_SCHEME}-${QALTI_LIB_CONFIG}-${XCODE_VER}\"",
+				"SPM_CLONES_DIR=\"${STABLE_TMP_ROOT}/SPMClones\"",
+				"",
+				"mkdir -p \"$DEST_DIR\" \"$DERIVED\" \"$SPM_CLONES_DIR\" \"$QALTI_NESTED_BUILD_CACHE_DIR\"",
+				"",
+				"# Pretty logs if available",
+				"run_xc() {",
+				"  if command -v xcbeautify >/dev/null 2>&1; then",
+				"    \"$@\" | xcbeautify",
+				"  elif command -v xcpretty >/dev/null 2>&1; then",
+				"    \"$@\" | xcpretty",
+				"  else",
+				"    \"$@\"",
+				"  fi",
+				"}",
+				"",
+				"# --- Helpers ------------------------------------------------------------------",
+				"",
+				"is_macho() {",
+				"  /usr/bin/file -b \"$1\" 2>/dev/null | grep -q \"Mach-O\"",
+				"}",
+				"",
+				"unsign_tree() {",
+				"  root=\"$1\"",
+				"  [ -d \"$root\" ] || return 0",
+				"",
+				"  # Remove signature/provisioning metadata",
+				"  find \"$root\" -type d -name \"_CodeSignature\" -prune -exec rm -rf {} \\; 2>/dev/null || true",
+				"  find \"$root\" -type f \\( -name \"CodeResources\" -o -name \"embedded.mobileprovision\" -o -name \"archived-expanded-entitlements.xcent\" \\) -exec rm -f {} \\; 2>/dev/null || true",
+				"",
+				"  # Unsign Mach-O binaries (framework executables, dylibs, bundles)",
+				"  find \"$root\" -type f \\( -perm -111 -o -name \"*.dylib\" -o -name \"*.so\" -o -name \"*.bundle\" -o -name \"${QALTI_LIB_FRAMEWORK_NAME}\" \\) -exec sh -c '",
+				"    for p do",
+				"      if /usr/bin/file -b \"$p\" | grep -q \"Mach-O\"; then",
+				"        /usr/bin/codesign --remove-signature \"$p\" 2>/dev/null || true",
+				"      fi",
+				"    done",
+				"  ' sh {} \\;",
+				"}",
+				"",
+				"unsign_framework() {",
+				"  fw=\"$1\"",
+				"  [ -d \"$fw\" ] || return 0",
+				"",
+				"  # Main binary (FrameworkName.framework/FrameworkName)",
+				"  bin=\"${fw}/${QALTI_LIB_FRAMEWORK_NAME}\"",
+				"  if [ ! -f \"$bin\" ]; then",
+				"    # Fallback: first executable-looking file at framework root",
+				"    bin=\"$(find \"$fw\" -maxdepth 1 -type f -perm -111 | head -n 1 || true)\"",
+				"  fi",
+				"",
+				"  unsign_tree \"$fw\"",
+				"",
+				"  if [ -n \"${bin:-}\" ] && [ -f \"$bin\" ] && is_macho \"$bin\"; then",
+				"    /usr/bin/codesign --remove-signature \"$bin\" 2>/dev/null || true",
+				"  fi",
+				"",
+				"  # Nested frameworks (if any)",
+				"  find \"$fw\" -type d -name \"*.framework\" ! -path \"$fw\" -exec sh -c '",
+				"    for nested do",
+				"      # Clean nested payload",
+				"      find \"$nested\" -type d -name \"_CodeSignature\" -prune -exec rm -rf {} \\; 2>/dev/null || true",
+				"      find \"$nested\" -type f \\( -name \"CodeResources\" -o -name \"embedded.mobileprovision\" -o -name \"archived-expanded-entitlements.xcent\" \\) -exec rm -f {} \\; 2>/dev/null || true",
+				"      nbase=$(basename \"${nested%*.framework}\")",
+				"      nbin=\"${nested}/${nbase}\"",
+				"      if [ -f \"$nbin\" ] && /usr/bin/file -b \"$nbin\" | grep -q \"Mach-O\"; then",
+				"        /usr/bin/codesign --remove-signature \"$nbin\" 2>/dev/null || true",
+				"      fi",
+				"    done",
+				"  ' sh {} \\;",
+				"}",
+				"",
+				"mtime() { /usr/bin/stat -f %m \"$1\" 2>/dev/null || echo 0; }",
+				"",
+				"# --- Resolve container (prefer what Xcode is building) ------------------------",
+				"",
+				"container_kind=\"\"",
+				"container_path=\"\"",
+				"",
+				"if [ -n \"${PROJECT_FILE_PATH:-}\" ] && [ -e \"${PROJECT_FILE_PATH:-}\" ]; then",
+				"  container_kind=\"-project\"; container_path=\"${PROJECT_FILE_PATH}\"",
+				"fi",
+				"",
+				"if [ -z \"$container_kind\" ]; then",
+				"  echo \"error: Could not find scheme '${QALTI_LIB_SCHEME}' in your project/workspace.\"",
+				"  exit 1",
+				"fi",
+				"",
+				"echo \"Using container: $container_kind $container_path (scheme: $QALTI_LIB_SCHEME, config: $QALTI_LIB_CONFIG)\"",
+				"",
+				"# 5) Nested build flags (unsigned, module-stable, reuse caches)",
+				"UNSET_FLAGS=\"-u OBJROOT -u SYMROOT -u BUILD_DIR -u CONFIGURATION_BUILD_DIR -u CONFIGURATION_TEMP_DIR \\",
+				" -u PROJECT_TEMP_DIR -u SHARED_PRECOMPS_DIR -u DWARF_DSYM_FOLDER_PATH -u TOOLCHAINS \\",
+				" -u EXECUTABLE_DEBUG_DYLIB_PATH -u EXECUTABLE_BLANK_INJECTION_DYLIB_PATH -u SWIFT_PREVIEWS -u PREVIEWS_LIBRARY_PATH\"",
+				"",
+				"COMMON_KV=\"\\",
+				" SKIP_INSTALL=NO \\",
+				" BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\",
+				" ONLY_ACTIVE_ARCH=NO \\",
+				" CODE_SIGNING_ALLOWED=NO \\",
+				" CODE_SIGNING_REQUIRED=NO \\",
+				" CODE_SIGN_IDENTITY= \\",
+				" AD_HOC_CODE_SIGNING_ALLOWED=NO \\",
+				" CODE_SIGN_STYLE=Manual \\",
+				" DEVELOPMENT_TEAM= \\",
+				" PROVISIONING_PROFILE_SPECIFIER= \\",
+				" PROVISIONING_PROFILE= \\",
+				" ENABLE_BITCODE=NO \\",
+				" ENABLE_DEBUG_DYLIB=NO \\",
+				" ENABLE_PREVIEWS=NO \\",
+				" ENABLE_XOJIT_PREVIEWS=NO \\",
+				" -parallelizeTargets \\",
+				" -clonedSourcePackagesDirPath $SPM_CLONES_DIR \\",
+				"\"",
+				"",
+				"# 6) Archive iOS (device)",
+				"run_xc env $UNSET_FLAGS TOOLCHAINS=com.apple.dt.toolchain.XcodeDefault \\",
+				"  xcrun xcodebuild archive \\",
+				"  \"$container_kind\" \"$container_path\" \\",
+				"  -scheme \"$QALTI_LIB_SCHEME\" \\",
+				"  -configuration \"$QALTI_LIB_CONFIG\" \\",
+				"  $COMMON_KV \\",
+				"  -destination \"generic/platform=iOS\" \\",
+				"  -archivePath \"$DERIVED/ios_devices\" \\",
+				"  -derivedDataPath \"$DERIVED\"",
+				"",
+				"# 7) Archive iOS Simulator (arm64 + x86_64)",
+				"run_xc env $UNSET_FLAGS TOOLCHAINS=com.apple.dt.toolchain.XcodeDefault \\",
+				"  xcrun xcodebuild archive \\",
+				"  \"$container_kind\" \"$container_path\" \\",
+				"  -scheme \"$QALTI_LIB_SCHEME\" \\",
+				"  -configuration \"$QALTI_LIB_CONFIG\" \\",
+				"  $COMMON_KV \\",
+				"  -destination \"generic/platform=iOS Simulator\" \\",
+				"  ARCHS=\"arm64 x86_64\" \\",
+				"  -archivePath \"$DERIVED/ios_sim\" \\",
+				"  -derivedDataPath \"$DERIVED\"",
+				"",
+				"IOS_FW=\"$DERIVED/ios_devices.xcarchive/Products/Library/Frameworks/${QALTI_LIB_FRAMEWORK_NAME}.framework\"",
+				"SIM_FW=\"$DERIVED/ios_sim.xcarchive/Products/Library/Frameworks/${QALTI_LIB_FRAMEWORK_NAME}.framework\"",
+				"IOS_DSYM=\"$DERIVED/ios_devices.xcarchive/dSYMs/${QALTI_LIB_FRAMEWORK_NAME}.framework.dSYM\"",
+				"SIM_DSYM=\"$DERIVED/ios_sim.xcarchive/dSYMs/${QALTI_LIB_FRAMEWORK_NAME}.framework.dSYM\"",
+				"",
+				"if [ ! -d \"$IOS_FW\" ] || [ ! -d \"$SIM_FW\" ]; then",
+				"  echo \"error: Framework outputs missing:\"",
+				"  echo \"  iOS device:     $IOS_FW\"",
+				"  echo \"  iOS simulator:  $SIM_FW\"",
+				"  exit 1",
+				"fi",
+				"",
+				"# 8) Skip re-pack if tar is newer than both frameworks",
+				"if [ -f \"$OUT_TAR\" ]; then",
+				"  OUT_TS=\"$(mtime \"$OUT_TAR\")\"",
+				"  IOS_TS=\"$(mtime \"$IOS_FW\")\"",
+				"  SIM_TS=\"$(mtime \"$SIM_FW\")\"",
+				"  if [ \"$OUT_TS\" -ge \"$IOS_TS\" ] && [ \"$OUT_TS\" -ge \"$SIM_TS\" ]; then",
+				"    echo \"ℹ️  ${TAR_NAME} is up to date; skipping re-pack.\"",
+				"    echo \"✅ Exists at ${OUT_TAR}\"",
+				"    exit 0",
+				"  fi",
+				"fi",
+				"",
+				"# 9) Unsign frameworks before XCFramework creation",
+				"echo \"🔧 Removing code signatures from built frameworks…\"",
+				"unsign_framework \"$IOS_FW\"",
+				"unsign_framework \"$SIM_FW\"",
+				"",
+				"# 10) Create XCFramework (attach dSYMs if both present)",
+				"TMP_XCF=\"${QALTI_NESTED_BUILD_CACHE_DIR}/xcframework/${QALTI_LIB_FRAMEWORK_NAME}.xcframework\"",
+				"# Ensure clean temp dir so failed previous runs don't interfere",
+				"rm -rf \"$(dirname \"$TMP_XCF\")\" 2>/dev/null || true",
+				"mkdir -p \"$(dirname \"$TMP_XCF\")\"",
+				": # TMP_XCF defined",
+				"",
+				"if [ -d \"$IOS_DSYM\" ] && [ -d \"$SIM_DSYM\" ]; then",
+				"  env -u TOOLCHAINS xcrun xcodebuild -create-xcframework \\",
+				"    -framework \"$IOS_FW\" -debug-symbols \"$IOS_DSYM\" \\",
+				"    -framework \"$SIM_FW\" -debug-symbols \"$SIM_DSYM\" \\",
+				"    -output \"$TMP_XCF\"",
+				"else",
+				"  env -u TOOLCHAINS xcrun xcodebuild -create-xcframework \\",
+				"    -framework \"$IOS_FW\" \\",
+				"    -framework \"$SIM_FW\" \\",
+				"    -output \"$TMP_XCF\"",
+				"fi",
+				"",
+				"# 11) Pack as .tar.bz2 into Resources/simulatorbinaries",
+				"(",
+				"  cd \"$(dirname \"$TMP_XCF\")\"",
+				"  COPYFILE_DISABLE=1 /usr/bin/tar \\",
+				"    --no-xattrs --numeric-owner --no-mac-metadata \\",
+				"    -cjf \"$TAR_NAME\" \\",
+				"    -C \"$(dirname \"$TMP_XCF\")\" \"$(basename \"$TMP_XCF\")\"",
+				")",
+				"/bin/mv -f \"$(dirname \"$TMP_XCF\")/$TAR_NAME\" \"$OUT_TAR\"",
+				"",
+				"# 12) Prove it's there",
+				"echo \"Contents of ${DEST_DIR}:\"",
+				"ls -lah \"${DEST_DIR}\"",
+				"",
+				"# 13) Cleanup temporary XCFramework directory",
+				"rm -rf \"$(dirname \"$TMP_XCF\")\"",
+				"echo \"✅ Packed unsigned ${TAR_NAME} → ${DEST_DIR}\"",
+				"",
+				"",
+			);
+		};
+		D0A4A7D42F12295C00416453 /* Embed Pre-built Simulator Runner */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			inputPaths = (
+				"$(SRCROOT)/.artifacts/simulator-runner/qalti-runner-simulator.tar.bz2",
+			);
+			name = "Embed Pre-built Simulator Runner";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/simulatorbinaries/qalti-runner-simulator.tar.bz2",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"#!/usr/bin/env sh",
+				"",
+				"# ==============================================================================",
+				"# IMPORTANT NOTE ON AUTOMATION",
+				"#",
+				"# Do not attempt to automate the generation of the simulator runner archive",
+				"# from within this script (e.g., by calling archive_simulator_runner.sh if",
+				"# the file is missing).",
+				"#",
+				"# REASON: Invoking `xcodebuild` from within an Xcode build phase on the same",
+				"# project is unstable. It causes nested build processes, leading to race",
+				"# conditions, file locking errors, and build system crashes.",
+				"#",
+				"# This script is intentionally designed to fail fast with a clear error message.",
+				"# The developer must run the generation script manually from the terminal.",
+				"# See DEVELOPER.md for the correct workflow.",
+				"# ==============================================================================",
+				"",
+				"set -eu",
+				"",
+				"if [ \"${PLATFORM_NAME:-}\" != \"macosx\" ]; then",
+				"  echo \"Skipping simulator runner archive copy (PLATFORM_NAME=${PLATFORM_NAME:-unset}).\"",
+				"  exit 0",
+				"fi",
+				"",
+				"ARCHIVE_SRC=\"${SRCROOT}/.artifacts/simulator-runner/qalti-runner-simulator.tar.bz2\"",
+				"ARCHIVE_DST_NAME=\"${QALTI_SIM_RUNNER_ARCHIVE_NAME:-qalti-runner-simulator.tar.bz2}\"",
+				"DEST_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/simulatorbinaries\"",
+				"DEST_PATH=\"${DEST_DIR}/${ARCHIVE_DST_NAME}\"",
+				"",
+				"if [ ! -f \"${ARCHIVE_SRC}\" ]; then",
+				"  echo \"Missing simulator runner archive at ${ARCHIVE_SRC}\"",
+				"  echo \"Run scripts/archive_simulator_runner.sh to generate it.\"",
+				"  exit 1",
+				"fi",
+				"",
+				"mkdir -p \"${DEST_DIR}\"",
+				"cp \"${ARCHIVE_SRC}\" \"${DEST_PATH}\"",
+				"",
+				"",
+			);
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1AC5D6D52EBB489200EBB19C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D0113FDF2E4D12B50079D0AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D0621CCD2E27E23D009FC73C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D099615A2E5C9FFF00EE1023 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D09E3E352CFF95850087E580 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D09E3E4F2CFF95870087E580 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		D0B10B4C2E16824F005B5AB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1AC5D6DE2EBB489200EBB19C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = D09E3E382CFF95850087E580 /* Qalti */;
+			targetProxy = 1AC5D6DD2EBB489200EBB19C /* PBXContainerItemProxy */;
+		};
+		D0113FF02E4D12FB0079D0AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */;
+			targetProxy = D0113FEF2E4D12FB0079D0AA /* PBXContainerItemProxy */;
+		};
+		D0113FF52E4D14070079D0AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */;
+			targetProxy = D0113FF42E4D14070079D0AA /* PBXContainerItemProxy */;
+		};
+		D0621CDB2E27E23D009FC73C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0621CD02E27E23D009FC73C /* IOSurfaceBroker */;
+			targetProxy = D0621CDA2E27E23D009FC73C /* PBXContainerItemProxy */;
+		};
+		D0996BCE2E62255200EE1023 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D099615D2E5C9FFF00EE1023 /* QaltiScheduler */;
+			targetProxy = D0996BCD2E62255200EE1023 /* PBXContainerItemProxy */;
+		};
+		D0B10B5C2E168B0B005B5AB4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0B10B4F2E16824F005B5AB4 /* QaltiRunner */;
+			targetProxy = D0B10B5B2E168B0B005B5AB4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1AC5D6DF2EBB489200EBB19C /* Debug configuration for PBXNativeTarget "QaltiUnitTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUnitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Qalti.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Qalti";
+			};
+			name = Debug;
+		};
+		1AC5D6E02EBB489200EBB19C /* Release configuration for PBXNativeTarget "QaltiUnitTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUnitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Qalti.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Qalti";
+			};
+			name = Release;
+		};
+		D0113FEC2E4D12B50079D0AA /* Debug configuration for PBXNativeTarget "QaltiRunnerLib" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gilevich.QaltiRunnerLib;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = NO;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 16.0;
+			};
+			name = Debug;
+		};
+		D0113FED2E4D12B50079D0AA /* Release configuration for PBXNativeTarget "QaltiRunnerLib" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEPLOYMENT_POSTPROCESSING = YES;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MACOSX_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.gilevich.QaltiRunnerLib;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = NO;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 16.0;
+			};
+			name = Release;
+		};
+		D0621CDE2E27E23D009FC73C /* Debug configuration for PBXNativeTarget "IOSurfaceBroker" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IOSurfaceBroker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IOSurfaceBroker;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.IOSurfaceBroker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D0621CDF2E27E23D009FC73C /* Release configuration for PBXNativeTarget "IOSurfaceBroker" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IOSurfaceBroker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IOSurfaceBroker;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.IOSurfaceBroker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D09961622E5C9FFF00EE1023 /* Debug configuration for PBXNativeTarget "QaltiScheduler" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D09961632E5C9FFF00EE1023 /* Release configuration for PBXNativeTarget "QaltiScheduler" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D09E3E5B2CFF95870087E580 /* Debug configuration for PBXProject "Qalti" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D09E3E5C2CFF95870087E580 /* Release configuration for PBXProject "Qalti" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D09E3E5E2CFF95870087E580 /* Debug configuration for PBXNativeTarget "Qalti" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Qalti/Qalti.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 24;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_DEBUG_DYLIB = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = YES;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Qalti/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "To capture connected iPhone screen";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "For recording asserts";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.5.9;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.Qalti;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D09E3E5F2CFF95870087E580 /* Release configuration for PBXNativeTarget "Qalti" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Qalti/Qalti.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 24;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_DEBUG_DYLIB = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = YES;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Qalti/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "To capture connected iPhone screen";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "For recording asserts";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 0.5.9;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.Qalti;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D09E3E642CFF95870087E580 /* Debug configuration for PBXNativeTarget "QaltiUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = QaltiRunner;
+			};
+			name = Debug;
+		};
+		D09E3E652CFF95870087E580 /* Release configuration for PBXNativeTarget "QaltiUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = QaltiRunner;
+			};
+			name = Release;
+		};
+		D0B10B582E168251005B5AB4 /* Debug configuration for PBXNativeTarget "QaltiRunner" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiRunner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D0B10B592E168251005B5AB4 /* Release configuration for PBXNativeTarget "QaltiRunner" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7GQCCA2N8B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiRunner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1AC5D6E12EBB489200EBB19C /* Build configuration list for PBXNativeTarget "QaltiUnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AC5D6DF2EBB489200EBB19C /* Debug configuration for PBXNativeTarget "QaltiUnitTests" */,
+				1AC5D6E02EBB489200EBB19C /* Release configuration for PBXNativeTarget "QaltiUnitTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D0113FEB2E4D12B50079D0AA /* Build configuration list for PBXNativeTarget "QaltiRunnerLib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0113FEC2E4D12B50079D0AA /* Debug configuration for PBXNativeTarget "QaltiRunnerLib" */,
+				D0113FED2E4D12B50079D0AA /* Release configuration for PBXNativeTarget "QaltiRunnerLib" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D0621CDD2E27E23D009FC73C /* Build configuration list for PBXNativeTarget "IOSurfaceBroker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0621CDE2E27E23D009FC73C /* Debug configuration for PBXNativeTarget "IOSurfaceBroker" */,
+				D0621CDF2E27E23D009FC73C /* Release configuration for PBXNativeTarget "IOSurfaceBroker" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D09961642E5C9FFF00EE1023 /* Build configuration list for PBXNativeTarget "QaltiScheduler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D09961622E5C9FFF00EE1023 /* Debug configuration for PBXNativeTarget "QaltiScheduler" */,
+				D09961632E5C9FFF00EE1023 /* Release configuration for PBXNativeTarget "QaltiScheduler" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D09E3E342CFF95850087E580 /* Build configuration list for PBXProject "Qalti" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D09E3E5B2CFF95870087E580 /* Debug configuration for PBXProject "Qalti" */,
+				D09E3E5C2CFF95870087E580 /* Release configuration for PBXProject "Qalti" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D09E3E5D2CFF95870087E580 /* Build configuration list for PBXNativeTarget "Qalti" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D09E3E5E2CFF95870087E580 /* Debug configuration for PBXNativeTarget "Qalti" */,
+				D09E3E5F2CFF95870087E580 /* Release configuration for PBXNativeTarget "Qalti" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D09E3E632CFF95870087E580 /* Build configuration list for PBXNativeTarget "QaltiUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D09E3E642CFF95870087E580 /* Debug configuration for PBXNativeTarget "QaltiUITests" */,
+				D09E3E652CFF95870087E580 /* Release configuration for PBXNativeTarget "QaltiUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		D0B10B5A2E168251005B5AB4 /* Build configuration list for PBXNativeTarget "QaltiRunner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0B10B582E168251005B5AB4 /* Debug configuration for PBXNativeTarget "QaltiRunner" */,
+				D0B10B592E168251005B5AB4 /* Release configuration for PBXNativeTarget "QaltiRunner" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		04AFE6722DF850CC00F5D54D /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		1A1E5C232EBB5D920034C911 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-atomics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.88.0;
+			};
+		};
+		1A1E5C2F2EBB68110034C911 /* XCRemoteSwiftPackageReference "swift-nio-ssl" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio-ssl";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.36.0;
+			};
+		};
+		1AAF29F92EBBA2D500706CBF /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
+		1AAF29FE2EBBA30B00706CBF /* XCRemoteSwiftPackageReference "swift-nio-http2" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-nio-http2.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.38.0;
+			};
+		};
+		1AD3C5C52EBB998C00A9E796 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.33.3;
+			};
+		};
+		D01901E82DDF798E00CAD9E1 /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/elrid/OpenAI.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		D03A8C122D79DAEE0023D78A /* XCRemoteSwiftPackageReference "grpc-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/grpc/grpc-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.24.1;
+			};
+		};
+		D08BBAB62E4FA78300118115 /* XCRemoteSwiftPackageReference "XcodeProj" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tuist/XcodeProj";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.5.0;
+			};
+		};
+		D09961672E5CEAF700EE1023 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.1;
+			};
+		};
+		D0A5B2C32F12345600ABCDEF /* XCRemoteSwiftPackageReference "aws-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/awslabs/aws-sdk-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		D0B017C82DFADBE400D41636 /* XCRemoteSwiftPackageReference "MarkdownUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/MarkdownUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+		D0C580C32D6620B300642AAE /* XCRemoteSwiftPackageReference "Yams" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jpsim/Yams.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.0;
+			};
+		};
+		D0F0F0F02F00000100AA0001 /* XCRemoteSwiftPackageReference "Puppy" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sushichop/Puppy.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0432CD6C2DF8539500FACA06 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04AFE6722DF850CC00F5D54D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		04AFE6772DF8521A00F5D54D /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04AFE6722DF850CC00F5D54D /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		1A1E5C242EBB5D920034C911 /* Atomics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C232EBB5D920034C911 /* XCRemoteSwiftPackageReference "swift-atomics" */;
+			productName = Atomics;
+		};
+		1A1E5C272EBB5E430034C911 /* NIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIO;
+		};
+		1A1E5C292EBB60AB0034C911 /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		1A1E5C2B2EBB60C00034C911 /* NIOHTTP1 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOHTTP1;
+		};
+		1A1E5C302EBB68110034C911 /* NIOSSL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C2F2EBB68110034C911 /* XCRemoteSwiftPackageReference "swift-nio-ssl" */;
+			productName = NIOSSL;
+		};
+		1A1E5C322EBB68C70034C911 /* GRPC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D03A8C122D79DAEE0023D78A /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = GRPC;
+		};
+		1AAF29ED2EBBA16600706CBF /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AD3C5C52EBB998C00A9E796 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		1AAF29EF2EBBA17000706CBF /* NIOCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOCore;
+		};
+		1AAF29F12EBBA17700706CBF /* NIOPosix */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOPosix;
+		};
+		1AAF29F32EBBA18200706CBF /* NIOPosix */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOPosix;
+		};
+		1AAF29F52EBBA18E00706CBF /* NIOConcurrencyHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOConcurrencyHelpers;
+		};
+		1AAF29F72EBBA19300706CBF /* NIOConcurrencyHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */;
+			productName = NIOConcurrencyHelpers;
+		};
+		1AAF29FA2EBBA2D500706CBF /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AAF29F92EBBA2D500706CBF /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		1AAF29FC2EBBA2DD00706CBF /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AAF29F92EBBA2D500706CBF /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		1AAF29FF2EBBA30B00706CBF /* NIOHTTP2 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AAF29FE2EBBA30B00706CBF /* XCRemoteSwiftPackageReference "swift-nio-http2" */;
+			productName = NIOHTTP2;
+		};
+		1AAF2A012EBBA31D00706CBF /* NIOHTTP2 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AAF29FE2EBBA30B00706CBF /* XCRemoteSwiftPackageReference "swift-nio-http2" */;
+			productName = NIOHTTP2;
+		};
+		1AD3C5C62EBB998C00A9E796 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1AD3C5C52EBB998C00A9E796 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		1AD3C5C82EBB9AD800A9E796 /* Yams */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0C580C32D6620B300642AAE /* XCRemoteSwiftPackageReference "Yams" */;
+			productName = Yams;
+		};
+		D01901E92DDF798E00CAD9E1 /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D01901E82DDF798E00CAD9E1 /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
+		};
+		D0571AB62D7F67BA008558B4 /* GRPC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D03A8C122D79DAEE0023D78A /* XCRemoteSwiftPackageReference "grpc-swift" */;
+			productName = GRPC;
+		};
+		D08BBAB72E4FA78300118115 /* XcodeProj */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D08BBAB62E4FA78300118115 /* XCRemoteSwiftPackageReference "XcodeProj" */;
+			productName = XcodeProj;
+		};
+		D09961682E5CEAF700EE1023 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D09961672E5CEAF700EE1023 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		D099616A2E5E006100EE1023 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D09961672E5CEAF700EE1023 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		D0A5B2C42F12345600ABCDEF /* AWSS3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0A5B2C32F12345600ABCDEF /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
+			productName = AWSS3;
+		};
+		D0A5B2C62F12345600ABCDEF /* AWSSDKIdentity */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0A5B2C32F12345600ABCDEF /* XCRemoteSwiftPackageReference "aws-sdk-swift" */;
+			productName = AWSSDKIdentity;
+		};
+		D0B017C92DFADBE400D41636 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0B017C82DFADBE400D41636 /* XCRemoteSwiftPackageReference "MarkdownUI" */;
+			productName = MarkdownUI;
+		};
+		D0C580C42D6620B300642AAE /* Yams */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0C580C32D6620B300642AAE /* XCRemoteSwiftPackageReference "Yams" */;
+			productName = Yams;
+		};
+		D0F0F0F12F00000100AA0001 /* Puppy */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0F0F0F02F00000100AA0001 /* XCRemoteSwiftPackageReference "Puppy" */;
+			productName = Puppy;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D09E3E312CFF95850087E580 /* Project object */;
+}

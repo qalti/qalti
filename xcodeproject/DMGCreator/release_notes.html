@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Qalti 0.5.9 Release Notes</title>
+</head>
+<body>
+
+<h2>What's New in Qalti 0.5.9</h2>
+<ul>
+    <li><strong>Video recording in CLI and GUI</strong> - Record test execution videos in both command-line and graphical interfaces. Toggle recording on/off via the Recording menu in GUI or use --record-video flag in CLI. Optionally auto-delete videos from successful test runs to save disk space</li>
+    <li><strong>Gemini 3 model support</strong> - Added support for Google's Gemini 3 Pro and Gemini 3 Flash preview models with optimized reasoning configuration for better test generation and execution</li>
+    <li><strong>GPT-5 model support</strong> - Added support for OpenAI's GPT-5, GPT-5 Mini, and GPT-5 Nano models, expanding your AI model options for test automation</li>
+    <li><strong>Fixed Allure report issues</strong> - Resolved screenshot filename collisions in Allure reports that occurred when running multiple tests consecutively. Screenshots now use unique datetime prefixes to prevent overwrites</li>
+    <li><strong>Allure reports in scheduler runs</strong> - Scheduler now fully supports Allure report generation. Use --allure-dir flag to generate comprehensive Allure reports for parallel test executions</li>
+    <li><strong>Execution time tracking</strong> - Test execution duration is now accurately tracked and included in Allure reports, providing better insights into test performance and timing</li>
+    <li><strong>Improved simulator opening speed</strong> - Enhanced simulator boot and connection reliability with optimized timing, reducing wait times when launching simulators for test execution</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.8</h2>
+<ul>
+    <li><strong>Run multiple tests from a folder in UI</strong> - Queue tests to run one-by-one</li>
+    <li><strong>Launch arguments and environment</strong> - Configure when opening the app</li>
+    <li><strong>Pinch-to-zoom support</strong> - Perform pinch and expand gestures for precise zoom control in tests</li>
+    <li><strong>Richer logging</strong> - Structured logs to stdout and to files</li>
+    <li><strong>Machine-readable test results</strong> - Simplified output for CLI/CI tooling</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.7</h2>
+<ul>
+    <li><strong>Added support for bash scripts</strong> - Configure anything you want, and let agent read preconditions from external files</li>
+    <li><strong>iPad support</strong> - Run qalti on any iPad, both physical and simulator</li>
+    <li><strong>Long taps</strong> - Now you can do long taps on any element you want</li>
+    <li><strong>Bug fixes and stability improvements</strong> — Fixes some annoyting crashes and hangs</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.6</h2>
+<ul>
+    <li><strong>Added support for multi-simulator CLI</strong> - Run CI tests in parallel</li>
+    <li><strong>Bug fixes and stability improvements</strong> — Fixes some annoyting crashes and hangs</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.4</h2>
+<ul>
+    <li><strong>Added streaming to the UI</strong> - Watch generation output live inside Qalti</li>
+    <li><strong>Video streaming on real devices</strong> - Stream high-fidelity video directly from connected devices</li>
+    <li><strong>Simplified onboarding</strong> - Get new team members productive with fewer setup steps</li>
+</ul>
+
+<h3>Bug Fixes & Improvements</h3>
+<ul>
+    <li>Fixed clicking accuracy degradation during long sessions</li>
+    <li>Improved UI readability across light and dark themes</li>
+    <li>Fixed CI hangs affecting automated pipelines</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.3</h2>
+<ul>
+    <li><strong>Real device support</strong> - Run and debug on physical iOS devices</li>
+    <li><strong>Grok support</strong> - Use the Grok model for AI assistance</li>
+    <li><strong>CLI mode</strong> - Use cli and scheduler to run Qalti in headless and parallel mode</li>
+</ul>
+
+<h3>Bug Fixes & Improvements</h3>
+<ul>
+    <li>Fixed bug where completion was called before a tool call completed</li>
+    <li>Improved login screen system theme handling</li>
+    <li>Fixed closing of simulators opened by the user outside the app</li>
+</ul>
+
+<h2>What's New in Qalti 0.5.1</h2>
+<ul>
+    <li><strong>Faster Agent Performance</strong> - Improved agent wait times after action and test execution speed</li>
+    <li><strong>Google auth</strong> - Added support for auth via google account</li>
+</ul>
+
+<h3>Bug Fixes & Improvements</h3>
+<ul>
+    <li>Fixed issues with wrong screenshot being sent to the agent in some cases</li>
+    <li>Fixed issue with model selection button size</li>
+    <li>Fixed erroneous cycled responses from the agent which lead to some tests timing out</li>
+</ul>
+
+<h2>What's New in Qalti</h2>
+<ul>
+    <li>Improved stability and performance</li>
+    <li>Bug fixes and enhancements</li>
+    <li>Updated dependencies</li>
+</ul>
+
+<h3>Bug Fixes</h3>
+<ul>
+    <li>Fixed issue with simulator connection</li>
+    <li>Resolved memory leaks in test execution</li>
+    <li>Improved error handling</li>
+</ul>
+</body>
+</html>

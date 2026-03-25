@@ -1,0 +1,50 @@
+{
+  "configurations" : [
+    {
+      "id" : "20774B3E-DD36-4A00-8BB2-8154AB98C09E",
+      "name" : "Test Scheme Action",
+      "options" : {
+        "diagnosticCollectionPolicy" : "Never",
+        "mainThreadCheckerEnabled" : false,
+        "userAttachmentLifetime" : "keepNever"
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "diagnosticCollectionPolicy" : "Never",
+    "environmentVariableEntries" : [
+      {
+        "key" : "CONTROL_SERVER_PORT",
+        "value" : "$(CONTROL_SERVER_PORT)"
+      },
+      {
+        "key" : "SCREENSHOT_SERVER_PORT",
+        "value" : "$(SCREENSHOT_SERVER_PORT)"
+      }
+    ],
+    "mainThreadCheckerEnabled" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Qalti.xcodeproj",
+      "identifier" : "D09E3E382CFF95850087E580",
+      "name" : "Qalti"
+    },
+    "userAttachmentLifetime" : "keepNever"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Qalti.xcodeproj",
+        "identifier" : "D09E3E522CFF95870087E580",
+        "name" : "QaltiUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Qalti.xcodeproj",
+        "identifier" : "1AC5D6D82EBB489200EBB19C",
+        "name" : "QaltiUnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Qalti</title>
+        <item>
+            <title>0.5.9</title>
+            <pubDate>Mon, 29 Dec 2025 18:01:20 +0300</pubDate>
+            <sparkle:version>24</sparkle:version>
+            <sparkle:shortVersionString>0.5.9</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://app.qalti.com/releases/Qalti-0.5.9.html</sparkle:releaseNotesLink>
+            <enclosure url="https://app.qalti.com/releases/Qalti-0.5.9.dmg" length="47540293" type="application/octet-stream" sparkle:edSignature="bZwsMzMvlJE5QmQJheyxwaRducS1goERLftuuDZ6/0tKPD/0Q9I48aMjbqPDNLWjKIx4QnETzmDAdK8JY0CHAA=="/>
+        </item>
+        <item>
+            <title>0.5.8</title>
+            <pubDate>Thu, 13 Nov 2025 18:05:10 +0200</pubDate>
+            <sparkle:version>22</sparkle:version>
+            <sparkle:shortVersionString>0.5.8</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://app.qalti.com/releases/Qalti-0.5.8.html</sparkle:releaseNotesLink>
+            <enclosure url="https://app.qalti.com/releases/Qalti-0.5.8.dmg" length="40987623" type="application/octet-stream" sparkle:edSignature="G7JK4lbssnYLtM2wZ5DT78006PQU2Yk8cwnc0jDCyUjoGu7W/R5IksUH7K4T9ag+pkDx/EPr8n+O3swIsRk9Dw=="/>
+        </item>
+        <item>
+            <title>0.5.7</title>
+            <pubDate>Fri, 31 Oct 2025 10:45:08 +0200</pubDate>
+            <sparkle:version>20</sparkle:version>
+            <sparkle:shortVersionString>0.5.7</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://app.qalti.com/releases/Qalti-0.5.7.html</sparkle:releaseNotesLink>
+            <enclosure url="https://app.qalti.com/releases/Qalti-0.5.7.dmg" length="40664444" type="application/octet-stream" sparkle:edSignature="ELFf4hmWkuslnKYhvVPkWJp+tuRtphoxbzKM3dYl/QFdn8qhwAAWxarakWkRxEDHmF3zbEn5ZxXnEuEjz6wFCw=="/>
+        </item>
+        <item>
+            <title>0.5.1</title>
+            <pubDate>Thu, 07 Aug 2025 01:15:44 +0300</pubDate>
+            <sparkle:version>3</sparkle:version>
+            <sparkle:shortVersionString>0.5.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://app.qalti.com/releases/Qalti-0.5.1.html</sparkle:releaseNotesLink>
+            <enclosure url="https://app.qalti.com/releases/Qalti-0.5.1.dmg" length="48286794" type="application/octet-stream" sparkle:edSignature="s9NtWWh7xyOJfT96RP8voEsec6uPYiv83qlOJPHV48jRPaIyhFnyI98ij/lXDNhDOopFPBxUfixDWFBPZW6gBQ=="/>
+        </item>
+        <item>
+            <title>0.5.0</title>
+            <pubDate>Wed, 30 Jul 2025 02:17:19 +0300</pubDate>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>0.5.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:releaseNotesLink>https://app.qalti.com/releases/Qalti-0.5.0.html</sparkle:releaseNotesLink>
+            <enclosure url="https://app.qalti.com/releases/Qalti-0.5.0.dmg" length="48477087" type="application/octet-stream" sparkle:edSignature="Y6fMGNtpooH/oTUpyAnb8IEY5dRSFcjpCz4bVjnwqyTIVXcC4hUeTbnyBm4w0gM7/rbxpAy+wc17z6eHBiqDCg=="/>
+        </item>
+    </channel>
+</rss>
