@@ -708,6 +708,7 @@ struct CLICommand {
     static func defaultReportFilename(for config: CLIConfiguration, dateProvider: DateProvider) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy_MM_dd_HHmmss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         let timestamp = formatter.string(from: dateProvider.now())
         return "\(config.testFile.deletingPathExtension().lastPathComponent)_\(timestamp).json"
@@ -828,7 +829,8 @@ struct CLICommand {
             --app-path <path>          App bundle to install before testing (.app or .ipa)
             --token, -t <token>        OpenRouter API key (or set OPENROUTER_API_KEY env var).
             --model <model>            AI model to use (default: gpt-4.1)
-                                       Available: gpt-4.1, gemini-2.5-pro, claude-4-sonnet, claude-3.5-sonnet
+                                       Available: gpt-4.1, gemini-2.5-pro, claude-4-sonnet, claude-3.5-sonnet,
+                                       openrouter/free (free models)
             --prompts-dir <dir>        Custom prompts directory
             --report-path <file>       Output report path (default: ./reports/test_TIMESTAMP.json)
             --allure-dir <dir>         Generate Allure report files in specified directory

@@ -1,0 +1,181 @@
+//
+//  TestRunnerRetryTests.swift
+//  QaltiUnitTests
+//
+//  Created by Pavel Akhrameev on 06.03.26.
+//
+
+import XCTest
+@testable import Qalti
+
+final class TestRunnerRetryTests: XCTestCase {
+
+    private var mockDelayProvider: MockDelayProvider!
+    private var testingRetryStrategy: TestingStrategy!
+    private var mockErrorCapturer: MockErrorCapturer!
+    private var mockCredentialsService: MockCredentialsService!
+    private var mockIdbManager: MockIdbManager!
+    
+    override func setUp() {
+        super.setUp()
+        mockDelayProvider = MockDelayProvider()
+        testingRetryStrategy = TestingStrategy(maxAttempts: 3, fixedDelay: 0.1)
+        mockErrorCapturer = MockErrorCapturer()
+        mockCredentialsService = MockCredentialsService()
+        mockIdbManager = MockIdbManager()
+        
+        // Set up valid credentials
+        mockCredentialsService.openRouterKey = "test-api-key"
+    }
+    
+    override func tearDown() {
+        mockDelayProvider = nil
+        testingRetryStrategy = nil
+        mockErrorCapturer = nil
+        mockCredentialsService = nil
+        mockIdbManager = nil
+        super.tearDown()
+    }
+    
+    func testRetryLogicWithRateLimitFailure() async {
+        let runHistory = RunHistory()
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: runHistory,
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: testingRetryStrategy,
+            delayProvider: mockDelayProvider
+        )
+        
+        // Create a test file URL
+        let testFileURL = createTempTestFile(content: "1. Open app\n2. Tap button")
+        
+        // This will fail since we don't have a real runtime
+        let result = await testRunner.runTest(fileURL: testFileURL, model: .openrouterFree)
+        
+        // Verify it was a failure
+        switch result {
+        case .failure(_, let error):
+            XCTAssertFalse(error.isEmpty)
+        case .success, .cancelled:
+            XCTFail("Expected failure due to missing runtime")
+        }
+        
+        // Clean up
+        try? FileManager.default.removeItem(at: testFileURL)
+    }
+    
+    func testRetryStrategyProgressionWithExponentialBackoff() {
+        let strategy = ExponentialBackoffStrategy(
+            maxAttempts: 4,
+            baseDelay: 1.0,
+            maxDelay: 20.0,
+            jitterFactor: 0.0
+        )
+        
+        // Test that delays follow exponential pattern
+        let delays = (1...4).compactMap { strategy.nextDelay(attempt: $0) }
+        let expectedDelays = [1.0, 2.0, 4.0, 8.0]
+        
+        for (actual, expected) in zip(delays, expectedDelays) {
+            XCTAssertEqual(actual, expected, accuracy: 0.01)
+        }
+    }
+    
+    func testRetryWithDifferentErrorTypes() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        
+        // Rate limit errors should be retried
+        let rateLimitError = NSError(domain: "Test", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limit exceeded"])
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: rateLimitError))
+        
+        // Network errors should be retried
+        let networkError = NSError(domain: "Test", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network timeout"])
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: networkError))
+        
+        // Auth errors should not be retried (handled by default implementation)
+        let authError = NSError(domain: "Test", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])
+        XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: authError))
+    }
+    
+    func testDelayProviderIntegration() async {
+        let mockProvider = MockDelayProvider()
+        
+        // Test multiple delays
+        try? await mockProvider.delay(1.0)
+        try? await mockProvider.delay(2.0)
+        try? await mockProvider.delay(4.0)
+        
+        // Verify the progression was captured
+        XCTAssertEqual(mockProvider.delayCallCount, 3)
+        XCTAssertTrue(mockProvider.verifyDelayProgression([1.0, 2.0, 4.0]))
+        XCTAssertEqual(mockProvider.totalDelayTime, 7.0)
+    }
+    
+    func testRetryStrategy_MaxAttemptsExceeded() {
+        let strategy = TestingStrategy(maxAttempts: 2, fixedDelay: 0.1)
+        
+        XCTAssertNotNil(strategy.nextDelay(attempt: 1))
+        XCTAssertNotNil(strategy.nextDelay(attempt: 2))
+        XCTAssertNil(strategy.nextDelay(attempt: 3)) // Exceeds max
+        
+        let rateLimitError = NSError(domain: "Test", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limited"])
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: rateLimitError))
+        XCTAssertTrue(strategy.shouldRetry(attempt: 2, error: rateLimitError))
+        XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: rateLimitError)) // Exceeds max
+    }
+    
+    func testRetryStrategyFactory_EnvironmentSelection() {
+        let production = RetryStrategyFactory.create(for: .production) as! ExponentialBackoffStrategy
+        let development = RetryStrategyFactory.create(for: .development) as! LinearBackoffStrategy
+        let testing = RetryStrategyFactory.create(for: .testing) as! TestingStrategy
+        
+        // Verify different strategies have different characteristics
+        XCTAssertEqual(production.maxAttempts, 3)
+        XCTAssertEqual(development.maxAttempts, 3)
+        XCTAssertEqual(testing.maxAttempts, 2)
+        
+        // Production should have longer delays than testing
+        XCTAssertNotNil(production.nextDelay(attempt: 1))
+        XCTAssertNotNil(development.nextDelay(attempt: 1))
+        XCTAssertEqual(testing.nextDelay(attempt: 1), 0.001) // Very fast for tests
+    }
+    
+    func testMockDelayProvider_FastExecution() async {
+        let mockProvider = MockDelayProvider()
+        
+        let startTime = Date()
+        
+        // Simulate retry progression
+        try? await mockProvider.delay(1.0)
+        try? await mockProvider.delay(2.0)
+        try? await mockProvider.delay(4.0)
+        
+        let elapsed = Date().timeIntervalSince(startTime)
+        
+        // Should complete almost instantly with mock
+        XCTAssertLessThan(elapsed, 0.1, "Mock delays should be near-instantaneous")
+        
+        // But should track all the requested delays
+        XCTAssertEqual(mockProvider.totalDelayTime, 7.0)
+        XCTAssertEqual(mockProvider.delayCallCount, 3)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func createTempTestFile(content: String) -> URL {
+        let tempDir = FileManager.default.temporaryDirectory
+        let testFile = tempDir.appendingPathComponent("test_\(UUID().uuidString).test")
+        
+        do {
+            try content.write(to: testFile, atomically: true, encoding: .utf8)
+        } catch {
+            XCTFail("Failed to create temp test file: \(error)")
+        }
+        
+        return testFile
+    }
+}

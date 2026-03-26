@@ -25,6 +25,8 @@ class IOSAgent: Loggable {
         case missingOpenRouterKey
         case missingS3Credentials
         case missingBase64ImageData
+        case rateLimited(retryAfter: TimeInterval, headers: [String: Any])
+        case requestThrottled(info: String)
 
         var errorDescription: String? {
             switch self {
@@ -54,7 +56,66 @@ class IOSAgent: Loggable {
                 return "AWS S3 credentials are missing. Please add them in Settings."
             case .missingBase64ImageData:
                 return "Screenshot processing failed: base64 image data is required when S3 is not configured."
+            case .rateLimited(let retryAfter, _):
+                return "Rate limited by OpenRouter. Please wait \(Int(retryAfter)) seconds before retrying. The free tier has request limits."
+            case .requestThrottled(let info):
+                return "Request throttled: \(info)"
             }
+        }
+    }
+
+    /// Information extracted from rate limit response headers
+    struct RateLimitInfo {
+        let retryAfter: TimeInterval
+        let limit: Int?
+        let remaining: Int?
+        let resetTime: Date?
+        let headers: [String: Any]
+        
+        init(from response: HTTPURLResponse) {
+            headers = response.allHeaderFields as? [String: Any] ?? [:]
+            
+            // Parse Retry-After header (seconds or HTTP date)
+            if let retryAfterString = headers["Retry-After"] as? String {
+                if let seconds = TimeInterval(retryAfterString) {
+                    retryAfter = seconds
+                } else if let date = DateFormatter.httpDate.date(from: retryAfterString) {
+                    retryAfter = max(0, date.timeIntervalSinceNow)
+                } else {
+                    retryAfter = 60.0 // Default fallback
+                }
+            } else {
+                retryAfter = 60.0 // Default for 429 without Retry-After
+            }
+            
+            // Parse rate limit headers (various formats)
+            limit = (headers["X-RateLimit-Limit"] as? String).flatMap(Int.init) ??
+                   (headers["X-Rate-Limit-Limit"] as? String).flatMap(Int.init)
+            
+            remaining = (headers["X-RateLimit-Remaining"] as? String).flatMap(Int.init) ??
+                       (headers["X-Rate-Limit-Remaining"] as? String).flatMap(Int.init)
+            
+            if let resetString = headers["X-RateLimit-Reset"] as? String ?? headers["X-Rate-Limit-Reset"] as? String,
+               let resetTimestamp = TimeInterval(resetString) {
+                resetTime = Date(timeIntervalSince1970: resetTimestamp)
+            } else {
+                resetTime = nil
+            }
+        }
+        
+        var description: String {
+            var parts: [String] = []
+            if let limit = limit, let remaining = remaining {
+                parts.append("limit: \(limit), remaining: \(remaining)")
+            }
+            if let resetTime = resetTime {
+                let formatter = DateFormatter()
+                formatter.dateStyle = .none
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.timeStyle = .medium
+                parts.append("resets at: \(formatter.string(from: resetTime))")
+            }
+            return parts.isEmpty ? "rate limited" : parts.joined(separator: ", ")
         }
     }
 
@@ -131,7 +192,7 @@ class IOSAgent: Loggable {
     private let commandExecutorTools: CommandExecutorToolsForAgent
     private let workingDirectoryForBash: URL
     private let testDirectory: URL
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     let errorCapturer: ErrorCapturing
     private let timeout: TimeInterval
     private var ongoingChatRequest: CancellableRequest? = nil
@@ -150,7 +211,7 @@ class IOSAgent: Loggable {
         elementLocator: UIElementLocator,
         workingDirectoryForBash: URL,
         testDirectory: URL,
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         errorCapturer: ErrorCapturing,
         timeout: TimeInterval = 240.0,
         runHistory: RunHistory
@@ -174,9 +235,7 @@ class IOSAgent: Loggable {
 
         // Create log directory path
         let downloadsPath = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let dateString = dateFormatter.string(from: Date())
+        let dateString = DateFormatter.logFile.string(from: Date())
         logDirectory = downloadsPath.appendingPathComponent("test_run_logs").appendingPathComponent(dateString)
     }
 
@@ -228,7 +287,7 @@ class IOSAgent: Loggable {
                 preparedQuery: preparedQuery,
                 toolCount: tools.count,
                 iteration: iteration,
-                maxRetries: 3
+                maxRetries: 0
             )
 
             guard streamed.toolCalls.isEmpty == false else {

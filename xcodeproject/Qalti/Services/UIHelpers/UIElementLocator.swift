@@ -90,7 +90,7 @@ class UIElementLocator: Loggable {
 
     // MARK: - Properties
 
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     private let errorCapturer: ErrorCapturing
     private let pointOutService: OpenRouterPointOutService
     private let defaultRelative: Bool
@@ -98,7 +98,7 @@ class UIElementLocator: Loggable {
     // MARK: - Initialization
     
     init(
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         errorCapturer: ErrorCapturing,
         defaultRelative: Bool
     ) {

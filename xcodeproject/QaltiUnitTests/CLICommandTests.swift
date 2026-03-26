@@ -22,6 +22,7 @@ final class CLICommandTests: XCTestCase {
         // (matching the behavior of CLICommand's internal formatter)
         let expectedFormatter = DateFormatter()
         expectedFormatter.dateFormat = "yyyy_MM_dd_HHmmss"
+        expectedFormatter.locale = Locale(identifier: "en_US_POSIX")
         expectedFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         let expectedTimestampString = expectedFormatter.string(from: fixedDate)
 

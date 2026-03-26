@@ -93,6 +93,7 @@ struct TestSuiteRunContext {
     private static let runFolderFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yy_MM_dd_HHmmss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter
     }()
 }

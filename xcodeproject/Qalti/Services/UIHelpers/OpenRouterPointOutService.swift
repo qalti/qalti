@@ -51,9 +51,9 @@ final class OpenRouterPointOutService: Loggable {
         }
     }
 
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
 
-    init(credentialsService: CredentialsService) {
+    init(credentialsService: any CredentialsServicing) {
         self.credentialsService = credentialsService
     }
 
