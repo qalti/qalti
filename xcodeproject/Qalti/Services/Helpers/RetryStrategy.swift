@@ -130,9 +130,9 @@ struct TestingStrategy: RetryStrategy {
     }
 }
 
-/// No-retry strategy for immediate failure
+/// No-retry strategy: run the test exactly once and never retry
 struct NoRetryStrategy: RetryStrategy {
-    let maxAttempts: Int = 0
+    let maxAttempts: Int = 1
     
     func nextDelay(attempt: Int) -> TimeInterval? {
         return nil

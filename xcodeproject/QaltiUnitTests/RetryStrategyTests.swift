@@ -93,8 +93,9 @@ final class RetryStrategyTests: XCTestCase {
     
     func testNoRetryStrategy() {
         let strategy = NoRetryStrategy()
-        
-        XCTAssertEqual(strategy.maxAttempts, 0)
+
+        // maxAttempts == 1: execute once, no retries
+        XCTAssertEqual(strategy.maxAttempts, 1)
         XCTAssertNil(strategy.nextDelay(attempt: 1))
         XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: TestError.rateLimitError))
     }

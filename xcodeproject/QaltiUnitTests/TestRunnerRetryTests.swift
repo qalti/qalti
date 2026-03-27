@@ -164,6 +164,37 @@ final class TestRunnerRetryTests: XCTestCase {
         XCTAssertEqual(mockProvider.delayCallCount, 3)
     }
     
+    func testNoRetryStrategy_runsOnceWithoutCrashing() async {
+        let runHistory = RunHistory()
+        let noRetryStrategy = NoRetryStrategy()
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: runHistory,
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: noRetryStrategy,
+            delayProvider: mockDelayProvider
+        )
+
+        let testFileURL = createTempTestFile(content: "1. Open app\n2. Tap button")
+
+        // With NoRetryStrategy the test must execute once and fail gracefully — not crash
+        let result = await testRunner.runTest(fileURL: testFileURL, model: .openrouterFree)
+
+        switch result {
+        case .failure(_, let error):
+            XCTAssertFalse(error.isEmpty)
+            // No delays should be requested when there are no retries
+            XCTAssertEqual(mockDelayProvider.delayCallCount, 0)
+        case .success, .cancelled:
+            XCTFail("Expected failure due to missing runtime")
+        }
+
+        try? FileManager.default.removeItem(at: testFileURL)
+    }
+
     // MARK: - Helper Methods
     
     private func createTempTestFile(content: String) -> URL {
