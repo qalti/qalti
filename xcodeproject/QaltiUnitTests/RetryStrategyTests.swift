@@ -25,7 +25,7 @@ final class RetryStrategyTests: XCTestCase {
         XCTAssertNil(strategy.nextDelay(attempt: 4)) // Exceeds max attempts
     }
     
-    func testExponentialBackoffMaxDelayCapps() {
+    func testExponentialBackoffMaxDelayCaps() {
         let strategy = ExponentialBackoffStrategy(
             maxAttempts: 10,
             baseDelay: 2.0,

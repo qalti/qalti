@@ -287,6 +287,9 @@ class IOSAgent: Loggable {
                 preparedQuery: preparedQuery,
                 toolCount: tools.count,
                 iteration: iteration,
+                // Internal retries are intentionally disabled (maxRetries: 0); retry logic
+                // is handled at the higher-level TestRunner layer. If transient non-rate-limit
+                // failures become a problem, consider restoring a small retry budget here.
                 maxRetries: 0
             )
 
