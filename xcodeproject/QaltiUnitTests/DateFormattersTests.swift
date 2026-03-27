@@ -17,7 +17,7 @@ final class DateFormattersTests: XCTestCase {
         let httpDateString = "Mon, 09 Mar 2026 18:30:45 GMT"
 
         // When
-        let parsedDate = DateFormatter.httpDate.date(from: httpDateString)
+        let parsedDate = DateFormatter.parseHTTPDate(httpDateString)
 
         // Then
         XCTAssertNotNil(parsedDate, "Should parse valid HTTP date string")
@@ -53,7 +53,7 @@ final class DateFormattersTests: XCTestCase {
         let date = calendar.date(from: components)!
 
         // When
-        let formattedString = DateFormatter.httpDate.string(from: date)
+        let formattedString = DateFormatter.formatHTTPDate(date)
 
         // Then - March 9, 2026 is actually a Monday, not Sunday
         XCTAssertEqual(formattedString, "Mon, 09 Mar 2026 18:30:45 GMT")
@@ -69,12 +69,12 @@ final class DateFormattersTests: XCTestCase {
 
         // When & Then
         for headerValue in retryAfterHeaders {
-            let parsedDate = DateFormatter.httpDate.date(from: headerValue)
+            let parsedDate = DateFormatter.parseHTTPDate(headerValue)
             XCTAssertNotNil(parsedDate, "Should parse Retry-After header: \(headerValue)")
 
             // Verify round-trip
-            let reformatted = DateFormatter.httpDate.string(from: parsedDate!)
-            let reparsed = DateFormatter.httpDate.date(from: reformatted)
+            let reformatted = DateFormatter.formatHTTPDate(parsedDate!)
+            let reparsed = DateFormatter.parseHTTPDate(reformatted)
 
             XCTAssertNotNil(reparsed, "Should be able to reparse formatted date")
             XCTAssertEqual(parsedDate!.timeIntervalSince1970, reparsed!.timeIntervalSince1970, accuracy: 1.0,
@@ -94,7 +94,7 @@ final class DateFormattersTests: XCTestCase {
 
         // When & Then
         for invalidDate in invalidDates {
-            let parsedDate = DateFormatter.httpDate.date(from: invalidDate)
+            let parsedDate = DateFormatter.parseHTTPDate(invalidDate)
             XCTAssertNil(parsedDate, "Should reject invalid date format: \(invalidDate)")
         }
     }
@@ -116,7 +116,7 @@ final class DateFormattersTests: XCTestCase {
         let date = calendar.date(from: components)!
 
         // When
-        let formattedString = DateFormatter.logFile.string(from: date)
+        let formattedString = DateFormatter.formatLogFileName(date)
 
         // Then
         XCTAssertEqual(formattedString, "2026-03-09_18-30-45")
@@ -132,7 +132,7 @@ final class DateFormattersTests: XCTestCase {
 
         // When & Then
         for date in testDates {
-            let filename = DateFormatter.logFile.string(from: date)
+            let filename = DateFormatter.formatLogFileName(date)
 
             // Should not contain filesystem-unsafe characters
             let unsafeCharacters = CharacterSet(charactersIn: "/<>:|\"\\*?")
@@ -162,8 +162,8 @@ final class DateFormattersTests: XCTestCase {
         for _ in 0..<10 {
             queue.async {
                 // Use all formatters simultaneously
-                let httpString = DateFormatter.httpDate.string(from: testDate)
-                let logString = DateFormatter.logFile.string(from: testDate)
+                let httpString = DateFormatter.formatHTTPDate(testDate)
+                let logString = DateFormatter.formatLogFileName(testDate)
 
                 // Verify they produce valid output
                 XCTAssertFalse(httpString.isEmpty)
@@ -184,7 +184,7 @@ final class DateFormattersTests: XCTestCase {
 
         measure {
             for _ in 0..<1000 {
-                _ = DateFormatter.httpDate.string(from: testDate)
+                _ = DateFormatter.formatHTTPDate(testDate)
             }
         }
     }
@@ -194,7 +194,7 @@ final class DateFormattersTests: XCTestCase {
 
         measure {
             for _ in 0..<1000 {
-                _ = DateFormatter.logFile.string(from: testDate)
+                _ = DateFormatter.formatLogFileName(testDate)
             }
         }
     }
@@ -211,7 +211,7 @@ final class DateFormattersTests: XCTestCase {
 
         // When & Then
         for value in realWorldValues {
-            let date = DateFormatter.httpDate.date(from: value)
+            let date = DateFormatter.parseHTTPDate(value)
             XCTAssertNotNil(date, "Should parse real-world Retry-After value: \(value)")
 
             // Should be able to calculate wait time
@@ -230,7 +230,7 @@ final class DateFormattersTests: XCTestCase {
         // When - Generate filenames with small time differences
         for i in 0..<100 {
             let date = Date(timeIntervalSinceNow: TimeInterval(i))
-            let filename = DateFormatter.logFile.string(from: date)
+            let filename = DateFormatter.formatLogFileName(date)
             filenames.insert(filename)
         }
 
@@ -257,8 +257,8 @@ final class DateFormattersTests: XCTestCase {
         let leapDate = calendar.date(from: components)!
 
         // When & Then
-        let httpString = DateFormatter.httpDate.string(from: leapDate)
-        let logString = DateFormatter.logFile.string(from: leapDate)
+        let httpString = DateFormatter.formatHTTPDate(leapDate)
+        let logString = DateFormatter.formatLogFileName(leapDate)
 
         XCTAssertTrue(httpString.contains("29 Feb 2024"), "HTTP formatter should handle leap year")
         XCTAssertTrue(logString.contains("2024-02-29"), "Log formatter should handle leap year")

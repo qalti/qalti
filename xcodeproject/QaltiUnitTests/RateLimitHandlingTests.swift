@@ -8,134 +8,135 @@
 import XCTest
 @testable import Qalti
 
+@MainActor
 final class RateLimitHandlingTests: XCTestCase {
 
-    func testIsRateLimitErrorWith429Code() async {
+    func testIsRateLimitErrorWith429Code() {
         let errorMessage = "HTTP 429: Too many requests"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithRateLimitText() async {
+    func testIsRateLimitErrorWithRateLimitText() {
         let errorMessage = "Rate limit exceeded. Please try again later."
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithTooManyRequestsText() async {
+    func testIsRateLimitErrorWithTooManyRequestsText() {
         let errorMessage = "Too many requests sent in a short period"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithQuotaExceededText() async {
+    func testIsRateLimitErrorWithQuotaExceededText() {
         let errorMessage = "Quota exceeded for this API key"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithLimitExceededText() async {
+    func testIsRateLimitErrorWithLimitExceededText() {
         let errorMessage = "Key limit exceeded (monthly limit). Manage it using https://openrouter.ai/settings/keys"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithThrottledText() async {
+    func testIsRateLimitErrorWithThrottledText() {
         let errorMessage = "Request was throttled due to high load"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithNonRateLimitMessage() async {
+    func testIsRateLimitErrorWithNonRateLimitMessage() {
         let errorMessage = "Authentication failed - invalid API key"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertFalse(isRateLimit)
     }
 
-    func testIsRateLimitErrorCaseInsensitive() async {
+    func testIsRateLimitErrorCaseInsensitive() {
         let errorMessage = "RATE LIMIT EXCEEDED"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithPartialMatch() async {
+    func testIsRateLimitErrorWithPartialMatch() {
         let errorMessage = "Service temporarily unavailable due to rate limiting"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithEmptyString() async {
+    func testIsRateLimitErrorWithEmptyString() {
         let errorMessage = ""
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertFalse(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithNetworkError() async {
+    func testIsRateLimitErrorWithNetworkError() {
         let errorMessage = "The Internet connection appears to be offline."
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertFalse(isRateLimit)
     }
 
-    func testIsRateLimitErrorWithServerError() async {
+    func testIsRateLimitErrorWithServerError() {
         let errorMessage = "Internal server error (500)"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertFalse(isRateLimit)
     }
 
     // MARK: - Error Message Scenarios Based on Real OpenRouter Responses
 
-    func testRealOpenRouterRateLimitMessage() async {
+    func testRealOpenRouterRateLimitMessage() {
         // Based on actual OpenRouter rate limit response
         let errorMessage = "statusError(response: <NSHTTPURLResponse: 0x600002bb7760> { URL: https://openrouter.ai:443/api/v1/chat/completions } { Status Code: 429"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit, "Should detect 429 status code in actual error messages")
     }
 
-    func testRealOpenRouterQuotaExceededMessage() async {
+    func testRealOpenRouterQuotaExceededMessage() {
         // Based on actual OpenRouter quota response
         let errorMessage = "{\"error\":{\"message\":\"Key limit exceeded (monthly limit). Manage it using https://openrouter.ai/settings/keys\",\"code\":403}}"
-        let testRunner = await createTestRunner()
+        let testRunner = createTestRunner()
 
-        let isRateLimit = await testRunner.isRateLimitErrorForTesting(errorMessage)
+        let isRateLimit = testRunner.isRateLimitErrorForTesting(errorMessage)
 
         XCTAssertTrue(isRateLimit, "Should detect quota exceeded messages")
     }

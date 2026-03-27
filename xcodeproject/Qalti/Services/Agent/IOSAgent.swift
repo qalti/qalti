@@ -79,7 +79,7 @@ class IOSAgent: Loggable {
             if let retryAfterString = headers["Retry-After"] as? String {
                 if let seconds = TimeInterval(retryAfterString) {
                     retryAfter = seconds
-                } else if let date = DateFormatter.httpDate.date(from: retryAfterString) {
+                } else if let date = DateFormatter.parseHTTPDate(retryAfterString) {
                     retryAfter = max(0, date.timeIntervalSinceNow)
                 } else {
                     retryAfter = 60.0 // Default fallback
@@ -235,7 +235,7 @@ class IOSAgent: Loggable {
 
         // Create log directory path
         let downloadsPath = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-        let dateString = DateFormatter.logFile.string(from: Date())
+        let dateString = DateFormatter.formatLogFileName(Date())
         logDirectory = downloadsPath.appendingPathComponent("test_run_logs").appendingPathComponent(dateString)
     }
 
