@@ -37,7 +37,9 @@ final class TestRunnerRetryTests: XCTestCase {
         super.tearDown()
     }
     
-    func testRetryLogicWithRateLimitFailure() async {
+    func testExecuteTestWithRetry_retriesOnRateLimitErrorAndSucceeds() async {
+        // Strategy allows 3 attempts; executor fails twice with a rate-limit error then succeeds
+        let strategy = TestingStrategy(maxAttempts: 3, fixedDelay: 0.001)
         let runHistory = RunHistory()
         let testRunner = await TestRunner(
             executionMode: .cli,
@@ -46,26 +48,29 @@ final class TestRunnerRetryTests: XCTestCase {
             credentialsService: mockCredentialsService,
             idbManager: mockIdbManager,
             errorCapturer: mockErrorCapturer,
-            retryStrategy: testingRetryStrategy,
+            retryStrategy: strategy,
             delayProvider: mockDelayProvider
         )
-        
-        // Create a test file URL
-        let testFileURL = createTempTestFile(content: "1. Open app\n2. Tap button")
-        
-        // This will fail since we don't have a real runtime
-        let result = await testRunner.runTest(fileURL: testFileURL, model: .openrouterFree)
-        
-        // Verify it was a failure
-        switch result {
-        case .failure(_, let error):
-            XCTAssertFalse(error.isEmpty)
-        case .success, .cancelled:
-            XCTFail("Expected failure due to missing runtime")
+
+        var executorCallCount = 0
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            if executorCallCount < 3 {
+                return .failure(dummySummary, error: "Rate limit exceeded")
+            }
+            return .success(dummySummary)
         }
-        
-        // Clean up
-        try? FileManager.default.removeItem(at: testFileURL)
+
+        // All 3 attempts were made
+        XCTAssertEqual(executorCallCount, 3)
+        // Delay between attempt 1→2 and 2→3, but not after the successful 3rd attempt
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 2)
+        if case .success = result { } else {
+            XCTFail("Expected .success on third attempt")
+        }
     }
     
     func testRetryStrategyProgressionWithExponentialBackoff() {
@@ -193,6 +198,36 @@ final class TestRunnerRetryTests: XCTestCase {
         }
 
         try? FileManager.default.removeItem(at: testFileURL)
+    }
+
+    func testNoRetryStrategy_executesOnceWithoutRetryOrDelay() async {
+        let runHistory = RunHistory()
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: runHistory,
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: NoRetryStrategy(),
+            delayProvider: mockDelayProvider
+        )
+
+        var executorCallCount = 0
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            return .failure(dummySummary, error: "Rate limit exceeded")
+        }
+
+        // Executor must be called exactly once — no retries with NoRetryStrategy
+        XCTAssertEqual(executorCallCount, 1)
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 0)
+        if case .failure = result { } else {
+            XCTFail("Expected .failure result")
+        }
     }
 
     // MARK: - Helper Methods

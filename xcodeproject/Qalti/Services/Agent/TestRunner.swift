@@ -281,13 +281,15 @@ class TestRunner: Loggable {
         await setStatus("Starting test...")
         await updateRunStatus(.running, preferredURL: normalizedURL)
 
-        let result = await executeTestWithRetry(
-            runtime: runtime,
-            testURL: normalizedURL,
-            model: model,
-            testContent: test,
-            workingDirectory: workingDirectory
-        )
+        let result = await executeTestWithRetry(testURL: normalizedURL) {
+            await self.executeTest(
+                runtime: runtime,
+                testURL: normalizedURL,
+                model: model,
+                testContent: test,
+                workingDirectory: workingDirectory
+            )
+        }
         return result
     }
 
@@ -312,9 +314,9 @@ class TestRunner: Loggable {
     }
 
     /// Executes a test with configurable retry strategy for handling rate limits and temporary failures
-    private func executeTestWithRetry(
-        runtime: IOSRuntime, testURL: URL, model: AvailableModel,
-        testContent: String, maxIterations: Int = 50, workingDirectory: URL?
+    internal func executeTestWithRetry(
+        testURL: URL,
+        singleAttemptExecutor: () async -> RunCompletion
     ) async -> RunCompletion {
 
         var lastError: String?
@@ -322,14 +324,7 @@ class TestRunner: Loggable {
         for attempt in 1...retryStrategy.maxAttempts {
             logger.debug("Executing test attempt \(attempt)/\(retryStrategy.maxAttempts)")
 
-            let result = await executeTest(
-                runtime: runtime,
-                testURL: testURL,
-                model: model,
-                testContent: testContent,
-                maxIterations: maxIterations,
-                workingDirectory: workingDirectory
-            )
+            let result = await singleAttemptExecutor()
 
             // Check if the result indicates a retryable failure
             switch result {
