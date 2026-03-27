@@ -32,16 +32,29 @@ protocol RetryStrategy {
 /// Default implementation for common retry logic
 extension RetryStrategy {
     func shouldRetry(attempt: Int, error: Error) -> Bool {
-        guard attempt <= maxAttempts else { return false }
-        
-        // Check for rate limit errors (429, 503)
-        let errorString = error.localizedDescription.lowercased()
+        // attempt < maxAttempts: after the last allowed attempt there is nothing left to retry.
+        guard attempt < maxAttempts else { return false }
 
-        if errorString.contains("429") || errorString.contains("rate limit") ||
-           errorString.contains("too many requests") || errorString.contains("503") {
+        // Check NSError codes directly so callers that supply HTTP-style codes
+        // (e.g. NSError(domain:…, code: 429)) are handled without relying on the
+        // localizedDescription containing the numeric string.
+        if let nsError = error as? NSError,
+           nsError.code == 429 || nsError.code == 503 {
             return true
         }
-        
+
+        // Check description for rate-limit / quota / throttle signals.
+        // Keeps parity with the indicators used in TestRunner.isRateLimitError.
+        let errorString = error.localizedDescription.lowercased()
+        let rateLimitIndicators = [
+            "429", "503",
+            "rate limit", "too many requests",
+            "quota exceeded", "limit exceeded", "throttled"
+        ]
+        if rateLimitIndicators.contains(where: { errorString.contains($0) }) {
+            return true
+        }
+
         // Check for temporary network issues
         let networkErrors = ["timeout", "connection", "network", "temporary"]
         return networkErrors.contains { errorString.contains($0) }

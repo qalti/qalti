@@ -105,7 +105,8 @@ final class RetryStrategyTests: XCTestCase {
         
         XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: TestError.rateLimitError))
         XCTAssertTrue(strategy.shouldRetry(attempt: 2, error: TestError.rateLimitError))
-        XCTAssertTrue(strategy.shouldRetry(attempt: 3, error: TestError.rateLimitError))
+        // attempt == maxAttempts: no retry remaining, even for retryable errors
+        XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: TestError.rateLimitError))
         XCTAssertFalse(strategy.shouldRetry(attempt: 4, error: TestError.rateLimitError)) // Exceeds max
     }
     
@@ -122,7 +123,72 @@ final class RetryStrategyTests: XCTestCase {
         XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: TestError.authenticationError))
         XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: TestError.genericError))
     }
-    
+
+    // MARK: - shouldRetry: NSError code handling
+
+    func testShouldRetry_nsErrorWith429Code_retriesWhenBelowMax() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "HTTP", code: 429, userInfo: [:])
+
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: error))
+        XCTAssertTrue(strategy.shouldRetry(attempt: 2, error: error))
+        // attempt == maxAttempts → no retry
+        XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: error))
+    }
+
+    func testShouldRetry_nsErrorWith503Code_retriesWhenBelowMax() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "HTTP", code: 503, userInfo: [:])
+
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: error))
+        XCTAssertTrue(strategy.shouldRetry(attempt: 2, error: error))
+        XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: error))
+    }
+
+    func testShouldRetry_nsErrorWithNonRetryableCode_doesNotRetry() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "HTTP", code: 401, userInfo: [:])
+
+        XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: error))
+    }
+
+    // MARK: - shouldRetry: additional text indicators
+
+    func testShouldRetry_quotaExceededText_retries() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "Test", code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: "Quota exceeded for this API key"])
+
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: error))
+    }
+
+    func testShouldRetry_limitExceededText_retries() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "Test", code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: "Daily limit exceeded"])
+
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: error))
+    }
+
+    func testShouldRetry_throttledText_retries() {
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let error = NSError(domain: "Test", code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: "Request was throttled due to high load"])
+
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: error))
+    }
+
+    // MARK: - shouldRetry: attempt boundary
+
+    func testShouldRetry_atMaxAttempts_returnsFalse() {
+        // Regardless of error type, attempt == maxAttempts must return false
+        // because there are no remaining attempts to schedule.
+        let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
+        let rateLimitError = NSError(domain: "HTTP", code: 429, userInfo: [:])
+
+        XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: rateLimitError))
+    }
+
     func testRetryStrategyFactoryEnvironments() {
         let production = RetryStrategyFactory.create(for: .production)
         let development = RetryStrategyFactory.create(for: .development)

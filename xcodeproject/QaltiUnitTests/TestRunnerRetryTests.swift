@@ -129,7 +129,8 @@ final class TestRunnerRetryTests: XCTestCase {
         
         let rateLimitError = NSError(domain: "Test", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limited"])
         XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: rateLimitError))
-        XCTAssertTrue(strategy.shouldRetry(attempt: 2, error: rateLimitError))
+        // attempt == maxAttempts: no retry remaining
+        XCTAssertFalse(strategy.shouldRetry(attempt: 2, error: rateLimitError))
         XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: rateLimitError)) // Exceeds max
     }
     

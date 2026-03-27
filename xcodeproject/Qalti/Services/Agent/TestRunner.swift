@@ -342,8 +342,10 @@ class TestRunner: Loggable {
                     userInfo: [NSLocalizedDescriptionKey: error]
                 )
 
-                // Check if this error is retryable according to our strategy
-                guard retryStrategy.shouldRetry(attempt: attempt, error: syntheticError) else {
+                // Check if this error is retryable according to our strategy,
+                // and only bother if there are more attempts remaining.
+                guard attempt < retryStrategy.maxAttempts,
+                      retryStrategy.shouldRetry(attempt: attempt, error: syntheticError) else {
                     // Error is not retryable or max attempts exceeded
                     logger.info("Error not retryable or max attempts exceeded: \(error)")
                     return result
