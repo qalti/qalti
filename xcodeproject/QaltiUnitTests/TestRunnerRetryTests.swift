@@ -11,7 +11,6 @@ import XCTest
 final class TestRunnerRetryTests: XCTestCase {
 
     private var mockDelayProvider: MockDelayProvider!
-    private var testingRetryStrategy: TestingStrategy!
     private var mockErrorCapturer: MockErrorCapturer!
     private var mockCredentialsService: MockCredentialsService!
     private var mockIdbManager: MockIdbManager!
@@ -19,18 +18,15 @@ final class TestRunnerRetryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockDelayProvider = MockDelayProvider()
-        testingRetryStrategy = TestingStrategy(maxAttempts: 3, fixedDelay: 0.1)
         mockErrorCapturer = MockErrorCapturer()
         mockCredentialsService = MockCredentialsService()
         mockIdbManager = MockIdbManager()
-        
         // Set up valid credentials
         mockCredentialsService.openRouterKey = "test-api-key"
     }
     
     override func tearDown() {
         mockDelayProvider = nil
-        testingRetryStrategy = nil
         mockErrorCapturer = nil
         mockCredentialsService = nil
         mockIdbManager = nil
@@ -227,6 +223,46 @@ final class TestRunnerRetryTests: XCTestCase {
         XCTAssertEqual(executorCallCount, 1)
         XCTAssertEqual(mockDelayProvider.delayCallCount, 0)
         if case .failure = result { } else {
+            XCTFail("Expected .failure result")
+        }
+    }
+
+    func testExecuteTestWithRetry_returnsLastFailureSummaryOnExhaustion() async {
+        // Arrange: create a dummy summary with non-nil URLs to simulate a real failure
+        let expectedTestRunURL = URL(fileURLWithPath: "/tmp/fake_test_run.json")
+        let expectedVideoURL = URL(fileURLWithPath: "/tmp/fake_video.mp4")
+        let dummySummary = TestRunner.RunSummary(
+            name: "TestName",
+            file: "TestFile.swift",
+            testFileURL: URL(fileURLWithPath: "/tmp/testfile"),
+            testRunURL: expectedTestRunURL,
+            videoURL: expectedVideoURL
+        )
+        let runHistory = RunHistory()
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: runHistory,
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: TestingStrategy(maxAttempts: 2, fixedDelay: 0.01),
+            delayProvider: mockDelayProvider
+        )
+        var callCount = 0
+        // Always fail, return our dummy summary with a retryable error string
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/testfile")) {
+            callCount += 1
+            return .failure(dummySummary, error: "Rate limit exceeded")
+        }
+        // Should have retried twice (maxAttempts)
+        XCTAssertEqual(callCount, 2)
+        // Should return the last failure summary, not a new one with nil URLs
+        if case .failure(let summary, let error) = result {
+            XCTAssertEqual(summary.testRunURL, expectedTestRunURL, "Should return last failure summary with correct testRunURL")
+            XCTAssertEqual(summary.videoURL, expectedVideoURL, "Should return last failure summary with correct videoURL")
+            XCTAssertEqual(error, "Rate limit exceeded")
+        } else {
             XCTFail("Expected .failure result")
         }
     }

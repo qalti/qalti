@@ -319,7 +319,8 @@ class TestRunner: Loggable {
         singleAttemptExecutor: () async -> RunCompletion
     ) async -> RunCompletion {
 
-        var lastError: String?
+        var lastFailureSummary: RunSummary? = nil
+        var lastError: String? = nil
 
         for attempt in 1...retryStrategy.maxAttempts {
             logger.debug("Executing test attempt \(attempt)/\(retryStrategy.maxAttempts)")
@@ -333,6 +334,7 @@ class TestRunner: Loggable {
                 return result
 
             case .failure(let summary, let error):
+                lastFailureSummary = summary
                 lastError = error
 
                 // Create a synthetic error for strategy evaluation
@@ -371,19 +373,24 @@ class TestRunner: Loggable {
 
                     await setStatus("Retrying test... (attempt \(attempt + 1))")
                 } else {
-                    // No more delays available
+                    // No more retry delays available
                     logger.info("No more retry delays available after attempt \(attempt)")
                     return result
                 }
             }
         }
 
-        // If we exhausted all retries, return the last failure
-        let summary = await makeRunSummary(testURL: testURL, testRunURL: nil, videoURL: nil)
-        let errorMessage = lastError ?? "Maximum retry attempts (\(retryStrategy.maxAttempts)) exceeded"
-        await setError(errorMessage)
-
-        return .failure(summary, error: errorMessage)
+        // If we exhausted all retries, return the last failure summary (with context)
+        if let lastSummary = lastFailureSummary, let lastErr = lastError {
+            await setError(lastErr)
+            return .failure(lastSummary, error: lastErr)
+        } else {
+            // Fallback: create a new summary if somehow no failure was recorded
+            let summary = await makeRunSummary(testURL: testURL, testRunURL: nil, videoURL: nil)
+            let errorMessage = lastError ?? "Maximum retry attempts (\(retryStrategy.maxAttempts)) exceeded"
+            await setError(errorMessage)
+            return .failure(summary, error: errorMessage)
+        }
     }
 
     internal func isRateLimitError(_ errorMessage: String) -> Bool {

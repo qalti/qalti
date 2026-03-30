@@ -29,7 +29,14 @@ protocol RetryStrategy {
     var description: String { get }
 }
 
-/// Default implementation for common retry logic
+/// Default implementation for common retry logic.
+///
+/// - Only allows retry if `attempt < maxAttempts` (i.e., maxAttempts is the total number of tries, not retries).
+/// - Explicitly checks NSError codes 429/503 for HTTP-style rate limit/service unavailable errors.
+/// - Also checks error descriptions for rate-limit/quota/throttle indicators.
+/// - Handles temporary network issues by matching common keywords.
+///
+/// This ensures callers cannot schedule a retry after the final allowed attempt, and that both error codes and strings are considered.
 extension RetryStrategy {
     func shouldRetry(attempt: Int, error: Error) -> Bool {
         // attempt < maxAttempts: after the last allowed attempt there is nothing left to retry.
