@@ -71,12 +71,20 @@ class IOSAgent: Loggable {
         let remaining: Int?
         let resetTime: Date?
         let headers: [String: Any]
-        
+
         init(from response: HTTPURLResponse) {
-            headers = response.allHeaderFields as? [String: Any] ?? [:]
-            
-            // Parse Retry-After header (seconds or HTTP date)
-            if let retryAfterString = headers["Retry-After"] as? String {
+            // Normalize header keys to lowercase strings
+            let rawHeaders = response.allHeaderFields
+            var normalizedHeaders: [String: Any] = [:]
+            for (key, value) in rawHeaders {
+                let keyString = String(describing: key).lowercased()
+                normalizedHeaders[keyString] = value
+            }
+            headers = normalizedHeaders
+
+            // Parse Retry-After header (seconds or HTTP date), case-insensitive, handle NSNumber
+            let retryAfterValue = headers["retry-after"]
+            if let retryAfterString = retryAfterValue as? String {
                 if let seconds = TimeInterval(retryAfterString) {
                     retryAfter = seconds
                 } else if let date = DateFormatter.parseHTTPDate(retryAfterString) {
@@ -84,18 +92,20 @@ class IOSAgent: Loggable {
                 } else {
                     retryAfter = 60.0 // Default fallback
                 }
+            } else if let retryAfterNumber = retryAfterValue as? NSNumber {
+                retryAfter = retryAfterNumber.doubleValue
             } else {
                 retryAfter = 60.0 // Default for 429 without Retry-After
             }
-            
-            // Parse rate limit headers (various formats)
-            limit = (headers["X-RateLimit-Limit"] as? String).flatMap(Int.init) ??
-                   (headers["X-Rate-Limit-Limit"] as? String).flatMap(Int.init)
-            
-            remaining = (headers["X-RateLimit-Remaining"] as? String).flatMap(Int.init) ??
-                       (headers["X-Rate-Limit-Remaining"] as? String).flatMap(Int.init)
-            
-            if let resetString = headers["X-RateLimit-Reset"] as? String ?? headers["X-Rate-Limit-Reset"] as? String,
+
+            // Parse rate limit headers (various formats, case-insensitive)
+            limit = (headers["x-ratelimit-limit"] as? String).flatMap(Int.init) ??
+                   (headers["x-rate-limit-limit"] as? String).flatMap(Int.init)
+
+            remaining = (headers["x-ratelimit-remaining"] as? String).flatMap(Int.init) ??
+                       (headers["x-rate-limit-remaining"] as? String).flatMap(Int.init)
+
+            if let resetString = headers["x-ratelimit-reset"] as? String ?? headers["x-rate-limit-reset"] as? String,
                let resetTimestamp = TimeInterval(resetString) {
                 resetTime = Date(timeIntervalSince1970: resetTimestamp)
             } else {

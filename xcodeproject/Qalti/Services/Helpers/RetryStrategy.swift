@@ -45,16 +45,19 @@ extension RetryStrategy {
         // Check NSError codes directly so callers that supply HTTP-style codes
         // (e.g. NSError(domain:…, code: 429)) are handled without relying on the
         // localizedDescription containing the numeric string.
-        if let nsError = error as? NSError,
-           nsError.code == 429 || nsError.code == 503 {
-            return true
+        if let nsError = error as? NSError {
+            if nsError.code == 429 {
+                return true // Rate limit
+            } else if nsError.code == 503 {
+                return true // Service unavailable, retriable but not a rate limit
+            }
         }
 
         // Check description for rate-limit / quota / throttle signals.
         // Keeps parity with the indicators used in TestRunner.isRateLimitError.
         let errorString = error.localizedDescription.lowercased()
         let rateLimitIndicators = [
-            "429", "503",
+            "429",
             "rate limit", "too many requests",
             "quota exceeded", "limit exceeded", "throttled"
         ]

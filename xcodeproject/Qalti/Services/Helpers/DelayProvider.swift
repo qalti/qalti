@@ -19,9 +19,10 @@ protocol DelayProvider {
 struct SystemDelayProvider: DelayProvider, Loggable {
     func delay(_ interval: TimeInterval) async throws {
         logger.debug("Delaying for \(interval) seconds")
-        // Clamp to a valid range before converting to UInt64: negative, NaN, or infinite
+        // Clamp to a valid range before converting to UInt64: negative, NaN, infinite, or too large
         // values would trap or produce undefined behaviour in UInt64(...).
-        let safeInterval = interval.isFinite ? max(0, interval) : 0
+        let maxSeconds = Double(UInt64.max) / 1_000_000_000
+        let safeInterval = interval.isFinite ? max(0, min(interval, maxSeconds)) : 0
         let nanoseconds = UInt64(safeInterval * 1_000_000_000)
         try await Task.sleep(nanoseconds: nanoseconds)
     }
@@ -45,13 +46,14 @@ class MockDelayProvider: DelayProvider, Loggable {
         lastDelayInterval = interval
         allDelayIntervals.append(interval)
         totalDelayTime += interval
-        
+
         logger.debug("Mock delay called: \(interval)s (call #\(delayCallCount))")
-        
+
         if shouldActuallyDelay {
             let actualDelay = delayOverride ?? interval
-            // Same guard as SystemDelayProvider: clamp before UInt64 conversion.
-            let safeDelay = actualDelay.isFinite ? max(0, actualDelay) : 0
+            // Clamp before UInt64 conversion to avoid overflow.
+            let maxSeconds = Double(UInt64.max) / 1_000_000_000
+            let safeDelay = actualDelay.isFinite ? max(0, min(actualDelay, maxSeconds)) : 0
             let nanoseconds = UInt64(safeDelay * 1_000_000_000)
             try await Task.sleep(nanoseconds: nanoseconds)
         }

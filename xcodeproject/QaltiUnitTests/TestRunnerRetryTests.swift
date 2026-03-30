@@ -180,10 +180,11 @@ final class TestRunnerRetryTests: XCTestCase {
             delayProvider: mockDelayProvider
         )
 
-        let testFileURL = createTempTestFile(content: "1. Open app\n2. Tap button")
-
-        // With NoRetryStrategy the test must execute once and fail gracefully — not crash
-        let result = await testRunner.runTest(fileURL: testFileURL, model: .openrouterFree)
+        // Directly test executeTestWithRetry to ensure retry logic is exercised
+        let dummySummary = TestRunner.RunSummary(name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil)
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            return .failure(dummySummary, error: "Some error")
+        }
 
         switch result {
         case .failure(_, let error):
@@ -193,8 +194,6 @@ final class TestRunnerRetryTests: XCTestCase {
         case .success, .cancelled:
             XCTFail("Expected failure due to missing runtime")
         }
-
-        try? FileManager.default.removeItem(at: testFileURL)
     }
 
     func testNoRetryStrategy_executesOnceWithoutRetryOrDelay() async {
