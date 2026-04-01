@@ -1559,56 +1559,56 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.1;
+				kind = exactVersion;
+				version = 2.38.1;
 			};
 		};
 		1A1E5C232EBB5D920034C911 /* XCRemoteSwiftPackageReference "swift-atomics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-atomics.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
+				kind = exactVersion;
+				version = 1.3.0;
 			};
 		};
 		1A1E5C262EBB5E430034C911 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.88.0;
+				kind = exactVersion;
+				version = 2.92.0;
 			};
 		};
 		1A1E5C2F2EBB68110034C911 /* XCRemoteSwiftPackageReference "swift-nio-ssl" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio-ssl";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.36.0;
+				kind = exactVersion;
+				version = 2.36.0;
 			};
 		};
 		1AAF29F92EBBA2D500706CBF /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.4;
+				kind = exactVersion;
+				version = 1.6.4;
 			};
 		};
 		1AAF29FE2EBBA30B00706CBF /* XCRemoteSwiftPackageReference "swift-nio-http2" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio-http2.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.38.0;
+				kind = exactVersion;
+				version = 1.39.0;
 			};
 		};
 		1AD3C5C52EBB998C00A9E796 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-protobuf.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.33.3;
+				kind = exactVersion;
+				version = 1.33.3;
 			};
 		};
 		D01901E82DDF798E00CAD9E1 /* XCRemoteSwiftPackageReference "OpenAI" */ = {
@@ -1623,56 +1623,56 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/grpc/grpc-swift.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.24.1;
+				kind = exactVersion;
+				version = 1.27.1;
 			};
 		};
 		D08BBAB62E4FA78300118115 /* XCRemoteSwiftPackageReference "XcodeProj" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tuist/XcodeProj";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.5.0;
+				kind = exactVersion;
+				version = 9.6.0;
 			};
 		};
 		D09961672E5CEAF700EE1023 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.1;
+				kind = exactVersion;
+				version = 1.7.0;
 			};
 		};
 		D0A5B2C32F12345600ABCDEF /* XCRemoteSwiftPackageReference "aws-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/awslabs/aws-sdk-swift.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = exactVersion;
+				version = 1.3.43;
 			};
 		};
 		D0B017C82DFADBE400D41636 /* XCRemoteSwiftPackageReference "MarkdownUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/MarkdownUI";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.4.1;
+				kind = exactVersion;
+				version = 2.4.1;
 			};
 		};
 		D0C580C32D6620B300642AAE /* XCRemoteSwiftPackageReference "Yams" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jpsim/Yams.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.3.0;
+				kind = exactVersion;
+				version = 5.4.0;
 			};
 		};
 		D0F0F0F02F00000100AA0001 /* XCRemoteSwiftPackageReference "Puppy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sushichop/Puppy.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
+				kind = exactVersion;
+				version = 0.9.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
