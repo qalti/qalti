@@ -31,8 +31,6 @@
 		1AAF2A022EBBA31D00706CBF /* NIOHTTP2 in Frameworks */ = {isa = PBXBuildFile; productRef = 1AAF2A012EBBA31D00706CBF /* NIOHTTP2 */; };
 		1AD3C5C72EBB998C00A9E796 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 1AD3C5C62EBB998C00A9E796 /* SwiftProtobuf */; };
 		1AD3C5C92EBB9AD800A9E796 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 1AD3C5C82EBB9AD800A9E796 /* Yams */; };
-		D0113FF22E4D14070079D0AA /* QaltiRunnerLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */; };
-		D0113FF32E4D14070079D0AA /* QaltiRunnerLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D01901EA2DDF798E00CAD9E1 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = D01901E92DDF798E00CAD9E1 /* OpenAI */; };
 		D0571AB72D7F67BA008558B4 /* GRPC in Frameworks */ = {isa = PBXBuildFile; productRef = D0571AB62D7F67BA008558B4 /* GRPC */; };
 		D0621CDC2E27E23D009FC73C /* IOSurfaceBroker.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -53,20 +51,6 @@
 			remoteGlobalIDString = D09E3E382CFF95850087E580;
 			remoteInfo = Qalti;
 		};
-		D0113FEF2E4D12FB0079D0AA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D0113FE22E4D12B50079D0AA;
-			remoteInfo = QaltiRunnerLib;
-		};
-		D0113FF42E4D14070079D0AA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D0113FE22E4D12B50079D0AA;
-			remoteInfo = QaltiRunnerLib;
-		};
 		D0621CDA2E27E23D009FC73C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
@@ -81,13 +65,6 @@
 			remoteGlobalIDString = D099615D2E5C9FFF00EE1023;
 			remoteInfo = QaltiScheduler;
 		};
-		D0B10B5B2E168B0B005B5AB4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D09E3E312CFF95850087E580 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D0B10B4F2E16824F005B5AB4;
-			remoteInfo = QaltiRunner;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -97,15 +74,6 @@
 			dstSubfolder = Frameworks;
 			files = (
 				1A1E5C4C2EBB8FF70034C911 /* XCTest.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-		};
-		D0113FF62E4D14070079D0AA /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			dstPath = "";
-			dstSubfolder = Frameworks;
-			files = (
-				D0113FF32E4D14070079D0AA /* QaltiRunnerLib.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 		};
@@ -135,7 +103,6 @@
 		D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = IOSurfaceBroker.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		D099615E2E5C9FFF00EE1023 /* QaltiScheduler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = QaltiScheduler; sourceTree = BUILT_PRODUCTS_DIR; };
 		D09E3E392CFF95850087E580 /* Qalti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Qalti.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D09E3E532CFF95870087E580 /* QaltiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QaltiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0B10B502E16824F005B5AB4 /* QaltiRunner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QaltiRunner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0D814B32D037D6A002B398E /* Qalti.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Qalti.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -279,12 +246,6 @@
 				D0B017CA2DFADBE400D41636 /* MarkdownUI in Frameworks */,
 			);
 		};
-		D09E3E502CFF95870087E580 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
-				D0113FF22E4D14070079D0AA /* QaltiRunnerLib.framework in Frameworks */,
-			);
-		};
 		D0B10B4D2E16824F005B5AB4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
@@ -321,7 +282,6 @@
 			isa = PBXGroup;
 			children = (
 				D09E3E392CFF95850087E580 /* Qalti.app */,
-				D09E3E532CFF95870087E580 /* QaltiUITests.xctest */,
 				D0B10B502E16824F005B5AB4 /* QaltiRunner.app */,
 				D0621CD12E27E23D009FC73C /* IOSurfaceBroker.xpc */,
 				D0113FE32E4D12B50079D0AA /* QaltiRunnerLib.framework */,
@@ -480,30 +440,6 @@
 			productReference = D09E3E392CFF95850087E580 /* Qalti.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D09E3E522CFF95870087E580 /* QaltiUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D09E3E632CFF95870087E580 /* Build configuration list for PBXNativeTarget "QaltiUITests" */;
-			buildPhases = (
-				D09E3E4F2CFF95870087E580 /* Sources */,
-				D09E3E502CFF95870087E580 /* Frameworks */,
-				D09E3E512CFF95870087E580 /* Resources */,
-				D0113FF62E4D14070079D0AA /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D0113FF02E4D12FB0079D0AA /* PBXTargetDependency */,
-				D0B10B5C2E168B0B005B5AB4 /* PBXTargetDependency */,
-				D0113FF52E4D14070079D0AA /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D09E3E562CFF95870087E580 /* QaltiUITests */,
-			);
-			name = QaltiUITests;
-			productName = QaltiUITests;
-			productReference = D09E3E532CFF95870087E580 /* QaltiUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		D0B10B4F2E16824F005B5AB4 /* QaltiRunner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D0B10B5A2E168251005B5AB4 /* Build configuration list for PBXNativeTarget "QaltiRunner" */;
@@ -549,11 +485,6 @@
 						CreatedOnToolsVersion = 16.1;
 						LastSwiftMigration = 1620;
 					};
-					D09E3E522CFF95870087E580 = {
-						CreatedOnToolsVersion = 16.1;
-						LastSwiftMigration = 1620;
-						TestTargetID = D0B10B4F2E16824F005B5AB4;
-					};
 					D0B10B4F2E16824F005B5AB4 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -591,7 +522,6 @@
 			projectRoot = "";
 			targets = (
 				D09E3E382CFF95850087E580 /* Qalti */,
-				D09E3E522CFF95870087E580 /* QaltiUITests */,
 				D0B10B4F2E16824F005B5AB4 /* QaltiRunner */,
 				D0621CD02E27E23D009FC73C /* IOSurfaceBroker */,
 				D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */,
@@ -621,11 +551,6 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				D0996BCF2E62257500EE1023 /* QaltiScheduler in Resources */,
-			);
-		};
-		D09E3E512CFF95870087E580 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			files = (
 			);
 		};
 		D0B10B4E2E16824F005B5AB4 /* Resources */ = {
@@ -970,11 +895,6 @@
 			files = (
 			);
 		};
-		D09E3E4F2CFF95870087E580 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
 		D0B10B4C2E16824F005B5AB4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
@@ -991,16 +911,6 @@
 			target = D09E3E382CFF95850087E580 /* Qalti */;
 			targetProxy = 1AC5D6DD2EBB489200EBB19C /* PBXContainerItemProxy */;
 		};
-		D0113FF02E4D12FB0079D0AA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */;
-			targetProxy = D0113FEF2E4D12FB0079D0AA /* PBXContainerItemProxy */;
-		};
-		D0113FF52E4D14070079D0AA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D0113FE22E4D12B50079D0AA /* QaltiRunnerLib */;
-			targetProxy = D0113FF42E4D14070079D0AA /* PBXContainerItemProxy */;
-		};
 		D0621CDB2E27E23D009FC73C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D0621CD02E27E23D009FC73C /* IOSurfaceBroker */;
@@ -1010,11 +920,6 @@
 			isa = PBXTargetDependency;
 			target = D099615D2E5C9FFF00EE1023 /* QaltiScheduler */;
 			targetProxy = D0996BCD2E62255200EE1023 /* PBXContainerItemProxy */;
-		};
-		D0B10B5C2E168B0B005B5AB4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D0B10B4F2E16824F005B5AB4 /* QaltiRunner */;
-			targetProxy = D0B10B5B2E168B0B005B5AB4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1508,60 +1413,6 @@
 			};
 			name = Release;
 		};
-		D09E3E642CFF95870087E580 /* Debug configuration for PBXNativeTarget "QaltiUITests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GQCCA2N8B;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = NO;
-				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = QaltiRunner;
-			};
-			name = Debug;
-		};
-		D09E3E652CFF95870087E580 /* Release configuration for PBXNativeTarget "QaltiUITests" */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7GQCCA2N8B;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.aiqa.QaltiUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = NO;
-				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = QaltiRunner;
-			};
-			name = Release;
-		};
 		D0B10B582E168251005B5AB4 /* Debug configuration for PBXNativeTarget "QaltiRunner" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1682,14 +1533,6 @@
 			buildConfigurations = (
 				D09E3E5E2CFF95870087E580 /* Debug configuration for PBXNativeTarget "Qalti" */,
 				D09E3E5F2CFF95870087E580 /* Release configuration for PBXNativeTarget "Qalti" */,
-			);
-			defaultConfigurationName = Release;
-		};
-		D09E3E632CFF95870087E580 /* Build configuration list for PBXNativeTarget "QaltiUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D09E3E642CFF95870087E580 /* Debug configuration for PBXNativeTarget "QaltiUITests" */,
-				D09E3E652CFF95870087E580 /* Release configuration for PBXNativeTarget "QaltiUITests" */,
 			);
 			defaultConfigurationName = Release;
 		};

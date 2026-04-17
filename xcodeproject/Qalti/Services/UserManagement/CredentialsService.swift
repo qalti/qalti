@@ -1,12 +1,19 @@
+//
+//  CredentialsService.swift
+//  Qalti
+//
+//  Created by Pavel Akhrameev on 06.03.26.
+//
+
 import Foundation
 import Logging
 
 // MARK: - Callback Token (now using shared CallbackToken from CallbackToken.swift)
 
-public class CredentialsService: ObservableObject, Loggable {
-    
+public class CredentialsService: CredentialsServicing, ObservableObject, Loggable {
+
     // MARK: - Errors
-    
+
     enum CredentialsError: Error, LocalizedError {
         case missingCredentials
 
@@ -42,7 +49,7 @@ public class CredentialsService: ObservableObject, Loggable {
         // Load OpenRouter key and S3 settings from Keychain on init
         self.openRouterKey = keychainManager.loadOpenRouterKey()
         self.s3Settings = keychainManager.loadS3Settings()
-        
+
         // Update credentials state based on OpenRouter key
         updateCredentialsState()
     }

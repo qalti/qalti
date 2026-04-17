@@ -14,11 +14,11 @@ final class ScreenshotUploader {
     
     // MARK: - Properties
     private let session: URLSession
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     private let errorCapturer: ErrorCapturing
 
     // MARK: - Initialization
-    init(credentialsService: CredentialsService, errorCapturer: ErrorCapturing) {
+    init(credentialsService: any CredentialsServicing, errorCapturer: ErrorCapturing) {
         self.credentialsService = credentialsService
         self.errorCapturer = errorCapturer
 
