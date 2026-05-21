@@ -266,6 +266,76 @@ final class TestRunnerRetryTests: XCTestCase {
         }
     }
 
+    func testExecuteTestWithRetry_delayThrowsCancellationError_returnsCancelled() async {
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        mockDelayProvider.errorToThrow = CancellationError()
+
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: RunHistory(),
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: TestingStrategy(maxAttempts: 3, fixedDelay: 0.001),
+            delayProvider: mockDelayProvider
+        )
+
+        var executorCallCount = 0
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            return .failure(dummySummary, error: "Rate limit exceeded")
+        }
+
+        // Executor ran once; delay threw before the second attempt
+        XCTAssertEqual(executorCallCount, 1)
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 1)
+        if case .cancelled(_, let reason) = result {
+            XCTAssertEqual(reason, TestRunner.CancellationReason.taskCancelled.rawValue)
+        } else {
+            XCTFail("Expected .cancelled when delay throws CancellationError, got \(result)")
+        }
+    }
+
+    func testExecuteTestWithRetry_delayThrowsNonCancellationError_returnsFailure() async {
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        struct DelayBrokenError: Error, LocalizedError {
+            var errorDescription: String? { "delay backend exploded" }
+        }
+        mockDelayProvider.errorToThrow = DelayBrokenError()
+
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: RunHistory(),
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: TestingStrategy(maxAttempts: 3, fixedDelay: 0.001),
+            delayProvider: mockDelayProvider
+        )
+
+        var executorCallCount = 0
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            return .failure(dummySummary, error: "Rate limit exceeded")
+        }
+
+        // Executor ran once; delay threw a non-cancellation error before retry
+        XCTAssertEqual(executorCallCount, 1)
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 1)
+        if case .failure(_, let error) = result {
+            XCTAssertEqual(error, "delay backend exploded",
+                           "Non-CancellationError must surface as .failure, not be mis-classified as .cancelled")
+        } else {
+            XCTFail("Expected .failure when delay throws a non-CancellationError, got \(result)")
+        }
+    }
+
     // MARK: - Helper Methods
     
     private func createTempTestFile(content: String) -> URL {

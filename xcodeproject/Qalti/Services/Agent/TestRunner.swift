@@ -361,9 +361,13 @@ class TestRunner: Loggable {
 
                     do {
                         try await delayProvider.delay(delay)
-                    } catch {
-                        logger.error("Delay interrupted: \(error)")
+                    } catch is CancellationError {
+                        logger.info("Delay cancelled before retry attempt \(attempt + 1)")
                         return .cancelled(summary, reason: CancellationReason.taskCancelled.rawValue)
+                    } catch {
+                        logger.error("Delay failed with non-cancellation error: \(error); returning last failure")
+                        await setError(error.localizedDescription)
+                        return .failure(summary, error: error.localizedDescription)
                     }
 
                     // Check for cancellation after delay

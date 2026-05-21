@@ -40,7 +40,12 @@ class MockDelayProvider: DelayProvider, Loggable {
     
     /// Custom delay override for specific test scenarios
     var delayOverride: TimeInterval?
-    
+
+    /// If set, `delay(_:)` throws this error instead of sleeping. Useful for
+    /// exercising the caller's catch path (e.g. distinguishing CancellationError
+    /// from other failures). Tracking state is still updated before throwing.
+    var errorToThrow: Error?
+
     func delay(_ interval: TimeInterval) async throws {
         delayCallCount += 1
         lastDelayInterval = interval
@@ -48,6 +53,10 @@ class MockDelayProvider: DelayProvider, Loggable {
         totalDelayTime += interval
 
         logger.debug("Mock delay called: \(interval)s (call #\(delayCallCount))")
+
+        if let errorToThrow {
+            throw errorToThrow
+        }
 
         if shouldActuallyDelay {
             let actualDelay = delayOverride ?? interval
@@ -67,6 +76,7 @@ class MockDelayProvider: DelayProvider, Loggable {
         allDelayIntervals.removeAll()
         totalDelayTime = 0
         delayOverride = nil
+        errorToThrow = nil
         logger.debug("Mock delay provider reset")
     }
     
