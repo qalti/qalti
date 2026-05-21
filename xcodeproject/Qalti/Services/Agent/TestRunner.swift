@@ -398,19 +398,7 @@ class TestRunner: Loggable {
     }
 
     internal func isRateLimitError(_ errorMessage: String) -> Bool {
-        let rateLimitIndicators = [
-            "429",
-            "rate limit",
-            "too many requests",
-            "quota exceeded",
-            "limit exceeded",
-            "throttled"
-        ]
-
-        let lowercaseError = errorMessage.lowercased()
-        return rateLimitIndicators.contains { indicator in
-            lowercaseError.contains(indicator)
-        }
+        RateLimitDetection.matches(errorMessage)
     }
 
     private func executeTest(

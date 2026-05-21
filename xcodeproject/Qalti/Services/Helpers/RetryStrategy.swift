@@ -8,6 +8,24 @@
 import Foundation
 import Logging
 
+/// Shared rate-limit detection keywords. Used by both `RetryStrategy.shouldRetry`
+/// and `TestRunner.isRateLimitError` so the two stay in lockstep.
+enum RateLimitDetection {
+    static let indicators = [
+        "429",
+        "rate limit",
+        "too many requests",
+        "quota exceeded",
+        "limit exceeded",
+        "throttled"
+    ]
+
+    static func matches(_ message: String) -> Bool {
+        let lowercased = message.lowercased()
+        return indicators.contains { lowercased.contains($0) }
+    }
+}
+
 /// Protocol defining retry strategies for handling rate limits and temporary failures
 protocol RetryStrategy {
     /// Calculates the delay before the next retry attempt
@@ -54,20 +72,15 @@ extension RetryStrategy {
         }
 
         // Check description for rate-limit / quota / throttle signals.
-        // Keeps parity with the indicators used in TestRunner.isRateLimitError.
-        let errorString = error.localizedDescription.lowercased()
-        let rateLimitIndicators = [
-            "429",
-            "rate limit", "too many requests",
-            "quota exceeded", "limit exceeded", "throttled"
-        ]
-        if rateLimitIndicators.contains(where: { errorString.contains($0) }) {
+        let errorString = error.localizedDescription
+        if RateLimitDetection.matches(errorString) {
             return true
         }
 
         // Check for temporary network issues
+        let lowercased = errorString.lowercased()
         let networkErrors = ["timeout", "connection", "network", "temporary"]
-        return networkErrors.contains { errorString.contains($0) }
+        return networkErrors.contains { lowercased.contains($0) }
     }
 }
 

@@ -119,11 +119,7 @@ class IOSAgent: Loggable {
                 parts.append("limit: \(limit), remaining: \(remaining)")
             }
             if let resetTime = resetTime {
-                let formatter = DateFormatter()
-                formatter.dateStyle = .none
-                formatter.locale = Locale(identifier: "en_US_POSIX")
-                formatter.timeStyle = .medium
-                parts.append("resets at: \(formatter.string(from: resetTime))")
+                parts.append("resets at: \(DateFormatter.formatHTTPDate(resetTime))")
             }
             return parts.isEmpty ? "rate limited" : parts.joined(separator: ", ")
         }
