@@ -25,8 +25,6 @@ class IOSAgent: Loggable {
         case missingOpenRouterKey
         case missingS3Credentials
         case missingBase64ImageData
-        case rateLimited(retryAfter: TimeInterval, headers: [String: Any])
-        case requestThrottled(info: String)
 
         var errorDescription: String? {
             switch self {
@@ -56,10 +54,6 @@ class IOSAgent: Loggable {
                 return "AWS S3 credentials are missing. Please add them in Settings."
             case .missingBase64ImageData:
                 return "Screenshot processing failed: base64 image data is required when S3 is not configured."
-            case .rateLimited(let retryAfter, _):
-                return "Rate limited by OpenRouter. Please wait \(Int(retryAfter)) seconds before retrying. The free tier has request limits."
-            case .requestThrottled(let info):
-                return "Request throttled: \(info)"
             }
         }
     }
