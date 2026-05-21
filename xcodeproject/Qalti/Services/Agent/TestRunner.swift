@@ -337,17 +337,19 @@ class TestRunner: Loggable {
                 lastFailureSummary = summary
                 lastError = error
 
-                // Create a synthetic error for strategy evaluation
-                let syntheticError = NSError(
-                    domain: "TestRunnerError",
-                    code: isRateLimitError(error) ? 429 : -1,
-                    userInfo: [NSLocalizedDescriptionKey: error]
-                )
+                // Wrap the string error so shouldRetry can inspect localizedDescription.
+                // No fake NSError code is needed — the keyword path in
+                // RateLimitDetection.matches already handles "429" and the other indicators.
+                struct AttemptError: LocalizedError {
+                    let message: String
+                    var errorDescription: String? { message }
+                }
+                let attemptError = AttemptError(message: error)
 
                 // Check if this error is retryable according to our strategy,
                 // and only bother if there are more attempts remaining.
                 guard attempt < retryStrategy.maxAttempts,
-                      retryStrategy.shouldRetry(attempt: attempt, error: syntheticError) else {
+                      retryStrategy.shouldRetry(attempt: attempt, error: attemptError) else {
                     // Error is not retryable or max attempts exceeded
                     logger.info("Error not retryable or max attempts exceeded: \(error)")
                     return result
@@ -395,10 +397,6 @@ class TestRunner: Loggable {
             await setError(errorMessage)
             return .failure(summary, error: errorMessage)
         }
-    }
-
-    internal func isRateLimitError(_ errorMessage: String) -> Bool {
-        RateLimitDetection.matches(errorMessage)
     }
 
     private func executeTest(

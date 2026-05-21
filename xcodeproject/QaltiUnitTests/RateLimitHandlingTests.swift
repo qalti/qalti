@@ -171,8 +171,10 @@ final class RateLimitHandlingTests: XCTestCase {
 // MARK: - Test Helpers Extension for TestRunner
 
 extension TestRunner {
-    /// Exposed isRateLimitError method for testing purposes
+    /// Test shim that calls the shared `RateLimitDetection.matches` predicate.
+    /// Retained on `TestRunner` so existing call sites keep working without
+    /// rewrites; the underlying detector now lives in `RateLimitDetection`.
     func isRateLimitErrorForTesting(_ errorMessage: String) -> Bool {
-        return self.isRateLimitError(errorMessage)
+        return RateLimitDetection.matches(errorMessage)
     }
 }

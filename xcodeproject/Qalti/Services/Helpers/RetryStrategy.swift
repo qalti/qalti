@@ -8,8 +8,9 @@
 import Foundation
 import Logging
 
-/// Shared rate-limit detection keywords. Used by both `RetryStrategy.shouldRetry`
-/// and `TestRunner.isRateLimitError` so the two stay in lockstep.
+/// Shared rate-limit detection keywords. The single source of truth used by
+/// `RetryStrategy.shouldRetry` and by direct callers (e.g. tests) so detection
+/// stays consistent across the codebase.
 enum RateLimitDetection {
     static let indicators = [
         "429",
