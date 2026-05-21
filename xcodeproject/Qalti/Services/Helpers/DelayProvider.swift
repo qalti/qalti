@@ -98,20 +98,10 @@ class MockDelayProvider: DelayProvider, Loggable {
     }
 }
 
-/// Factory for creating delay providers based on environment
+/// Factory for creating delay providers in tests.
+/// Production code should construct `SystemDelayProvider()` directly; tests
+/// inject `MockDelayProvider` (optionally via `createForTesting`).
 struct DelayProviderFactory {
-    static func create() -> DelayProvider {
-        let env = ProcessInfo.processInfo.environment
-        
-        if env["XCTestConfigurationFilePath"] != nil {
-            // Running in tests - use mock provider
-            return MockDelayProvider()
-        } else {
-            // Production or development - use real delays
-            return SystemDelayProvider()
-        }
-    }
-    
     /// Create provider for specific testing scenarios
     static func createForTesting(shouldActuallyDelay: Bool = false) -> MockDelayProvider {
         let provider = MockDelayProvider()

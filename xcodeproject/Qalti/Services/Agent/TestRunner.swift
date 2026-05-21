@@ -27,8 +27,8 @@ class TestRunner: Loggable {
         errorCapturer: ErrorCapturing,
         fileManager: FileSystemManaging = FileManager.default,
         cliRecorderFactory: ((URL) -> GRPCRecordingSessionProtocol)? = nil,
-        retryStrategy: RetryStrategy = RetryStrategyFactory.createFromEnvironment(),
-        delayProvider: DelayProvider = DelayProviderFactory.create()
+        retryStrategy: RetryStrategy = RetryStrategyFactory.create(for: .production),
+        delayProvider: DelayProvider = SystemDelayProvider()
     ) {
         self.executionMode = executionMode
         self.runHistory = runHistory

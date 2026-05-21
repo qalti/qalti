@@ -200,17 +200,4 @@ struct RetryStrategyFactory {
             return strategy
         }
     }
-    
-    /// Create strategy based on process environment
-    static func createFromEnvironment() -> RetryStrategy {
-        let env = ProcessInfo.processInfo.environment
-        
-        if env["XCTestConfigurationFilePath"] != nil {
-            return create(for: .testing)
-        } else if env["QALTI_DEVELOPMENT"] != nil {
-            return create(for: .development)
-        } else {
-            return create(for: .production)
-        }
-    }
 }
