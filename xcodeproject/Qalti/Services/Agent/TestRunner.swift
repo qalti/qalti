@@ -352,6 +352,7 @@ class TestRunner: Loggable {
                       retryStrategy.shouldRetry(attempt: attempt, error: attemptError) else {
                     // Error is not retryable or max attempts exceeded
                     logger.info("Error not retryable or max attempts exceeded: \(error)")
+                    await setError(error)
                     return result
                 }
 
@@ -381,6 +382,7 @@ class TestRunner: Loggable {
                 } else {
                     // No more retry delays available
                     logger.info("No more retry delays available after attempt \(attempt)")
+                    await setError(error)
                     return result
                 }
             }
