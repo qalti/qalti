@@ -14,7 +14,7 @@ final class TestSuiteRunner: ObservableObject {
     @Published private(set) var hasRuntime: Bool = false
     @Published private(set) var currentRunHistory: RunHistory?
 
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     private let idbManager: IdbManaging
     private let errorCapturer: ErrorCapturing
 
@@ -37,7 +37,7 @@ final class TestSuiteRunner: ObservableObject {
     init(
         documentsURL: URL,
         runStorage: RunStorage,
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         idbManager: IdbManaging,
         errorCapturer: ErrorCapturing,
         fileManager: FileSystemManaging = FileManager.default

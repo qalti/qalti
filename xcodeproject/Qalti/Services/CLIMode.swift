@@ -507,7 +507,7 @@ struct CLICommand {
         runHistory: RunHistory,
         startTime: Date,
         dateProvider: DateProvider,
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         idbManager: IdbManaging,
         errorCapturer: ErrorCapturing
     ) async -> ExitCode {
