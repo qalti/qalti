@@ -88,17 +88,18 @@ final class TestRunnerRetryTests: XCTestCase {
     
     func testRetryWithDifferentErrorTypes() {
         let strategy = ExponentialBackoffStrategy(maxAttempts: 3)
-        
-        // Rate limit errors should be retried
+
         let rateLimitError = NSError(domain: "Test", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limit exceeded"])
         XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: rateLimitError))
-        
-        // Network errors should be retried
+
+        let serviceUnavailable = NSError(domain: "Test", code: 503, userInfo: [NSLocalizedDescriptionKey: "Service Unavailable"])
+        XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: serviceUnavailable))
+
         let networkError = NSError(domain: "Test", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network timeout"])
         XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: networkError))
-        
-        // Auth errors should not be retried (handled by default implementation)
-        let authError = NSError(domain: "Test", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])
+
+        // Kept terse so future wording can't drift into a retry keyword.
+        let authError = NSError(domain: "Test", code: 401, userInfo: [NSLocalizedDescriptionKey: "auth denied"])
         XCTAssertFalse(strategy.shouldRetry(attempt: 1, error: authError))
     }
     
