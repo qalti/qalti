@@ -264,6 +264,94 @@ final class TestRunnerRetryTests: XCTestCase {
         } else {
             XCTFail("Expected .failure result")
         }
+        // The UI-facing error string must be surfaced on exhaustion, not left stale.
+        let surfacedError = await testRunner.testError
+        XCTAssertEqual(surfacedError, "Rate limit exceeded",
+                       "executeTestWithRetry must call setError when all attempts fail")
+    }
+
+    func testExecuteTestWithRetry_nonRetryableError_surfacesErrorViaSetError() async {
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: RunHistory(),
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: TestingStrategy(maxAttempts: 3, fixedDelay: 0.001),
+            delayProvider: mockDelayProvider
+        )
+
+        // "Authentication failed" matches none of RateLimitDetection's keywords
+        // nor the network-error keywords, so shouldRetry returns false on the
+        // first attempt and the guard early-exits without consuming retries.
+        let nonRetryableMessage = "Authentication failed: invalid token"
+        var executorCallCount = 0
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            return .failure(dummySummary, error: nonRetryableMessage)
+        }
+
+        // Single attempt, no delay, .failure returned
+        XCTAssertEqual(executorCallCount, 1)
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 0)
+        if case .failure(_, let error) = result {
+            XCTAssertEqual(error, nonRetryableMessage)
+        } else {
+            XCTFail("Expected .failure result for non-retryable error, got \(result)")
+        }
+        // Critical: the non-retryable early-exit must also surface the error.
+        let surfacedError = await testRunner.testError
+        XCTAssertEqual(surfacedError, nonRetryableMessage,
+                       "Non-retryable failures must call setError on early exit")
+    }
+
+    func testExecuteTestWithRetry_shouldRetryTrueButNextDelayNil_surfacesErrorViaSetError() async {
+        // A pathological strategy: shouldRetry says yes, but nextDelay returns nil.
+        // This drives executeTestWithRetry into the "No more retry delays available"
+        // early-exit branch, which previously skipped setError.
+        struct NoDelayButRetryableStrategy: RetryStrategy {
+            let maxAttempts: Int = 3
+            let description = "test: shouldRetry true, nextDelay nil"
+            func nextDelay(attempt: Int) -> TimeInterval? { nil }
+            func shouldRetry(attempt: Int, error: Error) -> Bool { true }
+        }
+
+        let dummySummary = TestRunner.RunSummary(
+            name: nil, file: nil, testFileURL: nil, testRunURL: nil, videoURL: nil
+        )
+        let testRunner = await TestRunner(
+            executionMode: .cli,
+            runHistory: RunHistory(),
+            recordVideo: false,
+            credentialsService: mockCredentialsService,
+            idbManager: mockIdbManager,
+            errorCapturer: mockErrorCapturer,
+            retryStrategy: NoDelayButRetryableStrategy(),
+            delayProvider: mockDelayProvider
+        )
+
+        let errorMessage = "Rate limit exceeded"
+        var executorCallCount = 0
+        let result = await testRunner.executeTestWithRetry(testURL: URL(fileURLWithPath: "/tmp/dummy.test")) {
+            executorCallCount += 1
+            return .failure(dummySummary, error: errorMessage)
+        }
+
+        // First attempt: shouldRetry == true, then nextDelay == nil → early exit.
+        XCTAssertEqual(executorCallCount, 1)
+        XCTAssertEqual(mockDelayProvider.delayCallCount, 0)
+        if case .failure(_, let error) = result {
+            XCTAssertEqual(error, errorMessage)
+        } else {
+            XCTFail("Expected .failure when nextDelay returns nil, got \(result)")
+        }
+        let surfacedError = await testRunner.testError
+        XCTAssertEqual(surfacedError, errorMessage,
+                       "nextDelay == nil early-exit must call setError")
     }
 
     func testExecuteTestWithRetry_delayThrowsCancellationError_returnsCancelled() async {
