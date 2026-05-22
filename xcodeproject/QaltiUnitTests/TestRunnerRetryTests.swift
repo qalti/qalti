@@ -131,6 +131,29 @@ final class TestRunnerRetryTests: XCTestCase {
         XCTAssertFalse(strategy.shouldRetry(attempt: 3, error: rateLimitError)) // Exceeds max
     }
     
+    // MARK: - effectiveRetryDelay
+
+    func testEffectiveRetryDelay_noHint_usesStrategyDelay() {
+        XCTAssertEqual(TestRunner.effectiveRetryDelay(strategyDelay: 4.0, serverHint: nil), 4.0)
+    }
+
+    func testEffectiveRetryDelay_zeroOrNegativeHint_ignored() {
+        XCTAssertEqual(TestRunner.effectiveRetryDelay(strategyDelay: 4.0, serverHint: 0), 4.0)
+        XCTAssertEqual(TestRunner.effectiveRetryDelay(strategyDelay: 4.0, serverHint: -10), 4.0)
+    }
+
+    func testEffectiveRetryDelay_positiveHint_overridesStrategy() {
+        XCTAssertEqual(TestRunner.effectiveRetryDelay(strategyDelay: 4.0, serverHint: 30), 30)
+    }
+
+    func testEffectiveRetryDelay_largeHint_cappedAtMax() {
+        let huge: TimeInterval = 10_000
+        XCTAssertEqual(
+            TestRunner.effectiveRetryDelay(strategyDelay: 4.0, serverHint: huge),
+            TestRunner.maxServerHintDelay
+        )
+    }
+
     func testRetryStrategyFactory_EnvironmentSelection() {
         let production = RetryStrategyFactory.create(for: .production) as! ExponentialBackoffStrategy
         let development = RetryStrategyFactory.create(for: .development) as! LinearBackoffStrategy

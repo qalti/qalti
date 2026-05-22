@@ -133,12 +133,14 @@ class IOSAgent: Loggable {
         private var _timeout: Bool = false
         private var _lastStatusCode: Int? = nil
         private var _lastErrorBody: String? = nil
+        private var _lastRateLimitInfo: RateLimitInfo?
 
         var insufficientBalance: Bool { stateQueue.sync { _insufficientBalance } }
         var authenticationFailed: Bool { stateQueue.sync { _authenticationFailed } }
         var timeout: Bool { stateQueue.sync { _timeout } }
         var lastStatusCode: Int? { stateQueue.sync { _lastStatusCode } }
         var lastErrorBody: String? { stateQueue.sync { _lastErrorBody } }
+        var lastRateLimitInfo: RateLimitInfo? { stateQueue.sync { _lastRateLimitInfo } }
 
         func intercept(response: URLResponse?, request: URLRequest, data: Data?) -> (response: URLResponse?, data: Data?) {
             guard let response = response as? HTTPURLResponse else { return (response, data) }
@@ -155,6 +157,10 @@ class IOSAgent: Loggable {
             case 504:
                 stateQueue.sync { _timeout = true }
                 return (response, nil)
+            case 429:
+                let info = RateLimitInfo(from: response)
+                stateQueue.sync { _lastRateLimitInfo = info }
+                return (response, data)
             case 402:
                 stateQueue.sync { _insufficientBalance = true }
                 return (response, nil)
@@ -188,6 +194,9 @@ class IOSAgent: Loggable {
     private(set) var isCancelled: Bool = false
     var apiCallCounter: Int = 0
     let logDirectory: URL
+
+    /// Most recent 429 `Retry-After` hint, read by `TestRunner` to override blind backoff.
+    private(set) var lastRateLimitHint: RateLimitInfo?
 
     private let commandExecutorTools: CommandExecutorToolsForAgent
     private let workingDirectoryForBash: URL
@@ -390,6 +399,10 @@ class IOSAgent: Loggable {
             } catch {
                 errorCapturer.capture(error: error)
                 var effectiveError: Swift.Error = error
+
+                if let hint = preparedQuery.errorCheckingMiddleware.lastRateLimitInfo {
+                    self.lastRateLimitHint = hint
+                }
 
                 let nsError = error as NSError
                 if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {

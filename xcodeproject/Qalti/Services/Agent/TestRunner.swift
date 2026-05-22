@@ -6,6 +6,16 @@ import OpenAI
 @MainActor
 class TestRunner: Loggable {
 
+    /// Cap on honored server `Retry-After` to avoid hour-long stalls.
+    static let maxServerHintDelay: TimeInterval = 300
+
+    nonisolated static func effectiveRetryDelay(strategyDelay: TimeInterval, serverHint: TimeInterval?) -> TimeInterval {
+        if let serverHint, serverHint > 0 {
+            return min(serverHint, maxServerHintDelay)
+        }
+        return strategyDelay
+    }
+
     private let executionMode: AppExecutionMode
     private let runHistory: RunHistory
     private let recordVideo: Bool
@@ -356,9 +366,11 @@ class TestRunner: Loggable {
                     return result
                 }
 
-                // Check if we should delay before the next attempt
-                if let delay = retryStrategy.nextDelay(attempt: attempt) {
-                    logger.info("Rate limit or temporary error detected, retrying in \(delay)s (attempt \(attempt)/\(retryStrategy.maxAttempts))")
+                if let strategyDelay = retryStrategy.nextDelay(attempt: attempt) {
+                    let serverHint = self.agent?.lastRateLimitHint?.retryAfter
+                    let delay = Self.effectiveRetryDelay(strategyDelay: strategyDelay, serverHint: serverHint)
+                    let source = serverHint != nil ? "server Retry-After" : "strategy"
+                    logger.info("Retrying in \(delay)s via \(source) (attempt \(attempt)/\(retryStrategy.maxAttempts))")
 
                     await setStatus("Rate limited, retrying in \(Int(delay))s (attempt \(attempt)/\(retryStrategy.maxAttempts))...")
 
