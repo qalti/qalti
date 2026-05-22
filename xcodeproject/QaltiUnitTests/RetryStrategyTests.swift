@@ -192,12 +192,10 @@ final class RetryStrategyTests: XCTestCase {
     func testRetryStrategyFactoryEnvironments() {
         let production = RetryStrategyFactory.create(for: .production)
         let development = RetryStrategyFactory.create(for: .development)
-        let testing = RetryStrategyFactory.create(for: .testing)
-        
+
         XCTAssertTrue(production is ExponentialBackoffStrategy)
         XCTAssertTrue(development is LinearBackoffStrategy)
-        XCTAssertTrue(testing is TestingStrategy)
-        
+
         // Test custom strategy
         let custom = NoRetryStrategy()
         let customStrategy = RetryStrategyFactory.create(for: .custom(custom))

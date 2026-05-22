@@ -134,13 +134,13 @@ final class TestRunnerRetryTests: XCTestCase {
     func testRetryStrategyFactory_EnvironmentSelection() {
         let production = RetryStrategyFactory.create(for: .production) as! ExponentialBackoffStrategy
         let development = RetryStrategyFactory.create(for: .development) as! LinearBackoffStrategy
-        let testing = RetryStrategyFactory.create(for: .testing) as! TestingStrategy
-        
+        let testing = TestingStrategy(maxAttempts: 2, fixedDelay: 0.001)
+
         // Verify different strategies have different characteristics
         XCTAssertEqual(production.maxAttempts, 3)
         XCTAssertEqual(development.maxAttempts, 3)
         XCTAssertEqual(testing.maxAttempts, 2)
-        
+
         // Production should have longer delays than testing
         XCTAssertNotNil(production.nextDelay(attempt: 1))
         XCTAssertNotNil(development.nextDelay(attempt: 1))

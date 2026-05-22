@@ -147,26 +147,6 @@ struct LinearBackoffStrategy: RetryStrategy {
     }
 }
 
-/// Fast strategy for testing with minimal delays
-struct TestingStrategy: RetryStrategy {
-    let maxAttempts: Int
-    let fixedDelay: TimeInterval
-    
-    init(maxAttempts: Int = 3, fixedDelay: TimeInterval = 0.01) {
-        self.maxAttempts = maxAttempts
-        self.fixedDelay = fixedDelay
-    }
-    
-    func nextDelay(attempt: Int) -> TimeInterval? {
-        guard attempt <= maxAttempts else { return nil }
-        return fixedDelay
-    }
-    
-    var description: String {
-        return "Testing strategy (max: \(maxAttempts), fixed: \(fixedDelay)s)"
-    }
-}
-
 /// No-retry strategy: run the test exactly once and never retry
 struct NoRetryStrategy: RetryStrategy {
     let maxAttempts: Int = 1
@@ -188,11 +168,10 @@ struct NoRetryStrategy: RetryStrategy {
 struct RetryStrategyFactory {
     enum Environment {
         case production
-        case development  
-        case testing
+        case development
         case custom(RetryStrategy)
     }
-    
+
     static func create(for environment: Environment) -> RetryStrategy {
         switch environment {
         case .production:
@@ -208,8 +187,6 @@ struct RetryStrategyFactory {
                 delayIncrement: 5.0,
                 maxDelay: 30.0
             )
-        case .testing:
-            return TestingStrategy(maxAttempts: 2, fixedDelay: 0.001)
         case .custom(let strategy):
             return strategy
         }
