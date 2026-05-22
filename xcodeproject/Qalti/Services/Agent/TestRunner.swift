@@ -323,8 +323,13 @@ class TestRunner: Loggable {
         }
     }
 
+    private struct AttemptError: LocalizedError {
+        let message: String
+        var errorDescription: String? { message }
+    }
+
     /// Executes a test with configurable retry strategy for handling rate limits and temporary failures
-    internal func executeTestWithRetry(
+    func executeTestWithRetry(
         testURL: URL,
         singleAttemptExecutor: () async -> RunCompletion
     ) async -> RunCompletion {
@@ -347,13 +352,6 @@ class TestRunner: Loggable {
                 lastFailureSummary = summary
                 lastError = error
 
-                // Wrap the string error so shouldRetry can inspect localizedDescription.
-                // No fake NSError code is needed — the keyword path in
-                // RateLimitDetection.matches already handles "429" and the other indicators.
-                struct AttemptError: LocalizedError {
-                    let message: String
-                    var errorDescription: String? { message }
-                }
                 let attemptError = AttemptError(message: error)
 
                 // Check if this error is retryable according to our strategy,
