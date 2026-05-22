@@ -77,10 +77,10 @@ final class TestRunnerRetryTests: XCTestCase {
             jitterFactor: 0.0
         )
         
-        // Test that delays follow exponential pattern
+        // maxAttempts=4 yields delays before attempts 2, 3, 4 (i.e. for attempt 1,2,3).
         let delays = (1...4).compactMap { strategy.nextDelay(attempt: $0) }
-        let expectedDelays = [1.0, 2.0, 4.0, 8.0]
-        
+        let expectedDelays = [1.0, 2.0, 4.0]
+        XCTAssertEqual(delays.count, expectedDelays.count)
         for (actual, expected) in zip(delays, expectedDelays) {
             XCTAssertEqual(actual, expected, accuracy: 0.01)
         }
@@ -121,8 +121,8 @@ final class TestRunnerRetryTests: XCTestCase {
         let strategy = TestingStrategy(maxAttempts: 2, fixedDelay: 0.1)
         
         XCTAssertNotNil(strategy.nextDelay(attempt: 1))
-        XCTAssertNotNil(strategy.nextDelay(attempt: 2))
-        XCTAssertNil(strategy.nextDelay(attempt: 3)) // Exceeds max
+        XCTAssertNil(strategy.nextDelay(attempt: 2)) // No retry after last attempt
+        XCTAssertNil(strategy.nextDelay(attempt: 3))
         
         let rateLimitError = NSError(domain: "Test", code: 429, userInfo: [NSLocalizedDescriptionKey: "Rate limited"])
         XCTAssertTrue(strategy.shouldRetry(attempt: 1, error: rateLimitError))

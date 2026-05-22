@@ -103,7 +103,7 @@ struct ExponentialBackoffStrategy: RetryStrategy {
     }
     
     func nextDelay(attempt: Int) -> TimeInterval? {
-        guard attempt <= maxAttempts else { return nil }
+        guard attempt < maxAttempts else { return nil }
         
         // Exponential backoff: baseDelay * 2^(attempt-1)
         let exponentialDelay = baseDelay * pow(2.0, Double(attempt - 1))
@@ -136,7 +136,7 @@ struct LinearBackoffStrategy: RetryStrategy {
     }
     
     func nextDelay(attempt: Int) -> TimeInterval? {
-        guard attempt <= maxAttempts else { return nil }
+        guard attempt < maxAttempts else { return nil }
         
         let linearDelay = delayIncrement * Double(attempt)
         return min(linearDelay, maxDelay)

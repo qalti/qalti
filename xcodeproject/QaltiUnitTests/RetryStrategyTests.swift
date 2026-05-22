@@ -18,11 +18,11 @@ final class RetryStrategyTests: XCTestCase {
             jitterFactor: 0.0 // No jitter for predictable tests
         )
         
-        // Test delay progression: 1s, 2s, 4s
+        // maxAttempts=3 → only attempts 1 and 2 have a "next" delay (before 2 and 3).
         XCTAssertEqual(strategy.nextDelay(attempt: 1)!, 1.0, accuracy: 0.01)
         XCTAssertEqual(strategy.nextDelay(attempt: 2)!, 2.0, accuracy: 0.01)
-        XCTAssertEqual(strategy.nextDelay(attempt: 3)!, 4.0, accuracy: 0.01)
-        XCTAssertNil(strategy.nextDelay(attempt: 4)) // Exceeds max attempts
+        XCTAssertNil(strategy.nextDelay(attempt: 3)) // No retry after last attempt
+        XCTAssertNil(strategy.nextDelay(attempt: 4))
     }
     
     func testExponentialBackoffMaxDelayCaps() {
@@ -63,12 +63,12 @@ final class RetryStrategyTests: XCTestCase {
             maxDelay: 20.0
         )
         
-        // Test linear progression: 5s, 10s, 15s, 20s
+        // maxAttempts=4 → delays exist before attempts 2, 3, 4 (i.e. for attempt 1,2,3).
         XCTAssertEqual(strategy.nextDelay(attempt: 1), 5.0)
         XCTAssertEqual(strategy.nextDelay(attempt: 2), 10.0)
         XCTAssertEqual(strategy.nextDelay(attempt: 3), 15.0)
-        XCTAssertEqual(strategy.nextDelay(attempt: 4), 20.0) // Reaches max
-        XCTAssertNil(strategy.nextDelay(attempt: 5)) // Exceeds max attempts
+        XCTAssertNil(strategy.nextDelay(attempt: 4)) // No retry after last attempt
+        XCTAssertNil(strategy.nextDelay(attempt: 5))
     }
     
     func testLinearBackoffMaxDelayCap() {
@@ -85,9 +85,9 @@ final class RetryStrategyTests: XCTestCase {
     
     func testTestingStrategyMinimalDelays() {
         let strategy = TestingStrategy(maxAttempts: 2, fixedDelay: 0.01)
-        
+
         XCTAssertEqual(strategy.nextDelay(attempt: 1), 0.01)
-        XCTAssertEqual(strategy.nextDelay(attempt: 2), 0.01)
+        XCTAssertNil(strategy.nextDelay(attempt: 2)) // No retry after last attempt
         XCTAssertNil(strategy.nextDelay(attempt: 3))
     }
     

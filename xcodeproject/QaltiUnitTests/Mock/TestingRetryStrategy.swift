@@ -20,7 +20,7 @@ struct TestingStrategy: RetryStrategy {
     }
 
     func nextDelay(attempt: Int) -> TimeInterval? {
-        guard attempt <= maxAttempts else { return nil }
+        guard attempt < maxAttempts else { return nil }
         return fixedDelay
     }
 
