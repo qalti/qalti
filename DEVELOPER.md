@@ -20,6 +20,7 @@ xcrun simctl list devices available
 Expected baseline:
 
 - macOS with Xcode **16.4+**
+- Python **3.10 or higher** (required)
 - iOS Simulator runtime installed
 - at least one available simulator device
 
@@ -81,22 +82,22 @@ xcodeproject/DerivedData_local/Build/Products/Debug/Qalti.app/Contents/Resources
 
 This step requires your OpenRouter API key and a simulator app build.
 
-1) Create or copy your OpenRouter API key from https://openrouter.ai/keys
+1) Create or copy your OpenRouter API key from <https://openrouter.ai/keys>
 2) Download demo app build (SyncUps):
 
-```bash
-curl -L -o SyncUps-simulator.zip https://app.qalti.com/SyncUps/SyncUps-simulator.zip
-```
+    ```bash
+    curl -L -o SyncUps-simulator.zip https://app.qalti.com/SyncUps/SyncUps-simulator.zip
+    ```
 
 3) Export `OPENROUTER_API_KEY` and run a sample test:
 
-```bash
-export OPENROUTER_API_KEY="sk-or-v1-..."
-xcodeproject/DerivedData_local/Build/Products/Debug/Qalti.app/Contents/MacOS/Qalti \
-  cli ./tests/syncups_change_theme.test \
-  --app-path ./SyncUps-simulator.zip \
-  --device-name "iPhone 16"
-```
+    ```bash
+    export OPENROUTER_API_KEY="sk-or-v1-..."
+    xcodeproject/DerivedData_local/Build/Products/Debug/Qalti.app/Contents/MacOS/Qalti \
+      cli ./tests/syncups_change_theme.test \
+      --app-path ./SyncUps-simulator.zip \
+      --device-name "iPhone 16"
+    ```
 
 Done checkpoint:
 

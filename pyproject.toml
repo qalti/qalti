@@ -1,0 +1,26 @@
+[tool.ruff]
+exclude = [
+    ".venv",
+    "__pycache__",
+    "scripts/output",
+    ".cache"
+]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort (import sorting)
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = false
