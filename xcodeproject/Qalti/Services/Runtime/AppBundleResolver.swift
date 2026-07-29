@@ -103,13 +103,17 @@ class AppBundleResolver: Loggable {
                 displayNames.append(app.name)
             }
 
-            // Add system apps to be sure (they might not be returned by IDB)
+            // Add system apps to be sure (they might not be returned by IDB).
+            // Strictly a fallback: idb describes what is *actually* installed, so a live entry must
+            // win. Overwriting it would silently resolve e.g. a bundled app named "Settings" to
+            // com.apple.Preferences and launch the wrong app.
             for (key, value) in Self.systemApps {
-                if byName[normalizeAppKey(key)] == nil {
-                    displayNames.append(key)
-                }
-                byName[normalizeAppKey(key)] = value
                 byBundleID[value.lowercased()] = value
+
+                let normalized = normalizeAppKey(key)
+                guard byName[normalized] == nil else { continue }
+                byName[normalized] = value
+                displayNames.append(key)
             }
 
             return Catalog(

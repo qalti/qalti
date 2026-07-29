@@ -519,6 +519,41 @@ but never wired to the save path, it was reading report files that are never wri
 have printed "NO REPORT" for all ten. It now recovers the real path from each run's
 `Report saved to:` line and prefers the report's structured `testResult`.
 
+### Unit tests added 2026-07-29 — and they immediately found another bug
+
+The changed code had **no unit coverage at all**: there was no `AppBundleResolverTests`, no test of
+`IOSRuntime.openApp`, and zero assertions on `timeoutInterval` anywhere in the repo. Worse,
+`MockAppBundleResolver` overrode `resolveBundle(for:)` to `return app` — the mock enshrined the
+exact silent-fallthrough bug this investigation was about, so every test using it was asserting the
+broken behaviour was fine. That is a large part of why the bug survived so long.
+
+Added `QaltiUnitTests/IOSRuntime/AppBundleResolverTests.swift` (16 tests) covering: resolution by
+display name (case/space-insensitive, trailing-"app" tolerant), the new resolution by bundle ID
+(including that `com.apple.DocumentsApp` is not truncated to `…Documents`), `.notInstalled` with a
+populated available-apps list, the failure message naming both the app and the alternatives,
+`.listUnavailable` being *distinct* from "not installed" when the device is unreachable, error
+capture, the system-app fallback, and the deliberate lenient behaviour retained in
+`resolveBundle(for:)`. Plus one test in `IOSRuntimeRequestBuilderTests` pinning the per-command
+deadlines. `MockAppBundleResolver` now carries a comment saying its passthrough is a test
+convenience and explicitly *not* a model of production behaviour.
+
+**A new pre-existing bug surfaced immediately.** `test_resolve_idbEntryWins_overSystemAppFallback`
+failed: the hardcoded system-app dictionary was applied *after* the idb results and overwrote them
+unconditionally, despite its own comment describing it as a fallback ("they might not be returned
+by IDB"). An app genuinely installed on the device and reported by idb under a name that collides
+with the table — say a bundled app called "Settings" — would silently resolve to
+`com.apple.Preferences` and launch the wrong app. That is the same failure mode as the SyncUps run
+opening `QaltiUITests-Runner`. Fixed: system entries now only fill gaps in the name index and never
+clobber a live idb entry.
+
+Suite result: **156 tests, 0 failures.**
+
+**Not re-verified end-to-end.** This branch (`fix/open-app-timeout`, based on `main`) does not
+contain the CLI auth-key fix that lives on `feature/openrouter_model_tooling`, so `--token` is
+ignored here and any CLI run fails with an OpenRouter 401 before reaching the simulator. The
+resolution-ordering change above is therefore covered by unit tests only; re-running the Reminders
+fixture against it requires both branches together (merge, or cherry-pick the auth fix).
+
 ## Simulator ownership on this machine (avoid collisions with the Flutter engine matrix)
 
 `~/Development/flutter` has a `Makefile` whose `all-skip-textinput` /`all` / `force` targets run
