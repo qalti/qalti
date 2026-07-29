@@ -1,0 +1,6 @@
+Open Reminders
+If a welcome screen or an iCloud syncing prompt appears, dismiss it and continue
+Create a new reminder
+Type "Qalti smoke test reminder"
+Go back to the reminders list
+Verify a reminder containing "Qalti smoke test reminder" appears in the list

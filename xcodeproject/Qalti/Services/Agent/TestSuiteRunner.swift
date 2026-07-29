@@ -131,7 +131,7 @@ private extension TestSuiteRunner {
             return false
         }
 
-        if credentialsService.openRouterKey?.isEmpty ?? true {
+        if credentialsService.bearer?.isEmpty ?? true {
             let message = IOSAgent.Error.missingOpenRouterKey.localizedDescription
             statusMessage = message
             presentUserError(message)

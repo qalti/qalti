@@ -239,7 +239,7 @@ class TestRunner: Loggable {
             return .failure(summary, error: errorMsg)
         }
 
-        if credentialsService.openRouterKey?.isEmpty ?? true {
+        if credentialsService.bearer?.isEmpty ?? true {
             let errorMsg = IOSAgent.Error.missingOpenRouterKey.localizedDescription
             await setError(errorMsg)
             let summary = await makeRunSummary(testURL: fileURL, testRunURL: nil, videoURL: nil)

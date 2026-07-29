@@ -17,7 +17,7 @@ class IOSAgent: Loggable {
         case unableToSendImage
         case unableToCreateLogDirectory
         case unableToWriteLogFile
-        case authenticationFailed
+        case authenticationFailed(source: String)
         case insufficientBalance
         case screenshotWithoutS3URL
         case scriptFailed(message: String)
@@ -38,8 +38,8 @@ class IOSAgent: Loggable {
                 return "Failed to create log directory"
             case .unableToWriteLogFile:
                 return "Failed to write log file"
-            case .authenticationFailed:
-                return "OpenRouter authentication failed. Please check your API key."
+            case .authenticationFailed(let source):
+                return "OpenRouter authentication failed using key from \(source). Please check that this key is a valid, active OpenRouter API key."
             case .insufficientBalance:
                 return "OpenRouter balance is insufficient. Please add funds to continue running tests."
             case .screenshotWithoutS3URL:
@@ -49,7 +49,7 @@ class IOSAgent: Loggable {
             case .backendReportedError(let statusCode, let message):
                 return "Server error (\(statusCode)): \(message)"
             case .missingOpenRouterKey:
-                return "OpenRouter API key is missing. Please add it in Settings."
+                return "OpenRouter API key is missing. Checked CLI --token/OPENROUTER_API_KEY and app Settings; neither is set."
             case .missingS3Credentials:
                 return "AWS S3 credentials are missing. Please add them in Settings."
             case .missingBase64ImageData:
@@ -343,7 +343,7 @@ class IOSAgent: Loggable {
 
                 // Handle non-retriable auth/billing errors immediately
                 if preparedQuery.errorCheckingMiddleware.authenticationFailed {
-                    throw Error.authenticationFailed
+                    throw Error.authenticationFailed(source: credentialsService.bearerSource)
                 } else if preparedQuery.errorCheckingMiddleware.insufficientBalance {
                     throw Error.insufficientBalance
                 }
@@ -564,8 +564,8 @@ class IOSAgent: Loggable {
         if AppConstants.shouldLogAgentActions, AppConstants.isDebug {
             try saveMessagesToLog(runHistory.getHistory(imageType: .base64))
         }
-        guard let openRouterKey = credentialsService.openRouterKey, !openRouterKey.isEmpty else {
-            logger.error("OpenRouter API key missing")
+        guard let bearerKey = credentialsService.bearer, !bearerKey.isEmpty else {
+            logger.error("OpenRouter API key missing (checked CLI token and app Settings)")
             throw Error.missingOpenRouterKey
         }
         let query = ChatQuery(
@@ -577,7 +577,7 @@ class IOSAgent: Loggable {
             tools: tools
         )
         let configuration = OpenAI.Configuration(
-            token: openRouterKey,
+            token: bearerKey,
             host: "openrouter.ai",
             port: 443,
             scheme: "https",
