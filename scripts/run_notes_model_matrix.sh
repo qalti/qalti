@@ -36,10 +36,22 @@ MODELS=(
 
 mkdir -p "$REPORT_DIR"
 
+> "$REPORT_DIR/run_ids.txt"
+
 for model in "${MODELS[@]}"; do
   safe_name="${model//\//_}"
-  echo "=== Running with --model $model ==="
-  "$QALTI_BIN" cli "$TEST_FILE" \
+
+  # The fixture is a template: {{RUN_ID}} is replaced with a token unique to this run.
+  # Without it the scenario is unsound as a benchmark — the reminders list is never cleaned up, so
+  # "verify a reminder containing <fixed text> appears" can be satisfied by a reminder some earlier
+  # run created, and a model that skipped creation entirely would still pass.
+  run_id="run-$(openssl rand -hex 3)"
+  run_test="$REPORT_DIR/${safe_name}.test"
+  sed "s/{{RUN_ID}}/$run_id/g" "$TEST_FILE" > "$run_test"
+  echo "$model $run_id" >> "$REPORT_DIR/run_ids.txt"
+
+  echo "=== Running with --model $model (run id: $run_id) ==="
+  "$QALTI_BIN" cli "$run_test" \
     --token "$OPENROUTER_API_KEY" \
     --model "$model" \
     --udid "$DEVICE_UDID" \
@@ -110,4 +122,54 @@ for model in models:
         verdict = f"RUN-LEVEL FAILURE: {run_failure[:150]}"
 
     print(f"{model:25s} {verdict}")
+EOF
+
+echo
+echo "=== Ground truth: did the reminder actually reach the app? ==="
+echo "(reads the Reminders store on the simulator — independent of what the agent claimed)"
+python3 - "$DEVICE_UDID" "$REPORT_DIR" <<'EOF'
+import glob, os, pathlib, shutil, sqlite3, sys, tempfile
+
+udid, report_dir = sys.argv[1], pathlib.Path(sys.argv[2])
+
+pattern = os.path.expanduser(
+    f"~/Library/Developer/CoreSimulator/Devices/{udid}"
+    "/data/Containers/Shared/AppGroup/*/Container_v1/Stores/Data-*.sqlite"
+)
+
+# Copy each candidate store (plus its WAL) before opening: rows written by a recent run often live
+# only in the -wal, and we must not touch the live database the simulator is using.
+tmp = tempfile.mkdtemp()
+titles = []
+for store in glob.glob(pattern):
+    for suffix in ("", "-wal", "-shm"):
+        if os.path.exists(store + suffix):
+            shutil.copy2(store + suffix, tmp)
+    copied = os.path.join(tmp, os.path.basename(store))
+    try:
+        con = sqlite3.connect(copied)
+        titles += [r[0] for r in con.execute(
+            "SELECT ZTITLE FROM ZREMCDREMINDER WHERE ZTITLE IS NOT NULL")]
+        con.close()
+    except sqlite3.Error:
+        continue  # not the reminders store
+shutil.rmtree(tmp, ignore_errors=True)
+
+run_ids = report_dir / "run_ids.txt"
+if not run_ids.exists():
+    print("  (no run_ids.txt — nothing to check)")
+    raise SystemExit
+
+for line in run_ids.read_text().split("\n"):
+    if not line.strip():
+        continue
+    model, run_id = line.split()
+    found = sum(1 for t in titles if run_id in t)
+    if found == 1:
+        status = "IN APP"
+    elif found == 0:
+        status = "NOT IN APP  <- nothing was created"
+    else:
+        status = f"IN APP x{found}  <- created more than once"
+    print(f"{model:25s} {run_id:12s} {status}")
 EOF

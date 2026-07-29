@@ -563,6 +563,58 @@ OpenRouter tooling), `fix/open-app-timeout` was merged into `feature/openrouter_
 Both the fast-failure behaviour and normal resolution therefore hold with the system-app ordering
 fix in place. Nothing is pushed.
 
+### Fixture made sound + matrix re-run with app-side ground truth 2026-07-29
+
+The first Reminders matrix proved the six passing models *claimed* success, but the scenario could
+not actually prove it: nothing cleans up, so after several runs the list held 9 identical
+`"Qalti smoke test reminder"` rows and the final step — "verify a reminder containing <fixed text>
+appears" — could be satisfied by a reminder some earlier run created. gpt-4.1 even noticed
+("Observed the presence of a duplicate reminder with the same text"). A model that skipped creation
+entirely and jumped to verification would still have passed. For a benchmark whose purpose is
+ranking models, that is a hole.
+
+Fixed by making the fixture a template: `tests/reminders_create_and_verify.test` now types and
+verifies `{{RUN_ID}}`, and `run_notes_model_matrix.sh` substitutes a fresh `run-<6 hex>` token per
+model, writes the generated fixture beside the log, and records the mapping in `run_ids.txt`.
+Verification can now only succeed on the reminder that run itself created. The script also gained a
+ground-truth stage that copies the Reminders CoreData store **with its `-wal`** (recent rows live
+there, not in the main file) and checks each token actually reached the app.
+
+Re-run results — agent verdict vs. what is really in the app:
+
+| Model | Run id | Agent verdict | In app? |
+|---|---|---|---|
+| gpt-4.1 | run-b150a8 | pass with comments | IN APP |
+| claude-4-sonnet | run-1537cd | pass | IN APP |
+| claude-haiku-4.5 | run-474c7d | pass | IN APP |
+| gpt-5-mini | run-acbf2a | pass | IN APP |
+| gpt-5 | run-4f635d | pass | IN APP |
+| gemini-2.5-pro | run-985776 | no report (decoding bug) | not in app |
+| gemini-3-flash-preview | run-b3d6a0 | no report (decoding bug) | not in app |
+| gemini-3-pro-preview | run-f2f6d9 | no report (stale ID) | not in app |
+| grok-4 | run-906996 | no report (stale ID) | not in app |
+| gpt-5-nano | run-9126e1 | no report (max iterations) | not in app |
+
+**Verdict and ground truth agree in all ten cases** — no model claimed an objective it had not
+actually achieved. The five passes are corroborated by exactly one reminder carrying that run's own
+token.
+
+Two notes on the differences from the first run:
+
+- **gpt-5-nano is flaky, not broken.** It passed the first matrix (~9 min) but here ran 25m42s and
+  died on "Max iterations reached without completion or valid JSON result" with only **one** valid
+  action across 50 iterations — it kept failing to emit a usable tool call. Worth re-running before
+  drawing conclusions about it. Mid-run it looked hung; sampling the process showed it inside
+  `IOSAgent.streamResult` with the SSE parser actively consuming data, i.e. genuinely streaming.
+  Note the 240s LLM timeout is an *idle* timeout, so a slow-but-alive stream never trips it — do
+  not kill a run that looks stalled without sampling it first.
+- **gemini-3-flash-preview created nothing this time**, where in the first matrix it got as far as
+  typing the text before the decoding bug killed it. It fails at whatever point the malformed
+  response arrives, so "no report" says nothing about whether the model can drive the UI.
+
+Run under concurrent load from the Flutter engine matrix (load average 50-69) on iOS 26.2
+`AFB3DA76…`, which that matrix does not claim — re-verified before launching.
+
 ## Simulator ownership on this machine (avoid collisions with the Flutter engine matrix)
 
 `~/Development/flutter` has a `Makefile` whose `all-skip-textinput` /`all` / `force` targets run
