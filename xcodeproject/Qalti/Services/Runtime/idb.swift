@@ -702,7 +702,15 @@ extension IdbManager {
             semaphore.signal()
         }
 
-        semaphore.wait()
+        // Bounded: an unresponsive idb_companion used to block this thread indefinitely, which
+        // surfaced later as an unrelated HTTP timeout somewhere else entirely.
+        if semaphore.wait(timeout: .now() + Self.listAppsTimeout) == .timedOut {
+            let message = "list_apps timed out after \(Int(Self.listAppsTimeout))s "
+                        + "(idb_companion is not responding for UDID \(udid))"
+            let error = IdbError.invalidResponse(message: message)
+            errorCapturer.capture(error: error)
+            throw error
+        }
 
         if let error = taskError {
             throw error
@@ -710,6 +718,9 @@ extension IdbManager {
 
         return apps
     }
+
+    /// How long to wait for `list_apps` before treating idb_companion as hung.
+    private static let listAppsTimeout: TimeInterval = 20
 
 }
 

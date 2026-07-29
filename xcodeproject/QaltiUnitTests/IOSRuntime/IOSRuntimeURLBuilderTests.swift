@@ -32,6 +32,26 @@ final class IOSRuntimeRequestBuilderTests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - Deadline Tests
+
+    /// Every runner request used to silently inherit Foundation's 60s default, so a hung runner was
+    /// indistinguishable from a slow one. Deadlines are now explicit and per-command.
+    func test_buildRequest_setsExplicitTimeout_forEveryCommand() throws {
+        let expected: [(RunnerCommand, TimeInterval)] = [
+            (.openApp(bundleID: "com.apple.reminders", launchArguments: nil, launchEnvironment: nil), 60),
+            (.openURL(urlString: "https://example.com"), 60),
+            (.getHierarchy, 45),
+            (.tap(x: 1, y: 2, isLong: false), 30),
+            (.input(text: "hello"), 30),
+            (.shake, 30)
+        ]
+
+        for (command, timeout) in expected {
+            let request = try XCTUnwrap(requestBuilder.buildRequest(for: command))
+            XCTAssertEqual(request.timeoutInterval, timeout, "unexpected deadline for \(command)")
+        }
+    }
+
     // MARK: - Command Request Tests
 
     func test_buildRequest_forTap() throws {
