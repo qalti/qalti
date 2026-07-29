@@ -548,11 +548,20 @@ clobber a live idb entry.
 
 Suite result: **156 tests, 0 failures.**
 
-**Not re-verified end-to-end.** This branch (`fix/open-app-timeout`, based on `main`) does not
-contain the CLI auth-key fix that lives on `feature/openrouter_model_tooling`, so `--token` is
-ignored here and any CLI run fails with an OpenRouter 401 before reaching the simulator. The
-resolution-ordering change above is therefore covered by unit tests only; re-running the Reminders
-fixture against it requires both branches together (merge, or cherry-pick the auth fix).
+**Branches consolidated + verified 2026-07-29.** `fix/open-app-timeout` was based on `main` and so
+lacked the CLI auth-key fix living on `feature/openrouter_model_tooling` — every CLI run there died
+with an OpenRouter 401 before reaching the simulator, which blocked end-to-end verification of the
+resolution-ordering change. Rather than split commit `e0b9e93` (which mixes the auth fix with
+OpenRouter tooling), `fix/open-app-timeout` was merged into `feature/openrouter_model_tooling`
+(merge `c1830ab`, no conflicts) so all the work lives on one branch. Re-verified there:
+
+- unit suite: **156 tests, 0 failures**
+- Reminders fixture, gpt-4.1, iOS 26.2 `AFB3DA76…`: **`test_result: "pass"`,
+  `test_objective_achieved: true`, 0 adaptations, 0 timeouts**
+- `open_app("NoSuchAppXYZ")`: still fails immediately with the installed-app list, 0 timeouts
+
+Both the fast-failure behaviour and normal resolution therefore hold with the system-app ordering
+fix in place. Nothing is pushed.
 
 ## Simulator ownership on this machine (avoid collisions with the Flutter engine matrix)
 
