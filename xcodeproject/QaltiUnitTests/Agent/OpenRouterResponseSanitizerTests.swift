@@ -182,6 +182,42 @@ final class OpenRouterResponseSanitizerTests: XCTestCase {
         XCTAssertTrue(buffer.consume(line("data: {\"a\":1}")).isEmpty)
     }
 
+    // MARK: - Middleware wiring
+
+    /// The sanitizer only protects anything if the middleware the OpenAI client actually calls
+    /// routes through it. Every other test here exercises the sanitizer directly, so without this
+    /// one a middleware that quietly returned its input unchanged would still show a green suite
+    /// while Gemini responses crashed exactly as before.
+    func test_errorDecodingMiddleware_sanitizesStreamedChunks() throws {
+        let middleware = IOSAgent.ErrorDecodingMiddleware()
+        let chunk = line("data: {\"id\":\"x\",\"service_tier\":\"provisioned\"}\n")
+
+        let result = middleware.interceptStreamingData(request: nil, chunk)
+
+        XCTAssertNil(
+            try json(from: result.dropLast())["service_tier"],
+            "middleware must route through the sanitizer, not pass raw bytes to the decoder"
+        )
+    }
+
+    /// The middleware must also do the buffering, not just the patching — an SSE line split across
+    /// two `didReceive data:` callbacks has to be reassembled before it can be inspected.
+    func test_errorDecodingMiddleware_buffersAcrossChunks() throws {
+        let middleware = IOSAgent.ErrorDecodingMiddleware()
+
+        XCTAssertTrue(middleware.interceptStreamingData(request: nil, line("data: {\"service_ti")).isEmpty)
+
+        let completed = middleware.interceptStreamingData(request: nil, line("er\":\"provisioned\"}\n"))
+        XCTAssertNil(try json(from: completed.dropLast())["service_tier"])
+    }
+
+    func test_errorDecodingMiddleware_leavesOrdinaryChunksUntouched() {
+        let middleware = IOSAgent.ErrorDecodingMiddleware()
+        let chunk = line("data: {\"choices\":[{\"delta\":{\"content\":\"hello\"}}]}\n")
+
+        XCTAssertEqual(middleware.interceptStreamingData(request: nil, chunk), chunk)
+    }
+
     func test_streamBuffer_keepsChunkBoundariesIndependentOfLineBoundaries() {
         let buffer = OpenRouterResponseSanitizer.StreamBuffer()
         let whole = "data: {\"a\":1}\ndata: {\"b\":2}\n"
