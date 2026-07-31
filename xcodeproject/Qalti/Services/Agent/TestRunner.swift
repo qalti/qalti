@@ -48,6 +48,10 @@ class TestRunner: Loggable {
         case gemini3proPreview = "google/gemini-3-pro-preview"
         case gemini3flashPreview = "google/gemini-3-flash-preview"
         case gemini3proImagePreview = "google/gemini-3-pro-image-preview"
+        // Replacements for stale IDs above (grok4, gemini3proPreview) that dropped off
+        // OpenRouter's live catalogue; see docs/openrouter_models.md.
+        case grok45 = "x-ai/grok-4.5"
+        case gemini31proPreview = "google/gemini-3.1-pro-preview"
 
         static var allCases: [AvailableModel] {
             return [
@@ -60,7 +64,9 @@ class TestRunner: Loggable {
                 .grok4,
                 .gpt5mini,
                 .gpt5nano,
-                .gpt5
+                .gpt5,
+                .grok45,
+                .gemini31proPreview
             ]
         }
 
@@ -90,6 +96,10 @@ class TestRunner: Loggable {
                 return "Claude 4 Sonnet"
             case .claudeHaiku45:
                 return "Claude 4.5 Haiku"
+            case .grok45:
+                return "Grok 4.5"
+            case .gemini31proPreview:
+                return "Gemini 3.1 Pro (preview)"
             }
         }
 
@@ -98,7 +108,7 @@ class TestRunner: Loggable {
             case .gpt5:
                 // GPT-5 benefits from constrained reasoning by default.
                 return .low
-            case .gemini3proPreview, .gemini3flashPreview:
+            case .gemini3proPreview, .gemini3flashPreview, .gemini31proPreview:
                 // Enable reasoning for Gemini 3 models (OpenRouter expects this via reasoning.effort).
                 return .low
             default:
@@ -107,7 +117,8 @@ class TestRunner: Loggable {
         }
 
         var separateImageAndText: Bool {
-            return self == .gemini3proPreview || self == .gemini3flashPreview || self == .gemini3proImagePreview
+            return self == .gemini3proPreview || self == .gemini3flashPreview
+                || self == .gemini3proImagePreview || self == .gemini31proPreview
         }
 
         // Convenience initializer that maps common inputs/aliases to a known model
@@ -137,6 +148,10 @@ class TestRunner: Loggable {
                 self = .grok4
             case "claude haiku 4.5", "claude-haiku-4.5", "haiku 4.5", "haiku-4.5":
                 self = .claudeHaiku45
+            case "grok-4.5", "grok 4.5", "grok45":
+                self = .grok45
+            case "gemini 3.1 pro", "gemini-3.1-pro", "gemini-3.1-pro-preview":
+                self = .gemini31proPreview
             default:
                 return nil
             }
