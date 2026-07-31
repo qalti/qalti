@@ -58,7 +58,7 @@ def get_openrouter_key() -> str:
 
 def get_http_referer() -> str:
     """Get HTTP-Referer header value from environment or use default."""
-    return os.environ.get("OPENROUTER_REFERER", "https://github.com/qalti/aiqa")
+    return os.environ.get("OPENROUTER_REFERER", "https://github.com/qalti/qalti")
 
 
 def test_model_availability(

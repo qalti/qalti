@@ -104,7 +104,7 @@ below), no retry messages, no errors — genuinely nothing, until the final give
 **Also notable: no report JSON was saved for this failed run** (no "Report saved to:" line
 anywhere in the log) — unlike every other failure mode seen in this codebase, which either goes
 through `TestRunner`'s forced-success override (still producing a report — see
-`cli_forced_success` memory) or a hard error that still gets logged via a caught path. This
+`docs/follow-ups.md`, "CLI mode force-reports success") or a hard error that still gets logged via a caught path. This
 specific failure (`Error.unexpectedResponse` thrown from the bottom of the iteration loop) appears
 to skip report-saving entirely, meaning **this failure mode currently leaves zero forensic
 artifact beyond whatever the CLI's own stdout log happened to capture**.
@@ -218,7 +218,7 @@ way**, since no debug-level capture of this exists.
 ## Repro environment details (for reference)
 
 - Fixture used both times: `tests/reminders_create_and_verify.test` (the self-proving,
-  `{{RUN_ID}}`-templated version — see `open_app_timeout_issue` memory for why the earlier Notes
+  `{{RUN_ID}}`-templated version — see `docs/investigations/open-app-timeout.md` for why the earlier Notes
   fixture was replaced).
 - Passing run: `scripts/output/notes_model_matrix_20260729_144842/gpt-5-nano.log`
 - Failing run: `scripts/output/notes_model_matrix_20260729_203638/gpt-5-nano.log`
@@ -227,4 +227,4 @@ way**, since no debug-level capture of this exists.
   (`logPlannedAction`, only place the `.info`-level "Agent Iteration #X/Y" line is printed).
 - This is unrelated to `open_app` (already fixed), the two Gemini decoding crashes (documented,
   separate root cause), or the two stale model IDs (`grok-4`, `gemini-3-pro-preview`) — do not
-  conflate when re-running matrices. See `MEMORY.md` project memory index for the full picture.
+  conflate when re-running matrices. See `docs/openrouter_models.md` and `docs/follow-ups.md`.

@@ -394,8 +394,8 @@ running CLI matrices, and treat the polling interval as a bug to fix.
    user-facing labels (`MobileSMS` → Messages, `MobileCal` → Calendar, `MobileSafari` → Safari).
 5. **Fix the idb_companion polling storm** in the GUI app (finding 4) — throttle/cache the device
    list instead of respawning a process per second.
-6. Only after 1-4: re-run the model matrix, **outside the sandbox**, with the Qalti GUI quit, on a
-   freshly booted dedicated simulator, and read verdicts from the report JSON's `testResult`.
+6. Only after 1-4: re-run the model matrix with the Qalti GUI quit, on a freshly booted dedicated
+   simulator, and read verdicts from the report JSON's `testResult`.
 
 ### End-to-end verification 2026-07-29 — PASSES
 

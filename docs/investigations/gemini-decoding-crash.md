@@ -40,7 +40,7 @@ already resolved — not related to this investigation).
 Two of the hardcoded model IDs in `TestRunner.AvailableModel`
 (`xcodeproject/Qalti/Services/Agent/TestRunner.swift:39-65`) are **live and reachable** on
 OpenRouter's catalogue (unlike `grok-4`/`gemini-3-pro-preview`, which are simply stale/404 —
-see `stale_openrouter_model_ids` memory, a separate and already-understood issue), but every run
+see `docs/openrouter_models.md`, a separate and already-understood issue), but every run
 against them crashes with a `DecodingError` inside Qalti's vendored OpenAI Swift client, before
 the agent ever gets a usable response:
 
@@ -51,7 +51,7 @@ Both surface identically at the CLI level as a **hard, non-zero-exit failure**
 (`IOSAgent.Error` → "Received unexpected response from AI service" → CLI prints
 `Test failed: Received unexpected response from AI service`). This is a real crash, not the
 agent "deciding" the test failed — so it is *not* subject to the CLI's forced-success override
-(`TestRunner.swift:414-418`; see `cli_forced_success` memory) and both CLI exit code and banner
+(`TestRunner.swift:414-418`; see `docs/follow-ups.md`) and both CLI exit code and banner
 are accurate here.
 
 ## Exact symptom (log excerpts)
@@ -242,7 +242,7 @@ low-risk and self-contained; consider option 3 as a parallel, non-blocking upstr
 5. Rebuild, then re-run the model matrix (`scripts/run_notes_model_matrix.sh`, now pointed at the
    Reminders fixture) filtered to just these two models to confirm both now complete without a
    `DecodingError`, and verify the ground-truth-checked pass/fail via the report JSON's top-level
-   `testResult` field (not the CLI banner — see `cli_forced_success` memory).
+   `testResult` field (not the CLI banner — see `docs/follow-ups.md`).
 6. If option 1 proves fragile (new unknown fields keep appearing over time), reconsider option 2
    (forking the dependency for proper optional/lenient `Codable` semantics) as a more durable fix.
 
@@ -261,4 +261,4 @@ low-risk and self-contained; consider option 3 as a parallel, non-blocking upstr
   parallel middleware class for the point-out/vision flow).
 - These two models are unrelated to the (already-fixed) `open_app` timeout bug and the
   (already-known) stale `grok-4`/`gemini-3-pro-preview` model IDs — do not conflate the four
-  issues when re-running matrices; see `MEMORY.md` project memory index for the full picture.
+  issues when re-running matrices; see `docs/openrouter_models.md` and `docs/follow-ups.md`.
