@@ -72,6 +72,9 @@ class IOSAgent: Loggable {
         private var _timeout: Bool = false
         private var _lastStatusCode: Int? = nil
         private var _lastErrorBody: String? = nil
+        // Buffers raw network chunks between calls so we only inspect/patch complete SSE lines
+        // (a single `didReceive data:` call is not guaranteed to align with line boundaries).
+        private var _lineBuffer = Data()
 
         var insufficientBalance: Bool { stateQueue.sync { _insufficientBalance } }
         var authenticationFailed: Bool { stateQueue.sync { _authenticationFailed } }
@@ -103,6 +106,91 @@ class IOSAgent: Loggable {
             default:
                 return (response, data)
             }
+        }
+
+        // Some OpenRouter-fronted models (observed with Gemini) stream chunks that are valid
+        // JSON but don't match this app's strict Codable schema for ChatStreamResult:
+        //   - `service_tier` can be a value ServiceTier's closed enum doesn't know (e.g. "provisioned")
+        //   - a `reasoning_details` entry's `type` can appear before its required payload field
+        //     (e.g. `reasoning.text` without `text` yet) on a partial delta
+        // Both throw DecodingError and kill the whole stream. Patch only these known-bad shapes
+        // on the raw bytes before the package's decoder ever sees them; every other line passes
+        // through byte-identical.
+        func interceptStreamingData(request: URLRequest?, _ data: Data) -> Data {
+            stateQueue.sync {
+                _lineBuffer.append(data)
+                var output = Data()
+                let lf: UInt8 = 0x0A
+                while let newlineIndex = _lineBuffer.firstIndex(of: lf) {
+                    let line = _lineBuffer.subdata(in: _lineBuffer.startIndex..<newlineIndex)
+                    output.append(Self.sanitize(line: line))
+                    output.append(lf)
+                    _lineBuffer.removeSubrange(_lineBuffer.startIndex...newlineIndex)
+                }
+                return output
+            }
+        }
+
+        private static let knownServiceTiers = Set(ServiceTier.allCases.map(\.rawValue))
+        private static let reasoningDetailRequiredKey: [String: String] = [
+            "reasoning.text": "text",
+            "reasoning.encrypted": "data",
+            "reasoning.summary": "summary"
+        ]
+
+        private static func sanitize(line rawLine: Data) -> Data {
+            var line = rawLine
+            var hadTrailingCR = false
+            if line.last == 0x0D {
+                hadTrailingCR = true
+                line.removeLast()
+            }
+
+            guard let text = String(data: line, encoding: .utf8), text.hasPrefix("data: "),
+                  let jsonData = text.dropFirst("data: ".count).data(using: .utf8),
+                  var obj = (try? JSONSerialization.jsonObject(with: jsonData)) as? [String: Any]
+            else {
+                return rawLine
+            }
+
+            var mutated = false
+
+            if let tier = obj["service_tier"] as? String, !knownServiceTiers.contains(tier) {
+                obj.removeValue(forKey: "service_tier")
+                mutated = true
+            }
+
+            if var choices = obj["choices"] as? [[String: Any]] {
+                for i in choices.indices {
+                    guard var delta = choices[i]["delta"] as? [String: Any],
+                          var details = delta["reasoning_details"] as? [[String: Any]]
+                    else { continue }
+                    for j in details.indices {
+                        guard let type = details[j]["type"] as? String,
+                              let requiredKey = reasoningDetailRequiredKey[type],
+                              details[j][requiredKey] == nil
+                        else { continue }
+                        details[j][requiredKey] = ""
+                        mutated = true
+                    }
+                    delta["reasoning_details"] = details
+                    choices[i]["delta"] = delta
+                }
+                if mutated {
+                    obj["choices"] = choices
+                }
+            }
+
+            guard mutated,
+                  let patchedData = try? JSONSerialization.data(withJSONObject: obj),
+                  let patchedText = String(data: patchedData, encoding: .utf8)
+            else {
+                return rawLine
+            }
+
+            var result = Data("data: \(patchedText)".utf8)
+            if hadTrailingCR { result.append(0x0D) }
+            return result
         }
     }
 
