@@ -425,7 +425,7 @@ normally once the target app actually exists — the original bug was the imposs
 not the tooling; (b) Qalti does handle interstitial popups autonomously, as designed; (c) with the
 dismissal written as an explicit step, popup handling grades as a clean **pass** rather than
 *pass with comments* (`Prompts.swift:599`), preserving the matrix's signal; and (d) a busy machine
-running a parallel 4-simulator Flutter matrix does **not** by itself cause the failure.
+running an unrelated parallel 4-simulator matrix does **not** by itself cause the failure.
 
 Still worth fixing regardless (findings 2-5 above): the resolver's silent fallthrough, the missing
 HTTP/gRPC deadlines, the noisy app list, and the GUI's `idb_companion` respawn loop.
@@ -519,7 +519,7 @@ OpenRouter tooling), `fix/open-app-timeout` was merged into `feature/openrouter_
 - `open_app("NoSuchAppXYZ")`: still fails immediately with the installed-app list, 0 timeouts
 
 Both the fast-failure behaviour and normal resolution therefore hold with the system-app ordering
-fix in place. Nothing is pushed.
+fix in place.
 
 ### Fixture made sound + matrix re-run with app-side ground truth 2026-07-29
 

@@ -16,17 +16,17 @@ Changes made:
   reasoning effort, same treatment as `gpt5`, instead of `nil` (which likely let OpenRouter/the
   provider default to a more expensive effort level with nothing constraining hidden-token spend).
 
-This resolves the "is it my Mac or the model" question definitively: it was neither, in the
-narrow sense — it was Qalti's own fixed request configuration not giving a small reasoning model
-enough room to think *and* answer within the same budget. Below is kept as the original
+This settles the "bad local machine or bad model" question: it was neither. Qalti's own fixed
+request configuration did not give a small reasoning model room to think *and* answer within the
+same budget. Below is kept as the original
 investigation trail for context.
 
 ## Status (superseded): ROOT CAUSE CONFIRMED 2026-07-31, fix not yet applied
 
 Ran 3 fresh reps against the Reminders fixture with `--log-level debug`, in a deliberately clean
 environment (single simulator, the stale Qalti GUI instance that was found spawning a runaway
-`idb_companion` loop was quit first) — ruling out "it's a local machine issue" as the cause, per
-the user's own suspicion going in. Result: **2 of 3 reps failed identically** (rep 1: pass in
+`idb_companion` loop was quit first) — ruling out "it's a local machine issue", which was the
+leading suspicion going in. Result: **2 of 3 reps failed identically** (rep 1: pass in
 189s; rep 2 and rep 3: failed after ~1080s each, hitting the 50-iteration cap).
 
 The debug logs still only showed `"No tool calls in assistant response"` /
@@ -220,8 +220,11 @@ way**, since no debug-level capture of this exists.
 - Fixture used both times: `tests/reminders_create_and_verify.test` (the self-proving,
   `{{RUN_ID}}`-templated version — see `docs/investigations/open-app-timeout.md` for why the earlier Notes
   fixture was replaced).
-- Passing run: `scripts/output/notes_model_matrix_20260729_144842/gpt-5-nano.log`
-- Failing run: `scripts/output/notes_model_matrix_20260729_203638/gpt-5-nano.log`
+- The run logs quoted throughout are under `scripts/output/`, which is gitignored — they exist only
+  on the machine that produced them. Reproduce with the command in step 1 above rather than
+  expecting to find these files in a fresh checkout:
+  - Passing run: `notes_model_matrix_20260729_144842/gpt-5-nano.log`
+  - Failing run: `notes_model_matrix_20260729_203638/gpt-5-nano.log`
 - Relevant source: `xcodeproject/Qalti/Services/Agent/IOSAgent.swift:220-297` (main loop),
   `:683-703` (`shouldRejectToolCallsWithoutComment`, ruled out as the cause here), `:801-807`
   (`logPlannedAction`, only place the `.info`-level "Agent Iteration #X/Y" line is printed).
