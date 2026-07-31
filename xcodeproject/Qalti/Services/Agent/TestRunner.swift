@@ -108,7 +108,7 @@ class TestRunner: Loggable {
             case .gpt5, .gpt5nano:
                 // Constrain reasoning by default; gpt5nano was observed exhausting its whole
                 // completion-token budget on hidden reasoning and returning empty content when
-                // left unset (see GPT5_NANO_FLAKINESS_INVESTIGATION.md).
+                // left unset (see docs/investigations/gpt5-nano-flakiness.md).
                 return .low
             case .gemini3proPreview, .gemini3flashPreview, .gemini31proPreview:
                 // Enable reasoning for Gemini 3 models (OpenRouter expects this via reasoning.effort).

@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""One-off: extract real per-model verdicts from run_notes_model_matrix.sh log files,
-by following each log's own "Report saved to:" line (since --report-path doesn't work,
-see PA-015 continuation notes) to the actual JSON report under ~/Documents/Qalti/Runs/.
-Uses the report's top-level "testResult" field (runSucceeded is force-set true in CLI mode
-and is not a trustworthy verdict)."""
+"""Extract real per-model verdicts from run_notes_model_matrix.sh log files.
+
+Follows each log's own "Report saved to:" line to the actual JSON report under
+~/Documents/Qalti/Runs/, because the CLI's --report-path flag is parsed but never wired to
+the save path. Uses the report's top-level "testResult" field: runSucceeded is force-set to
+true in CLI mode and is not a trustworthy verdict.
+
+Keep MODELS_IN_ORDER in sync with the MODELS array in run_notes_model_matrix.sh.
+"""
+
 import json
 import re
 import sys
@@ -13,13 +18,13 @@ MODELS_IN_ORDER = [
     "gpt-4.1",
     "claude-4-sonnet",
     "gemini-2.5-pro",
-    "gemini-3-pro-preview",
     "gemini-3-flash-preview",
     "claude-haiku-4.5",
-    "grok-4",
     "gpt-5-mini",
     "gpt-5-nano",
     "gpt-5",
+    "grok-4.5",
+    "gemini-3.1-pro-preview",
 ]
 
 log_dir = Path(sys.argv[1])

@@ -36,6 +36,9 @@ scripts/output/
 
 # Temporary run files / local data
 test_runs/
+tests/reports/
+# Demo app build downloaded per DEVELOPER.md
+SyncUps-simulator.zip
 cache/
 data/
 data_local/

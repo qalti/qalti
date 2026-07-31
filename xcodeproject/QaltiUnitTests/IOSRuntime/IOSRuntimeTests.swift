@@ -174,6 +174,51 @@ final class IOSRuntimeTests: XCTestCase {
         XCTAssertEqual(req.url?.path, "/open-url")
         XCTAssertEqual(json["url"] as? String, urlToOpen)
     }
+
+    // MARK: - openApp fails fast on an unresolved app
+
+    /// `openApp` used to hand an unresolved name to the runner as though it were a bundle ID, so a
+    /// missing app surfaced as a 60s request timeout instead of an error. It must now answer
+    /// immediately and never reach the network.
+    func testOpenAppWithUnknownAppReportsNotInstalledWithoutSendingARequest() {
+        mockIdbManager.stubbedApps = [(name: "SyncUps", bundleID: "co.kslavnov.SyncUps")]
+        let runtime = makeRuntimeWithRealResolver(idbManager: mockIdbManager)
+
+        var response: IOSRuntime.Response?
+        runtime.openApp(name: "Notes") { response = $0 }
+
+        let error = try? XCTUnwrap(response?.error)
+        XCTAssertNotNil(error, "expected an error response")
+        XCTAssertTrue(error?.contains("not installed") ?? false, "error should say it is not installed: \(error ?? "nil")")
+        XCTAssertTrue(error?.contains("SyncUps") ?? false, "error should list what is installed: \(error ?? "nil")")
+        XCTAssertNil(runtime.capturedRequest, "no request should be sent for an app that isn't there")
+    }
+
+    /// Deliberate consequence of the above, recorded so it isn't rediscovered as a bug: when the
+    /// app catalogue can't be read at all, `openApp` fails rather than optimistically forwarding a
+    /// string that may well be a valid bundle ID. A device-level failure is reported as such, and
+    /// is kept distinct from "this app is not installed".
+    func testOpenAppWhenCatalogUnavailableFailsFastAndIsNotReportedAsMissingApp() {
+        let runtime = makeRuntimeWithRealResolver(idbManager: ThrowingIdbManager())
+
+        var response: IOSRuntime.Response?
+        runtime.openApp(name: "com.apple.reminders") { response = $0 }
+
+        let error = try? XCTUnwrap(response?.error)
+        XCTAssertNotNil(error, "expected an error response")
+        XCTAssertFalse(error?.contains("not installed") ?? true, "device failure must not read as a missing app: \(error ?? "nil")")
+        XCTAssertNil(runtime.capturedRequest, "no request should be sent when the catalogue is unreadable")
+    }
+
+    /// Unlike `spyRuntime`, whose resolver is never exercised, this builds a runtime over a real
+    /// `AppBundleResolver` backed by the given idb stub, so resolution actually runs.
+    private func makeRuntimeWithRealResolver(idbManager: IdbManaging) -> SpyIOSRuntime {
+        SpyIOSRuntime(
+            simulatorID: "test-sim-id",
+            idbManager: idbManager,
+            errorCapturer: mockErrorCapturer
+        )
+    }
 }
 
 // MARK: - Private Spy Subclass

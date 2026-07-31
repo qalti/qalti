@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-import argparse
-import os
-import shutil
-import subprocess
-import sys
-from pathlib import Path
-
 """
 Qalti Build Script
 Automates the build process described in DEVELOPER.md
@@ -15,6 +8,13 @@ Enhanced version with:
 - Optional derived data cleaning
 - Better error handling and guidance
 """
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
 
 class Colors:

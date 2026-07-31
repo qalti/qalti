@@ -52,7 +52,7 @@ The rest of this document is kept as the original hypothesis-stage investigation
 
 Branch: `feature/openrouter_model_tooling`. Found during the same 10-model matrix effort as the
 (already-fixed) `open_app` timeout bug and the (documented, not-yet-fixed) Gemini decoding
-crashes — see `OPEN_APP_TIMEOUT_INVESTIGATION.md` and `GEMINI_DECODING_CRASH_INVESTIGATION.md`.
+crashes — see `docs/investigations/open-app-timeout.md` and `docs/investigations/gemini-decoding-crash.md`.
 `gpt-5-nano` is unrelated to either of those; it's its own distinct issue.
 
 Two real matrix runs exist on disk with `gpt-5-nano` results, both against the Reminders fixture:

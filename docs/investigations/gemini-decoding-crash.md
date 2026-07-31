@@ -2,8 +2,10 @@
 
 ## Status: FIXED 2026-07-31
 
-Implemented "Fix option 1" below (middleware-based sanitization via `interceptStreamingData`) in
-`ErrorDecodingMiddleware` (`xcodeproject/Qalti/Services/Agent/IOSAgent.swift:68-`). Verified
+Implemented "Fix option 1" below (middleware-based sanitization via `interceptStreamingData`).
+The repair itself lives in `OpenRouterResponseSanitizer`
+(`xcodeproject/Qalti/Services/Agent/OpenRouterResponseSanitizer.swift`), a standalone type so it
+can be unit tested and reused; `IOSAgent.ErrorDecodingMiddleware` calls into it. Verified
 end-to-end against both live models on iPhone 16e (iOS 26.0) using the Reminders fixture:
 
 - `gemini-2.5-pro`: no decode error; `testResult.test_result: "pass with comments"`,
@@ -18,13 +20,21 @@ entry's `type` requires (`text`/`data`/`summary`) with `""` if missing — befor
 package's decoder ever sees the bytes. Lines needing no patch pass through byte-identical. No
 dependency fork/patch was needed, as hoped in "Fix option 1" below.
 
+Covered by `OpenRouterResponseSanitizerTests` (15 cases), which pin both the patches and — more
+importantly, since this runs over every byte of every model response — the byte-identical
+pass-through of everything it does not recognise.
+
+Step 4 of the plan below (the same treatment for `OpenRouterPointOutService`'s own middleware) was
+**not** done: that path is non-streaming and the failure has not been observed there. It is
+recorded in `docs/follow-ups.md` instead.
+
 The rest of this document is kept as-is for historical/reference context (the original
 investigation, alternatives considered, and why bumping the dependency wouldn't have helped).
 
 ## Context / how this was found
 
 Branch: `feature/openrouter_model_tooling`. Found during the same 10-model matrix effort that
-also uncovered and fixed the `open_app` timeout bug (see `OPEN_APP_TIMEOUT_INVESTIGATION.md`,
+also uncovered and fixed the `open_app` timeout bug (see `docs/investigations/open-app-timeout.md`,
 already resolved — not related to this investigation).
 
 Two of the hardcoded model IDs in `TestRunner.AvailableModel`
@@ -212,7 +222,7 @@ low-risk and self-contained; consider option 3 as a parallel, non-blocking upstr
      --log-level debug
    ```
    (repeat with `--model gemini-3-flash-preview`). Note: use the fixed Reminders fixture, not the
-   old Notes one — see `OPEN_APP_TIMEOUT_INVESTIGATION.md` for why Notes is unusable on iOS 26.x
+   old Notes one — see `docs/investigations/open-app-timeout.md` for why Notes is unusable on iOS 26.x
    simulators, unrelated to this bug.
 2. Capture one real raw SSE chunk for each crash (e.g. temporarily log `interceptStreamingData`'s
    raw `data` before implementing any sanitization, or reproduce via a direct `curl` against

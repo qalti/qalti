@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Script to check availability of OpenRouter models by making test requests.
+"""
+
 import json
 import os
 import time
@@ -7,10 +11,6 @@ from typing import Any
 
 import requests
 from dotenv import load_dotenv
-
-"""
-Script to check availability of OpenRouter models by making test requests.
-"""
 
 
 def load_environment():

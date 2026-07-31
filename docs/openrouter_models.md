@@ -41,8 +41,12 @@ end-to-end, not just check catalogue presence.
 
 ## Related known issues (separate from stale IDs)
 
-- `gemini-2.5-pro` and `gemini-3-flash-preview` were, until fixed, crashing Qalti's response
-  decoding entirely (unrelated to whether the ID itself was live) — see the "Fix Gemini decoding
-  crashes via streaming-chunk sanitization" commit and `GEMINI_DECODING_CRASH_INVESTIGATION.md`.
-- `gpt-5-nano` has shown intermittent flakiness (silently exhausting all iterations without
-  completing) — see `GPT5_NANO_FLAKINESS_INVESTIGATION.md`. Not yet root-caused.
+Both of the issues below are **fixed** on this branch; they are listed because they were failures
+of a *live* model ID, which is easy to misread as the ID itself having gone stale.
+
+- `gemini-2.5-pro` and `gemini-3-flash-preview` crashed Qalti's response decoding entirely
+  (unrelated to whether the ID was live). Fixed by streaming-chunk sanitization — see
+  `docs/investigations/gemini-decoding-crash.md`.
+- `gpt-5-nano` silently exhausted all 50 iterations returning empty content. Root-caused to
+  Qalti's own `maxCompletionTokens` budget being too tight for a reasoning model, not to the
+  model or the ID — see `docs/investigations/gpt5-nano-flakiness.md`.

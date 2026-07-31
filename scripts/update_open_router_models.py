@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
+"""Fetch the live OpenRouter catalogue and categorise it for investigation.
+
+Writes JSON only, all of it under the gitignored scripts/output/: the full catalogue, the
+categorised breakdown (free vision / cheap vision / free text-only), and a "suitable models"
+list that check_model_availability.py takes as its input.
+
+This is a research tool, not a code generator. It deliberately does not write into the Xcode
+source tree; the model IDs Qalti actually drives are hand-curated in
+TestRunner.AvailableModel, documented in docs/openrouter_models.md.
+
+Caveat when reading the output: vision capability here is inferred from the catalogue's
+modality string plus an id/name keyword match, so it over-reports — audio and image-generation
+models can land in the vision buckets. Use `check_model_availability.py --test-vision` to
+confirm empirically before trusting a classification.
+"""
+
 import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import requests
-
-"""
-Script to fetch available models from OpenRouter API and generate Swift code.
-Shows both free models and cheap vision models.
-"""
 
 
 def ensure_output_dir() -> Path:
@@ -253,133 +264,6 @@ def filter_models_by_category(
     }
 
 
-def to_swift_case_name(model_id: str, seen: dict[str, int]) -> str:
-    name = (
-        model_id.replace("/", "_")
-        .replace("-", "_")
-        .replace(".", "_")
-        .replace(":", "_")
-        .replace("+", "_plus")
-    )
-    if name[0].isdigit():
-        name = "m_" + name
-    if name in seen:
-        seen[name] += 1
-        name = f"{name}_{seen[name]}"
-    else:
-        seen[name] = 0
-    return name
-
-
-def generate_swift_enum_with_categories(
-    categories: dict[str, list[dict[str, Any]]],
-) -> str:
-    """Generate Swift enum with different model categories."""
-
-    # Combine free vision (priority) + some cheap vision models
-    suitable_models = categories["free_vision"].copy()
-
-    # Add some of the cheapest vision models if we have few free vision models
-    if len(suitable_models) < 5:
-        # Sort cheap vision by total cost and take top models to reach ~10 total
-        cheap_sorted = sorted(
-            categories["cheap_vision"],
-            key=lambda x: x["prompt_cost"] + x["completion_cost"],
-        )
-        needed = min(10 - len(suitable_models), len(cheap_sorted))
-        suitable_models.extend(cheap_sorted[:needed])
-
-    seen: dict[str, int] = {}
-    case_names = [to_swift_case_name(model["id"], seen) for model in suitable_models]
-
-    swift_code = f"""//
-//  OpenRouterModels.swift
-//  Generated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-//
-//  Free vision models: {len(categories["free_vision"])}
-//  Cheap vision models: {len(categories["cheap_vision"])}
-//  Free text-only models: {len(categories["free_text_only"])}
-//
-
-import Foundation
-
-enum OpenRouterModel: String, CaseIterable {{
-    // Default model (paid)
-    case defaultModel = "anthropic/claude-3.5-sonnet"
-
-    // Vision models (free or very cheap)
-"""
-    for model, case_name in zip(suitable_models, case_names, strict=True):
-        swift_code += f'    case {case_name} = "{model["id"]}"\n'
-
-    swift_code += """
-    var displayName: String {
-        switch self {
-        case .defaultModel:
-            return "Claude 3.5 Sonnet (Default - Paid)"
-"""
-
-    for model, case_name in zip(suitable_models, case_names, strict=True):
-        cost_info = (
-            "FREE"
-            if model["prompt_cost"] == 0
-            else f"~${(model['prompt_cost'] + model['completion_cost']) * 1000:.4f}/1K"
-        )
-        swift_code += f'        case .{case_name}:\n            return "{model["name"]} ({cost_info})"\n'
-
-    swift_code += """        }
-    }
-
-    var maxCompletionTokens: Int {
-        switch self {
-        case .defaultModel:
-            return 60
-"""
-
-    for model, case_name in zip(suitable_models, case_names, strict=True):
-        max_tokens = model.get("max_completion_tokens") or 60
-        swift_code += f"        case .{case_name}:\n            return {max_tokens}\n"
-
-    swift_code += """        }
-    }
-
-    var isVisionCapable: Bool {
-        return true  // All models in this enum support vision
-    }
-
-    var isFree: Bool {
-        switch self {
-        case .defaultModel:
-            return false
-"""
-
-    for model, case_name in zip(suitable_models, case_names, strict=True):
-        is_free = model.get("prompt_cost", 0) == 0
-        swift_code += (
-            f"        case .{case_name}:\n            return {str(is_free).lower()}\n"
-        )
-
-    swift_code += """        }
-    }
-
-    var estimatedCostPer1KTokens: Double {
-        switch self {
-        case .defaultModel:
-            return 0.036  // Approximate for Claude 3.5 Sonnet
-"""
-
-    for model, case_name in zip(suitable_models, case_names, strict=True):
-        total_cost = (model["prompt_cost"] + model["completion_cost"]) * 1000
-        swift_code += f"        case .{case_name}:\n            return {total_cost}\n"
-
-    swift_code += """        }
-    }
-}
-"""
-
-    return swift_code
-
-
 def save_categorized_data(categories: dict[str, list[dict[str, Any]]]):
     """Save categorized model data to output directory."""
     output_dir = ensure_output_dir()
@@ -459,19 +343,6 @@ def main():
         for model in cheap_sorted[:5]:
             total_cost = model["prompt_cost"] + model["completion_cost"]
             print(f"  - {model['id']} (~${total_cost * 1000:.4f}/1K tokens)")
-
-    # Generate Swift code
-    swift_code = generate_swift_enum_with_categories(categories)
-
-    # Save Swift file
-    output_file = (
-        Path(__file__).resolve().parent.parent
-        / "xcodeproject/Qalti/Services/UIHelpers/OpenRouterModels.swift"
-    )
-    output_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_file, "w") as f:
-        f.write(swift_code)
-    print(f"\nSwift enum generated: {output_file}")
 
     # Save categorized data
     save_categorized_data(categories)

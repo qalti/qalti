@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Runs tests/reminders_create_and_verify.test once per model in Qalti's TestRunner.AvailableModel
-# list, to spot-check that every hardcoded model ID still resolves against a live OpenRouter
-# call. grok-4 and gemini-3-pro-preview are expected to fail (see PA-015 continuation notes) —
-# they're intentionally left in the matrix, unmodified, to document the live failure.
+# list, to spot-check that every hardcoded model ID still resolves against a live OpenRouter call.
+# The list below must stay in sync with TestRunner.AvailableModel.allCases; see
+# docs/openrouter_models.md for which IDs are known live vs. known dead.
 #
 # NOTE: Qalti's CLI mode force-overrides an agent-decided failure to "success" at the top
 # level (TestRunner.swift, "forcing SUCCESS to match legacy behavior"), so neither the CLI's
@@ -15,23 +15,27 @@ QALTI_BIN="xcodeproject/DerivedData_local/Build/Products/Debug/Qalti.app/Content
 # NOTE: was tests/notes_create_and_verify.test until 2026-07-28. Notes (com.apple.mobilenotes) is
 # not registered/launchable on iOS 26.x simulators at all — even plain `xcrun simctl launch` fails —
 # so that fixture was impossible and every model "failed" it identically. Reminders is verified
-# launchable. See OPEN_APP_TIMEOUT_INVESTIGATION.md, "UPDATE 2026-07-28".
+# launchable. See docs/investigations/open-app-timeout.md, "UPDATE 2026-07-28".
 TEST_FILE="tests/reminders_create_and_verify.test"
 REPORT_DIR="scripts/output/notes_model_matrix_$(date +%Y%m%d_%H%M%S)"
 DEVICE_UDID="${QALTI_SIM_UDID:?Set QALTI_SIM_UDID to a booted simulator UDID, e.g. from: xcrun simctl list devices | grep Booted}"
+: "${OPENROUTER_API_KEY:?Set OPENROUTER_API_KEY to an OpenRouter key (https://openrouter.ai/keys)}"
 
 # Order: gpt-4.1 first, claude-sonnet-4 second, then the rest of TestRunner.AvailableModel.allCases.
+# Known-dead IDs (grok-4, gemini-3-pro-preview — see docs/openrouter_models.md) are deliberately
+# NOT listed here: they would make this matrix permanently red and hide real regressions. Their
+# live replacements are covered instead.
 MODELS=(
   "gpt-4.1"
   "claude-4-sonnet"
   "gemini-2.5-pro"
-  "gemini-3-pro-preview"   # expected to fail: stale ID, see memory/stale_openrouter_model_ids.md
   "gemini-3-flash-preview"
   "claude-haiku-4.5"
-  "grok-4"                 # expected to fail: stale ID, see memory/stale_openrouter_model_ids.md
   "gpt-5-mini"
   "gpt-5-nano"
   "gpt-5"
+  "grok-4.5"
+  "gemini-3.1-pro-preview"
 )
 
 mkdir -p "$REPORT_DIR"

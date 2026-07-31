@@ -266,47 +266,20 @@ All in `Qalti/Services/Runtime/AppBundleResolver.swift` (82 lines total):
    establish a baseline for whether iOS 26.0 Simulator + this Xcode version has any known
    general app-launch flakiness unrelated to Qalti's own code.
 
-## UPDATE 2026-07-27: Likely actual root cause found — simulator contention, not a Qalti code bug
+## UPDATE 2026-07-27: simulator contention (superseded — see the 2026-07-28 update below)
 
-Re-investigated by checking live system/process state (not code) while the original symptom was
-still fresh. Findings, in order of discovery:
+An intermediate conclusion, kept only so the reasoning trail stays complete. Inspecting live system
+state while the symptom was fresh showed a badly loaded machine: several simulators booted at once,
+a runaway `backboardd` pegging a core for hours, an intermittently unresponsive
+`CoreSimulatorService`/`simdiskimaged`, and — the apparent smoking gun — the target UDID being
+driven concurrently by an unrelated project's UI-test runner. "Simulator resource contention"
+looked like the root cause.
 
-1. `xcrun simctl list devices` **failed outright** on first attempt with
-   `CoreSimulatorService connection became invalid` / `simdiskimaged crashed or is not responding`
-   / `Unable to discover any Simulator runtimes`. Retried seconds later — succeeded normally. So
-   `CoreSimulatorService` (the shared XPC daemon all simulator tooling, including `idb_companion`,
-   talks to) is **intermittently unresponsive** in this environment right now.
-2. `ps aux` showed **6 simulators booted simultaneously** (iOS 26.0 x2, iOS 26.2 x2, iOS 27.0 x1,
-   plus one more), and one `backboardd` process (for a *different* device, iOS 26.2
-   `44391AD6-...`) pegged at **~100% CPU continuously for 3.8+ hours**. That's a hung/runaway
-   simulator-internal process straining the shared `CoreSimulatorService`/`simdiskimaged` daemons
-   that every booted simulator depends on.
-3. **Smoking gun**: the exact simulator UDID this investigation used as its target device
-   (`B2888315-A100-413E-B2DA-2F2AE65E8C78`, "iPhone 17", iOS 26.0) is, right now, **also being
-   actively driven by a totally unrelated project's automation session** — a `leverage-ios`
-   checkout has its own app (`Leverage.app`) installed and its own UI-test runner process
-   (`LeverageUITests-Runner.app`) running against that same UDID concurrently (confirmed via
-   `lsof`/`ps` showing both processes rooted in
-   `/Users/pavelakhrameev/Library/Developer/CoreSimulator/Devices/B2888315-.../...`).
-
-**Revised conclusion**: the `open_app` timeout is very likely **not** a bug in Qalti's own
-app-launch/bundle-resolution code (hypotheses 1–5 above may still be worth hardening, especially
-the missing timeouts/deadlines noted throughout, since they make Qalti fragile to exactly this
-kind of contention instead of failing fast with a clear error) — it's **simulator resource
-contention**: multiple concurrent Claude Code sessions across *different projects* were sharing
-the same booted simulator UDID and/or overloading the shared `CoreSimulatorService`/
-`simdiskimaged` daemons, causing app-launch requests to hang instead of completing or failing
-cleanly.
-
-**How to apply / next steps**: before re-running the model matrix, (a) boot a **fresh, dedicated**
-simulator UDID that no other project/session is using, (b) close/shut down unrelated booted
-simulators if possible, and (c) confirm `xcrun simctl list devices` returns cleanly and
-`CoreSimulatorService`/backboardd CPU usage is normal immediately before the run. If failures
-persist on a genuinely dedicated, uncontended simulator, that would newly implicate the code-level
-hypotheses above. Separately, Qalti's own missing timeouts (gRPC `list_apps`, the `/open-app`
-HTTP request) should still be given explicit, shorter deadlines with clear error messages instead
-of hanging — that's a real robustness gap regardless of root cause, and would have made this
-exact situation much faster to diagnose.
+It was not. The symptom reproduces on a dedicated, uncontended machine (next section), so the
+contention was real but incidental. One durable lesson survives it: Qalti had no explicit deadline
+on either the gRPC `list_apps` call or the `/open-app` HTTP request, so under load it degraded into
+an opaque hang rather than failing fast with a usable error — a robustness gap regardless of root
+cause, and the reason this took three sessions to pin down.
 
 ## UPDATE 2026-07-28: Actual root cause confirmed — **Notes is not installable/launchable on iOS 26.x simulators**. Contention theory superseded.
 
@@ -379,22 +352,6 @@ a plausible contributor to the *original* machine's "CoreSimulatorService is fla
 crashed" symptoms that were previously attributed to other projects. Quit the Qalti GUI app before
 running CLI matrices, and treat the polling interval as a bug to fix.
 
-### 5. Methodology warning: `xcrun simctl` fails inside Claude Code's sandbox
-Run inside the default sandbox, `xcrun simctl list devices` fails with exactly the errors quoted in
-the 2026-07-27 update:
-```
-CoreSimulatorService connection became invalid.  Simulator services will no longer be available.
-Could not kickstart simdiskimaged ... simdiskimaged crashed or is not responding
-Unable to discover any Simulator runtimes.
-```
-The identical command run with the sandbox disabled succeeds instantly and cleanly. **These errors
-are a sandbox artifact, not evidence of daemon health.** Any simulator diagnostics — and any Qalti
-CLI run, which needs the same CoreSimulator XPC access plus writes under
-`~/Library/Developer/CoreSimulator` — must be run **outside the sandbox**. Part of the 2026-07-27
-"CoreSimulatorService is intermittently unresponsive" finding may be this artifact (though its
-retry-succeeded observation suggests at least some of it was genuine), and if the original model
-matrix was launched from inside a sandboxed shell, that is an additional independent candidate cause
-for the uniform hangs.
 
 ### Revised status of the earlier hypotheses
 | # | Hypothesis | Status after 2026-07-28 |
@@ -443,8 +400,9 @@ for the uniform hangs.
 ### End-to-end verification 2026-07-29 — PASSES
 
 `Qalti cli tests/reminders_create_and_verify.test --model gpt-4.1 --udid AFB3DA76-…` run on the
-iOS 26.2 iPhone 16e, **concurrently with the Flutter engine matrix** (deliberately not stopped, to
-prove contention is not the blocker). Completed in **~80 s over 6 iterations, zero timeouts**
+iOS 26.2 iPhone 16e, **concurrently with an unrelated heavy test matrix on the same machine**
+(deliberately not stopped, to prove contention is not the blocker). Completed in **~80 s over 6
+iterations, zero timeouts**
 (`grep -c 'timed out'` on the run log = 0):
 
 ```
@@ -612,49 +570,19 @@ Two notes on the differences from the first run:
   typing the text before the decoding bug killed it. It fails at whatever point the malformed
   response arrives, so "no report" says nothing about whether the model can drive the UI.
 
-Run under concurrent load from the Flutter engine matrix (load average 50-69) on iOS 26.2
-`AFB3DA76…`, which that matrix does not claim — re-verified before launching.
-
-## Simulator ownership on this machine (avoid collisions with the Flutter engine matrix)
-
-`~/Development/flutter` has a `Makefile` whose `all-skip-textinput` /`all` / `force` targets run
-`run_ios_tests.py`, which claims **4 simulators**: runtimes `26.0.1`, `26.1`, `27.0`
-(`DEFAULT_FULL_MATRIX_RUNTIMES`, `run_ios_tests.py:38`) plus a hardcoded iOS 18.6 device
-(`IOS_18_6_SIMULATOR_UDID`, line 36). Resolved against the current device set:
-
-| Runtime | Device | UDID | Note |
-|---|---|---|---|
-| 26.0.1 | iPhone 17 Pro | `F8F690EC-38FE-4350-ACDE-D46F37E041C5` | falls back to the `iOS-26-0` runtime key |
-| 26.1 | iPhone 17 Pro | `B593EAFC-DC4B-41D2-9D19-ED15EAE41159` | |
-| 27.0 | iPhone 17 Pro | `A8C97EEA-7A59-43F8-877A-399C3C1DAC66` | |
-| 18.6 | IosUnitTestsSimulator18 | `D6A4D5CA-74E3-4532-BE40-75937E8C18F4` | hardcoded, not auto-selected |
-
-**Qalti should stay on iOS 26.2 or 26.4** — neither runtime is in that matrix. Concretely, use
-**iPhone 16e `AFB3DA76-2A11-46CD-ADAB-EFE24128ED27` (iOS 26.2)**, which is already booted and is
-the device all the 2026-07-28 findings above were verified on.
-
-Two collision hazards to respect:
-
-1. The three 26.x/27.x picks are **not hardcoded** — `find_udid_for_ios_runtime` takes
-   `iphones[0]`, the first iPhone in `simctl list -j` order for that runtime
-   (`run_ios_tests.py:97-99`). Creating or deleting an iPhone device in runtime **26.0/26.0.1,
-   26.1, or 27.0 can silently re-point which device the Flutter matrix grabs mid-run.** Only
-   create throwaway/probe devices under 26.2 or 26.4.
-2. `B2888315` (iPhone 17, iOS 26.0 — the original investigation's device) sits in the same runtime
-   group the 26.0.1 run selects from. Don't reuse it.
+Run under heavy concurrent load from an unrelated test matrix on the same machine (load average
+50-69), on a simulator that matrix does not use — verified before launching.
 
 ## Repro environment details (for reference)
 
 - macOS 26.4.1 (25E253), Xcode 26.2 (17C52 toolchain)
-- Simulator used: "iPhone 17", iOS 26.0, UDID `B2888315-A100-413E-B2DA-2F2AE65E8C78` (this exact
-  UDID may no longer be booted by the time this is picked up — re-resolve via
-  `xcrun simctl list devices | grep Booted`, and note this environment has previously had
-  *multiple* simulators booted simultaneously, so don't blindly grep-and-take-all UDIDs)
+- Original repro on "iPhone 17" / iOS 26.0; post-fix verification on "iPhone 16e" / iOS 26.2.
+  Resolve a UDID with `xcrun simctl list devices | grep Booted` rather than reusing one from this
+  document, and check that only the simulator you intend is booted.
 - `idb_companion` binary reports "Built at Jul 14 2025 23:10:15", architecture arm64
 - Qalti built from `xcodeproject/Qalti.xcodeproj`, scheme `Qalti`, Debug config, via
   `xcodebuild ... -derivedDataPath xcodeproject/DerivedData_local build`
 - Simulator runner artifacts must be (re)generated once via
   `cd xcodeproject && bash ./scripts/archive_simulator_runner.sh` before the CLI's
-  `xcodebuild test-without-building` pipeline can connect at all (this was a real, separate
-  one-time setup gap found and resolved earlier in this session — already done in this checkout,
-  but worth knowing about if starting fresh elsewhere)
+  `xcodebuild test-without-building` pipeline can connect at all — a one-time setup gap worth
+  knowing about when starting from a fresh checkout
