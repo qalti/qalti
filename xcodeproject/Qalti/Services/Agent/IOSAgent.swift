@@ -660,7 +660,11 @@ class IOSAgent: Loggable {
             messages: historyForLLM,
             model: model.fullName,
             reasoningEffort: model.reasoning,
-            maxCompletionTokens: 1000,
+            // Reasoning-capable models draw hidden reasoning tokens from this same budget, not a
+            // separate one; too tight a cap can leave zero tokens for the visible answer (observed
+            // with gpt-5-nano returning empty content) even though a fixed 1000 was enough for
+            // non-reasoning models. Raised for headroom across all models.
+            maxCompletionTokens: 4000,
             temperature: 0.7,
             tools: tools
         )
