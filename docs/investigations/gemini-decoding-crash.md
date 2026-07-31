@@ -20,9 +20,15 @@ entry's `type` requires (`text`/`data`/`summary`) with `""` if missing — befor
 package's decoder ever sees the bytes. Lines needing no patch pass through byte-identical. No
 dependency fork/patch was needed, as hoped in "Fix option 1" below.
 
-Covered by `OpenRouterResponseSanitizerTests` (15 cases), which pin both the patches and — more
-importantly, since this runs over every byte of every model response — the byte-identical
-pass-through of everything it does not recognise.
+Covered by `OpenRouterResponseSanitizerTests` (18 cases), which pin both the patches, the
+byte-identical pass-through of everything the sanitizer does not recognise (the property that
+matters most, since this runs over every byte of every model response), and the middleware's
+delegation to it — without that last group, a middleware that quietly passed raw bytes through
+would still show a green suite while these two models crashed exactly as before.
+
+Re-verified live against both models *after* the logic was extracted out of the middleware into
+its own type, so the end-to-end result above holds for the code as it now stands, not only for the
+inline version it replaced.
 
 Step 4 of the plan below (the same treatment for `OpenRouterPointOutService`'s own middleware) was
 **not** done: that path is non-streaming and the failure has not been observed there. It is
