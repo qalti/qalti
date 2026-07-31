@@ -188,6 +188,8 @@ class TestRunner: Loggable {
 
     var onStatusChanged: ((String?) -> Void)?
     var onErrorChanged: ((String?) -> Void)?
+    /// Raised only for failures the user must change a setting to get past; see `RunBlockingError`.
+    var onRunBlocked: ((RunBlockingError) -> Void)?
     var onRunningChanged: ((Bool) -> Void)?
     var suiteContext: TestSuiteRunContext?
 
@@ -247,6 +249,9 @@ class TestRunner: Loggable {
         if credentialsService.bearer?.isEmpty ?? true {
             let errorMsg = IOSAgent.Error.missingOpenRouterKey.localizedDescription
             await setError(errorMsg)
+            if let blocking = RunBlockingError(from: IOSAgent.Error.missingOpenRouterKey) {
+                onRunBlocked?(blocking)
+            }
             let summary = await makeRunSummary(testURL: fileURL, testRunURL: nil, videoURL: nil)
             return .failure(summary, error: errorMsg)
         }
@@ -371,6 +376,12 @@ class TestRunner: Loggable {
         isRunning = false
         let errorMessage = error.localizedDescription
         let wasCancelled = agent?.isCancelled == true || agent == nil
+
+        // Classified here because this is the last point the typed error exists — everything
+        // downstream is a String.
+        if !wasCancelled, let blocking = RunBlockingError(from: error) {
+            onRunBlocked?(blocking)
+        }
 
         await stopRecordingSession()
         let finalVideoURL = currentRecordingSession?.outputURL ?? cliRecordingSession?.outputURL
