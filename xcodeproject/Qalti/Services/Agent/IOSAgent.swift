@@ -352,10 +352,23 @@ class IOSAgent: Loggable {
                     throw CancellationError()
                 }
 
-                // Handle non-retriable auth/billing errors immediately
-                if preparedQuery.errorCheckingMiddleware.authenticationFailed {
+                // Handle non-retriable auth/billing errors immediately.
+                //
+                // The middleware flags below are only set from `intercept(response:request:data:)`,
+                // which the package calls on non-streaming requests only — `StreamingSession`
+                // cancels on a non-2xx and raises `OpenAIError.statusError` without ever consulting
+                // the middleware. So on the agent's streaming path these flags stay false and a 401
+                // used to escape as a raw NSHTTPURLResponse header dump, *after* being retried three
+                // times against a key already known to be rejected. Read the status off the error
+                // itself first.
+                let streamedStatusCode: Int? = {
+                    if case .statusError(_, let statusCode) = error as? OpenAIError { return statusCode }
+                    return preparedQuery.errorCheckingMiddleware.lastStatusCode
+                }()
+
+                if preparedQuery.errorCheckingMiddleware.authenticationFailed || streamedStatusCode == 401 {
                     throw Error.authenticationFailed(source: credentialsService.bearerSource)
-                } else if preparedQuery.errorCheckingMiddleware.insufficientBalance {
+                } else if preparedQuery.errorCheckingMiddleware.insufficientBalance || streamedStatusCode == 402 {
                     throw Error.insufficientBalance
                 }
 
@@ -396,8 +409,7 @@ class IOSAgent: Loggable {
                     // without reliably providing the response body to our middleware. That means we
                     // can't safely classify HTTP 400 errors by inspecting the body (e.g. "thought_signature")
                     // on the client side. To keep the system reliable, we retry all 400s here.
-                    if let status = preparedQuery.errorCheckingMiddleware.lastStatusCode,
-                       (400...599).contains(status) {
+                    if let status = streamedStatusCode, (400...599).contains(status) {
                         if status == 401 || status == 402 {
                             return false
                         }
