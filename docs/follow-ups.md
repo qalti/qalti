@@ -45,13 +45,6 @@ the whole body from that middleware's `intercept(response:request:data:)`. Note 
 is a bare JSON object rather than an SSE `data:` line, so the sanitizer needs a variant that takes
 raw JSON without the prefix.
 
-### Two known-dead model IDs remain in the model picker
-
-`x-ai/grok-4` and `google/gemini-3-pro-preview` 404 at request time but are still offered in
-`TestRunner.AvailableModel.allCases`. Kept deliberately as documented examples of catalogue drift;
-see `docs/openrouter_models.md`. Remove them once nothing depends on that failure being
-reproducible.
-
 ### Model list has no automated drift check
 
 `TestRunner.AvailableModel` is hand-maintained against a catalogue that changes underneath it, and

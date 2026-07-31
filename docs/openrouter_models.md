@@ -5,19 +5,27 @@ OpenRouter model IDs Qalti's agent can drive. OpenRouter's catalogue changes ove
 get renamed, superseded, or removed — so this list can silently go stale: picking a dead ID in the
 UI/CLI produces a live 404 from OpenRouter at request time, not a build-time or startup failure.
 
-## Known-stale IDs (kept in the enum, not removed)
+## Retired IDs (removed 2026-07-31)
 
-As of 2026-07-31, two IDs in the enum are confirmed **dead** (hard 404 from OpenRouter):
+Two IDs were confirmed **dead** (hard 404 from OpenRouter) and have been removed from the enum,
+along with their aliases, in favour of live replacements:
 
-| Case | Dead ID | Live replacement | Case for replacement |
-|---|---|---|---|
+| Removed case | Dead ID | Replaced by | New case |
+| --- | --- | --- | --- |
 | `grok4` | `x-ai/grok-4` | `x-ai/grok-4.5` | `grok45` |
 | `gemini3proPreview` | `google/gemini-3-pro-preview` | `google/gemini-3.1-pro-preview` | `gemini31proPreview` |
 
-The dead cases are intentionally left in place rather than repointed or removed, so that a stale
-ID stays a reproducible, documented example rather than silently disappearing — the replacement
-cases were added alongside them instead. If you're touching this list, prefer removing the dead
-entries once you've confirmed nothing depends on the specific error behavior of picking one.
+Retiring an ID is a small breaking change, handled as follows:
+
+- **CLI:** `--model x-ai/grok-4` (or the `grok-4` / `grok 4` aliases) now **fails** with an error
+  listing the available models. It deliberately does not fall back to a default, and it does not
+  silently redirect to the replacement — either would report a result for a model that never ran.
+- **App:** a retired ID saved in `UserDefaults` no longer resolves, so the picker falls back to its
+  default. Nothing crashes and the selection is visible in the UI.
+
+Aliases for a retired ID are removed rather than repointed at the replacement, for the same reason:
+`grok-4` and `grok-4.5` are different models, and a run labelled with the wrong one is worse than a
+run that refuses to start.
 
 ## Other models in the enum confirmed live (as of the same check)
 

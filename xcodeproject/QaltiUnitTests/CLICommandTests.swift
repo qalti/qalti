@@ -89,6 +89,57 @@ final class CLICommandTests: XCTestCase {
         XCTAssertEqual(executionEnd, Date(timeIntervalSince1970: 1300))
     }
 
+    // MARK: - --model Parsing Tests
+
+    func test_parseArguments_acceptsAModelAlias() throws {
+        let mockEnvironment = MockEnvironmentProvider(
+            deviceUDID: nil,
+            allVariables: ["QALTI_TOKEN": "fake_token"]
+        )
+        let arguments = ["/path/to/test.test", "--model", "gpt-5-nano"]
+
+        let config = try runParseArguments(arguments: arguments, environment: mockEnvironment)
+
+        XCTAssertEqual(config.model, .gpt5nano)
+    }
+
+    /// An unrecognized `--model` used to be dropped silently, so the run proceeded on the default
+    /// model while the report was labelled as though it answered for the requested one — a
+    /// confidently wrong result. Retiring `x-ai/grok-4` and `google/gemini-3-pro-preview` makes
+    /// this a path real callers hit, so it must fail loudly.
+    func test_parseArguments_rejectsAnUnknownModel() {
+        let mockEnvironment = MockEnvironmentProvider(
+            deviceUDID: nil,
+            allVariables: ["QALTI_TOKEN": "fake_token"]
+        )
+        let arguments = ["/path/to/test.test", "--model", "definitely-not-a-model"]
+
+        XCTAssertThrowsError(
+            try runParseArguments(arguments: arguments, environment: mockEnvironment)
+        ) { error in
+            let message = (error as? LocalizedError)?.errorDescription ?? "\(error)"
+            XCTAssertTrue(message.contains("definitely-not-a-model"), "error should quote the input: \(message)")
+            XCTAssertTrue(message.contains("openai/gpt-4.1"), "error should list what is available: \(message)")
+        }
+    }
+
+    /// A retired ID must not resolve to its replacement: `grok-4` and `grok-4.5` are different
+    /// models, and a run labelled with the wrong one is worse than a run that refuses to start.
+    func test_parseArguments_rejectsARetiredModelIDRatherThanRedirecting() {
+        let mockEnvironment = MockEnvironmentProvider(
+            deviceUDID: nil,
+            allVariables: ["QALTI_TOKEN": "fake_token"]
+        )
+
+        for retired in ["x-ai/grok-4", "grok-4", "google/gemini-3-pro-preview", "gemini-3-pro"] {
+            let arguments = ["/path/to/test.test", "--model", retired]
+            XCTAssertThrowsError(
+                try runParseArguments(arguments: arguments, environment: mockEnvironment),
+                "retired id '\(retired)' should not parse"
+            )
+        }
+    }
+
     // MARK: - Argument Parsing Tests
 
     // SCENARIO 1: --udid from command line should ALWAYS WIN

@@ -22,9 +22,9 @@ DEVICE_UDID="${QALTI_SIM_UDID:?Set QALTI_SIM_UDID to a booted simulator UDID, e.
 : "${OPENROUTER_API_KEY:?Set OPENROUTER_API_KEY to an OpenRouter key (https://openrouter.ai/keys)}"
 
 # Order: gpt-4.1 first, claude-sonnet-4 second, then the rest of TestRunner.AvailableModel.allCases.
-# Known-dead IDs (grok-4, gemini-3-pro-preview — see docs/openrouter_models.md) are deliberately
-# NOT listed here: they would make this matrix permanently red and hide real regressions. Their
-# live replacements are covered instead.
+# This should be every entry in allCases. If a model 404s here, the ID has been retired from
+# OpenRouter's catalogue: replace it in the enum rather than leaving it in the matrix, or this
+# goes permanently red and hides real regressions (see docs/openrouter_models.md).
 MODELS=(
   "gpt-4.1"
   "claude-4-sonnet"
