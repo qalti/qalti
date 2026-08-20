@@ -20,7 +20,7 @@
   - Install Qalti:
 
     ```bash
-    curl -L -o Qalti.dmg https://app.qalti.com/releases/Qalti.dmg
+    curl -L -o Qalti.dmg https://github.com/qalti/qalti/releases/latest/download/Qalti.dmg
     hdiutil attach Qalti.dmg -nobrowse -quiet -mountpoint /Volumes/Qalti
     cp -R /Volumes/Qalti/Qalti.app /Applications/Qalti.app
     hdiutil detach /Volumes/Qalti -quiet
