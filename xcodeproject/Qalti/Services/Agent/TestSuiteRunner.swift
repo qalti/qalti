@@ -13,6 +13,8 @@ final class TestSuiteRunner: ObservableObject {
     @Published private(set) var isTestRunning: Bool = false
     @Published private(set) var hasRuntime: Bool = false
     @Published private(set) var currentRunHistory: RunHistory?
+    /// Set when a run stops for a reason the user must fix. Drives a modal; see `RunBlockingError`.
+    @Published var runBlockingError: RunBlockingError?
 
     private let credentialsService: CredentialsService
     private let idbManager: IdbManaging
@@ -62,6 +64,12 @@ final class TestSuiteRunner: ObservableObject {
     func presentUserError(_ message: String) {
         testError = message
         testStatus = nil
+    }
+
+    /// Surfaces a configuration problem as a dialog *in addition to* the inline strip, so the
+    /// reason is readable and the fix is one click away.
+    func presentRunBlockingError(_ error: RunBlockingError) {
+        runBlockingError = error
     }
 
     func clearUserMessages() {
@@ -131,10 +139,13 @@ private extension TestSuiteRunner {
             return false
         }
 
-        if credentialsService.openRouterKey?.isEmpty ?? true {
+        if credentialsService.bearer?.isEmpty ?? true {
             let message = IOSAgent.Error.missingOpenRouterKey.localizedDescription
             statusMessage = message
             presentUserError(message)
+            if let blocking = RunBlockingError(from: IOSAgent.Error.missingOpenRouterKey) {
+                presentRunBlockingError(blocking)
+            }
             return false
         }
 
@@ -506,6 +517,10 @@ private extension TestSuiteRunner {
 
         runner.onErrorChanged = { [weak self] error in
             self?.testError = error
+        }
+
+        runner.onRunBlocked = { [weak self] blocking in
+            self?.presentRunBlockingError(blocking)
         }
 
         runner.onRunningChanged = { [weak self] isRunning in

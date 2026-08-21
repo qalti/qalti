@@ -17,7 +17,7 @@ class IOSAgent: Loggable {
         case unableToSendImage
         case unableToCreateLogDirectory
         case unableToWriteLogFile
-        case authenticationFailed
+        case authenticationFailed(source: String)
         case insufficientBalance
         case screenshotWithoutS3URL
         case scriptFailed(message: String)
@@ -38,8 +38,8 @@ class IOSAgent: Loggable {
                 return "Failed to create log directory"
             case .unableToWriteLogFile:
                 return "Failed to write log file"
-            case .authenticationFailed:
-                return "OpenRouter authentication failed. Please check your API key."
+            case .authenticationFailed(let source):
+                return "OpenRouter authentication failed using key from \(source). Please check that this key is a valid, active OpenRouter API key."
             case .insufficientBalance:
                 return "OpenRouter balance is insufficient. Please add funds to continue running tests."
             case .screenshotWithoutS3URL:
@@ -49,7 +49,7 @@ class IOSAgent: Loggable {
             case .backendReportedError(let statusCode, let message):
                 return "Server error (\(statusCode)): \(message)"
             case .missingOpenRouterKey:
-                return "OpenRouter API key is missing. Please add it in Settings."
+                return "OpenRouter API key is missing. Checked CLI --token/OPENROUTER_API_KEY and app Settings; neither is set."
             case .missingS3Credentials:
                 return "AWS S3 credentials are missing. Please add them in Settings."
             case .missingBase64ImageData:
@@ -72,6 +72,9 @@ class IOSAgent: Loggable {
         private var _timeout: Bool = false
         private var _lastStatusCode: Int? = nil
         private var _lastErrorBody: String? = nil
+        // Reassembles raw network chunks into whole SSE lines before sanitization; see
+        // OpenRouterResponseSanitizer.
+        private let _streamBuffer = OpenRouterResponseSanitizer.StreamBuffer()
 
         var insufficientBalance: Bool { stateQueue.sync { _insufficientBalance } }
         var authenticationFailed: Bool { stateQueue.sync { _authenticationFailed } }
@@ -103,6 +106,14 @@ class IOSAgent: Loggable {
             default:
                 return (response, data)
             }
+        }
+
+        // Some OpenRouter-fronted models stream chunks that are valid JSON but don't match the
+        // vendored client's strict Codable schema, which throws DecodingError and kills the whole
+        // stream. OpenRouterResponseSanitizer patches only those known-bad shapes; every other
+        // line passes through byte-identical.
+        func interceptStreamingData(request: URLRequest?, _ data: Data) -> Data {
+            stateQueue.sync { _streamBuffer.consume(data) }
         }
     }
 
@@ -341,10 +352,23 @@ class IOSAgent: Loggable {
                     throw CancellationError()
                 }
 
-                // Handle non-retriable auth/billing errors immediately
-                if preparedQuery.errorCheckingMiddleware.authenticationFailed {
-                    throw Error.authenticationFailed
-                } else if preparedQuery.errorCheckingMiddleware.insufficientBalance {
+                // Handle non-retriable auth/billing errors immediately.
+                //
+                // The middleware flags below are only set from `intercept(response:request:data:)`,
+                // which the package calls on non-streaming requests only — `StreamingSession`
+                // cancels on a non-2xx and raises `OpenAIError.statusError` without ever consulting
+                // the middleware. So on the agent's streaming path these flags stay false and a 401
+                // used to escape as a raw NSHTTPURLResponse header dump, *after* being retried three
+                // times against a key already known to be rejected. Read the status off the error
+                // itself first.
+                let streamedStatusCode: Int? = {
+                    if case .statusError(_, let statusCode) = error as? OpenAIError { return statusCode }
+                    return preparedQuery.errorCheckingMiddleware.lastStatusCode
+                }()
+
+                if preparedQuery.errorCheckingMiddleware.authenticationFailed || streamedStatusCode == 401 {
+                    throw Error.authenticationFailed(source: credentialsService.bearerSource)
+                } else if preparedQuery.errorCheckingMiddleware.insufficientBalance || streamedStatusCode == 402 {
                     throw Error.insufficientBalance
                 }
 
@@ -385,8 +409,7 @@ class IOSAgent: Loggable {
                     // without reliably providing the response body to our middleware. That means we
                     // can't safely classify HTTP 400 errors by inspecting the body (e.g. "thought_signature")
                     // on the client side. To keep the system reliable, we retry all 400s here.
-                    if let status = preparedQuery.errorCheckingMiddleware.lastStatusCode,
-                       (400...599).contains(status) {
+                    if let status = streamedStatusCode, (400...599).contains(status) {
                         if status == 401 || status == 402 {
                             return false
                         }
@@ -564,20 +587,24 @@ class IOSAgent: Loggable {
         if AppConstants.shouldLogAgentActions, AppConstants.isDebug {
             try saveMessagesToLog(runHistory.getHistory(imageType: .base64))
         }
-        guard let openRouterKey = credentialsService.openRouterKey, !openRouterKey.isEmpty else {
-            logger.error("OpenRouter API key missing")
+        guard let bearerKey = credentialsService.bearer, !bearerKey.isEmpty else {
+            logger.error("OpenRouter API key missing (checked CLI token and app Settings)")
             throw Error.missingOpenRouterKey
         }
         let query = ChatQuery(
             messages: historyForLLM,
             model: model.fullName,
             reasoningEffort: model.reasoning,
-            maxCompletionTokens: 1000,
+            // Reasoning-capable models draw hidden reasoning tokens from this same budget, not a
+            // separate one; too tight a cap can leave zero tokens for the visible answer (observed
+            // with gpt-5-nano returning empty content) even though a fixed 1000 was enough for
+            // non-reasoning models. Raised for headroom across all models.
+            maxCompletionTokens: 4000,
             temperature: 0.7,
             tools: tools
         )
         let configuration = OpenAI.Configuration(
-            token: openRouterKey,
+            token: bearerKey,
             host: "openrouter.ai",
             port: 443,
             scheme: "https",

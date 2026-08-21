@@ -32,6 +32,27 @@ final class IOSRuntimeRequestBuilderTests: XCTestCase {
         super.tearDown()
     }
     
+    // MARK: - Deadline Tests
+
+    /// Deadlines are set explicitly rather than inherited from Foundation, but are deliberately
+    /// still 60s everywhere — making them explicit must not change behaviour on its own. This test
+    /// exists so that tightening one becomes a visible, deliberate edit rather than a silent one.
+    func test_buildRequest_setsExplicitTimeout_forEveryCommand() throws {
+        let expected: [(RunnerCommand, TimeInterval)] = [
+            (.openApp(bundleID: "com.apple.reminders", launchArguments: nil, launchEnvironment: nil), 60),
+            (.openURL(urlString: "https://example.com"), 60),
+            (.getHierarchy, 60),
+            (.tap(x: 1, y: 2, isLong: false), 60),
+            (.input(text: "hello"), 60),
+            (.shake, 60)
+        ]
+
+        for (command, timeout) in expected {
+            let request = try XCTUnwrap(requestBuilder.buildRequest(for: command))
+            XCTAssertEqual(request.timeoutInterval, timeout, "unexpected deadline for \(command)")
+        }
+    }
+
     // MARK: - Command Request Tests
 
     func test_buildRequest_forTap() throws {

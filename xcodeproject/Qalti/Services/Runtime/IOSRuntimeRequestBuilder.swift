@@ -46,6 +46,9 @@ struct IOSRuntimeRequestBuilder: Loggable {
 
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod(for: command)
+        // Explicit per-command deadline, so this is a decision the code states rather than a
+        // value inherited from Foundation by accident.
+        request.timeoutInterval = Self.timeout(for: command)
         // Wait flag applies to all commands (even GET) so we pass it via a dedicated header.
         request.setValue(waitForCompletion ? "true" : "false", forHTTPHeaderField: "X-Qalti-Wait")
 
@@ -54,6 +57,26 @@ struct IOSRuntimeRequestBuilder: Loggable {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
         return request
+    }
+
+    /// Per-command request deadlines.
+    ///
+    /// Deliberately uniform at 60s, which is what every command already got implicitly from
+    /// Foundation's default — making them explicit must not change behaviour on its own. The
+    /// `open_app` hang this branch fixes was never a deadline problem: it was an unresolvable app
+    /// name being sent downstream as if it were a bundle ID (see `AppBundleResolver.resolve(_:)`),
+    /// so shortening these would trade a fixed bug for new flakes on a loaded machine.
+    ///
+    /// The switch is here so individual commands can be tuned on evidence — measure first.
+    private static func timeout(for command: RunnerCommand) -> TimeInterval {
+        switch command {
+        case .openApp, .openURL:
+            return 60
+        case .getHierarchy:
+            return 60
+        default:
+            return 60
+        }
     }
 
     private func path(for command: RunnerCommand) -> String {

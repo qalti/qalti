@@ -332,9 +332,18 @@ struct CLICommand {
                 i += 1
                 guard i < arguments.count else { throw CLIError(message: "Missing value for --model") }
                 let input = arguments[i]
-                if let parsed = TestRunner.AvailableModel(from: input) {
-                    model = parsed
+                // An unrecognized value used to be dropped silently, so the run proceeded on the
+                // default model while the report claimed to answer for the one that was asked for.
+                // That is worse than not running: it produces a confidently wrong result. Now that
+                // retired model IDs exist (x-ai/grok-4, google/gemini-3-pro-preview), this is a
+                // path real callers will hit.
+                guard let parsed = TestRunner.AvailableModel(from: input) else {
+                    let known = TestRunner.AvailableModel.allCases
+                        .map(\.rawValue)
+                        .joined(separator: ", ")
+                    throw CLIError(message: "Unknown --model '\(input)'. Available models: \(known)")
                 }
+                model = parsed
 
             case "--prompts-dir":
                 i += 1

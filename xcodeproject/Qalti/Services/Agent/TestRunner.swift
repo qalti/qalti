@@ -40,27 +40,29 @@ class TestRunner: Loggable {
         case gpt41 = "openai/gpt-4.1"
         case gemini25pro = "google/gemini-2.5-pro"
         case claude4 = "anthropic/claude-sonnet-4"
-        case grok4 = "x-ai/grok-4"
         case gpt5mini = "openai/gpt-5-mini"
         case gpt5 = "openai/gpt-5"
         case gpt5nano = "openai/gpt-5-nano"
         case claudeHaiku45 = "anthropic/claude-haiku-4.5"
-        case gemini3proPreview = "google/gemini-3-pro-preview"
         case gemini3flashPreview = "google/gemini-3-flash-preview"
         case gemini3proImagePreview = "google/gemini-3-pro-image-preview"
+        // Replaced x-ai/grok-4 and google/gemini-3-pro-preview, which were removed from
+        // OpenRouter's live catalogue and 404 at request time; see docs/openrouter_models.md.
+        case grok45 = "x-ai/grok-4.5"
+        case gemini31proPreview = "google/gemini-3.1-pro-preview"
 
         static var allCases: [AvailableModel] {
             return [
                 .gpt41,
                 .gemini25pro,
-                .gemini3proPreview,
                 .gemini3flashPreview,
                 .claude4,
                 .claudeHaiku45,
-                .grok4,
                 .gpt5mini,
                 .gpt5nano,
-                .gpt5
+                .gpt5,
+                .grok45,
+                .gemini31proPreview
             ]
         }
 
@@ -68,10 +70,6 @@ class TestRunner: Loggable {
 
         var displayName: String {
             switch self {
-            case .grok4:
-                return "Grok 4"
-            case .gemini3proPreview:
-                return "Gemini 3 Pro (preview)"
             case .gemini3flashPreview:
                 return "Gemini 3 Flash (preview)"
             case .gemini3proImagePreview:
@@ -90,15 +88,21 @@ class TestRunner: Loggable {
                 return "Claude 4 Sonnet"
             case .claudeHaiku45:
                 return "Claude 4.5 Haiku"
+            case .grok45:
+                return "Grok 4.5"
+            case .gemini31proPreview:
+                return "Gemini 3.1 Pro (preview)"
             }
         }
 
         var reasoning: ChatQuery.ReasoningEffort? {
             switch self {
-            case .gpt5:
-                // GPT-5 benefits from constrained reasoning by default.
+            case .gpt5, .gpt5nano:
+                // Constrain reasoning by default; gpt5nano was observed exhausting its whole
+                // completion-token budget on hidden reasoning and returning empty content when
+                // left unset (see docs/investigations/gpt5-nano-flakiness.md).
                 return .low
-            case .gemini3proPreview, .gemini3flashPreview:
+            case .gemini3flashPreview, .gemini31proPreview:
                 // Enable reasoning for Gemini 3 models (OpenRouter expects this via reasoning.effort).
                 return .low
             default:
@@ -107,7 +111,8 @@ class TestRunner: Loggable {
         }
 
         var separateImageAndText: Bool {
-            return self == .gemini3proPreview || self == .gemini3flashPreview || self == .gemini3proImagePreview
+            return self == .gemini3flashPreview
+                || self == .gemini3proImagePreview || self == .gemini31proPreview
         }
 
         // Convenience initializer that maps common inputs/aliases to a known model
@@ -125,18 +130,18 @@ class TestRunner: Loggable {
                 self = .gpt41
             case "gemini 2.5 pro", "gemini-2.5-pro":
                 self = .gemini25pro
-            case "gemini 3 pro", "gemini-3-pro", "gemini-3-pro-preview":
-                self = .gemini3proPreview
             case "gemini 3 flash", "gemini-3-flash", "gemini-3-flash-preview":
                 self = .gemini3flashPreview
             case "gemini 3 pro image", "gemini-3-pro-image", "gemini-3-pro-image-preview":
                 self = .gemini3proImagePreview
             case "claude 4 sonnet", "claude-4-sonnet", "claude4":
                 self = .claude4
-            case "grok-4", "grok 4", "grok4":
-                self = .grok4
             case "claude haiku 4.5", "claude-haiku-4.5", "haiku 4.5", "haiku-4.5":
                 self = .claudeHaiku45
+            case "grok-4.5", "grok 4.5", "grok45":
+                self = .grok45
+            case "gemini 3.1 pro", "gemini-3.1-pro", "gemini-3.1-pro-preview":
+                self = .gemini31proPreview
             default:
                 return nil
             }
@@ -183,6 +188,8 @@ class TestRunner: Loggable {
 
     var onStatusChanged: ((String?) -> Void)?
     var onErrorChanged: ((String?) -> Void)?
+    /// Raised only for failures the user must change a setting to get past; see `RunBlockingError`.
+    var onRunBlocked: ((RunBlockingError) -> Void)?
     var onRunningChanged: ((Bool) -> Void)?
     var suiteContext: TestSuiteRunContext?
 
@@ -239,9 +246,12 @@ class TestRunner: Loggable {
             return .failure(summary, error: errorMsg)
         }
 
-        if credentialsService.openRouterKey?.isEmpty ?? true {
+        if credentialsService.bearer?.isEmpty ?? true {
             let errorMsg = IOSAgent.Error.missingOpenRouterKey.localizedDescription
             await setError(errorMsg)
+            if let blocking = RunBlockingError(from: IOSAgent.Error.missingOpenRouterKey) {
+                onRunBlocked?(blocking)
+            }
             let summary = await makeRunSummary(testURL: fileURL, testRunURL: nil, videoURL: nil)
             return .failure(summary, error: errorMsg)
         }
@@ -366,6 +376,12 @@ class TestRunner: Loggable {
         isRunning = false
         let errorMessage = error.localizedDescription
         let wasCancelled = agent?.isCancelled == true || agent == nil
+
+        // Classified here because this is the last point the typed error exists — everything
+        // downstream is a String.
+        if !wasCancelled, let blocking = RunBlockingError(from: error) {
+            onRunBlocked?(blocking)
+        }
 
         await stopRecordingSession()
         let finalVideoURL = currentRecordingSession?.outputURL ?? cliRecordingSession?.outputURL

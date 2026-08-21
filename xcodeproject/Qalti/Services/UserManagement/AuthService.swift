@@ -62,6 +62,14 @@ public class CredentialsService: ObservableObject, Loggable {
         return nil
     }
 
+    /// Human-readable description of where `bearer` currently resolves from, for diagnostics
+    /// (e.g. distinguishing a CLI-provided token from a stale key saved in app Settings).
+    var bearerSource: String {
+        if let key = apiKey, !key.isEmpty { return "CLI token (--token/OPENROUTER_API_KEY)" }
+        if let key = openRouterKey, !key.isEmpty { return "app Settings (Keychain)" }
+        return "none"
+    }
+
     // MARK: - OpenRouter Key Management
 
     func setOpenRouterKey(_ key: String) {

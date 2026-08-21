@@ -269,7 +269,13 @@ class IOSRuntime: Equatable, Loggable {
 
     /// Opens an app on the runtime and returns structured response
     func openApp(name: String, launchArguments: [String]? = nil, launchEnvironment: [String: String]? = nil, completion: @escaping (Response) -> Void) {
-        let bundleID = appBundleResolver.resolveBundle(for: name)
+        // Fail fast on an unknown app: sending an unresolved name to the runner as if it were a
+        // bundle ID makes a missing app look like a request timeout ~60s later.
+        let resolution = appBundleResolver.resolve(name)
+        guard case .resolved(let bundleID) = resolution else {
+            completion(Response(error: resolution.failureMessage ?? "Could not resolve bundle ID for app: \(name)"))
+            return
+        }
 
         guard !bundleID.isEmpty else {
             completion(Response(error: "Could not resolve bundle ID for app: \(name)"))

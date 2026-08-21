@@ -65,7 +65,8 @@ final class OpenRouterPointOutService: Loggable {
         relative: Bool,
         completion: @escaping (Result<UIElementLocator.PointOutResponse, UIElementLocator.Error>) -> Void
     ) {
-        guard let openRouterKey = credentialsService.openRouterKey, !openRouterKey.isEmpty else {
+        guard let bearerKey = credentialsService.bearer, !bearerKey.isEmpty else {
+            logger.error("OpenRouter API key missing (checked CLI token and app Settings)")
             credentialsService.triggerCredentialsRequired()
             completion(.failure(.credentialsRequired))
             return
@@ -92,7 +93,7 @@ final class OpenRouterPointOutService: Loggable {
         )
 
         let configuration = OpenAI.Configuration(
-            token: openRouterKey,
+            token: bearerKey,
             host: "openrouter.ai",
             port: 443,
             scheme: "https",
@@ -147,6 +148,7 @@ final class OpenRouterPointOutService: Loggable {
 
             case .failure(let error):
                 if errorMiddleware.authenticationFailed {
+                    logger.error("OpenRouter authentication failed using key from \(credentialsService.bearerSource). Please check that this key is a valid, active OpenRouter API key.")
                     credentialsService.triggerCredentialsRequired()
                     return completion(.failure(.credentialsRequired))
                 }

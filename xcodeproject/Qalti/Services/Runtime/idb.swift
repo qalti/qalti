@@ -689,20 +689,40 @@ extension IdbManager {
         var taskError: Error?
         var apps: [(name: String, bundleID: String)] = []
 
-        Task {
+        // `abandoned` is set only after the wait below has timed out, at which point this function
+        // has already thrown and will never read `apps`/`taskError`. It exists so the orphaned task
+        // stays quiet instead of reporting a stale failure minutes later, under a caller that has
+        // long since moved on.
+        let abandoned = AbandonedFlag()
+
+        let task = Task {
             do {
                 let response = try await connection.client.list_apps(request)
                 apps = response.apps.map { appInfo in
                     (name: appInfo.name, bundleID: appInfo.bundleID)
                 }
             } catch {
-                errorCapturer.capture(error: error)
+                if !abandoned.isSet {
+                    errorCapturer.capture(error: error)
+                }
                 taskError = error
             }
             semaphore.signal()
         }
 
-        semaphore.wait()
+        // Bounded: an unresponsive idb_companion used to block this thread indefinitely, which
+        // surfaced later as an unrelated HTTP timeout somewhere else entirely.
+        if semaphore.wait(timeout: .now() + Self.listAppsTimeout) == .timedOut {
+            // Cancel so a hung RPC doesn't outlive the call that started it.
+            abandoned.set()
+            task.cancel()
+
+            let message = "list_apps timed out after \(Int(Self.listAppsTimeout))s "
+                        + "(idb_companion is not responding for UDID \(udid))"
+            let error = IdbError.invalidResponse(message: message)
+            errorCapturer.capture(error: error)
+            throw error
+        }
 
         if let error = taskError {
             throw error
@@ -711,6 +731,26 @@ extension IdbManager {
         return apps
     }
 
+    /// How long to wait for `list_apps` before treating idb_companion as hung.
+    private static let listAppsTimeout: TimeInterval = 20
+}
+
+/// One-way flag marking a timed-out `list_apps` call, so its orphaned task knows the caller is gone.
+private final class AbandonedFlag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = false
+
+    var isSet: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return value
+    }
+
+    func set() {
+        lock.lock()
+        defer { lock.unlock() }
+        value = true
+    }
 }
 
 public enum TargetType: String {

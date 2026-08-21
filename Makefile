@@ -18,6 +18,7 @@ VENV_BIN := $(VENV_DIR)/bin
 VENV_PYTHON := $(VENV_BIN)/python
 VENV_PIP := $(VENV_BIN)/pip
 SCRIPT := scripts/build_qalti.py
+SCRIPTS_DIR := scripts
 XCODE_SCRIPT := scripts/xcode_build.sh
 
 # Default target
@@ -33,8 +34,8 @@ help:
 	@echo "  $(MAGENTA)first-run$(NC)      - First-time setup with guidance"
 	@echo ""
 	@echo "$(BOLD)Development:$(NC)"
-	@echo "  $(GREEN)format$(NC)         - Format Python code with black"
-	@echo "  $(GREEN)lint$(NC)           - Lint Python code with flake8"
+	@echo "  $(GREEN)format$(NC)         - Format Python code with ruff"
+	@echo "  $(GREEN)lint$(NC)           - Lint Python code with ruff"
 	@echo "  $(MAGENTA)reset-permissions$(NC) - Reset folder access permissions"
 	@echo ""
 	@echo "$(BOLD)Utilities:$(NC)"
@@ -75,27 +76,30 @@ xcode-fast:
 # Create virtual environment and install tools
 .PHONY: venv
 venv: $(VENV_DIR)
+	$(VENV_PIP) install ruff requests python-dotenv
+	@echo "$(BOLD)$(CYAN)💡 To activate: source $(VENV_DIR)/bin/activate$(NC)"
 
 $(VENV_DIR):
 	@echo "$(BOLD)$(CYAN)🔧 Creating Python virtual environment...$(NC)"
 	$(PYTHON) -m venv $(VENV_DIR)
-	@echo "$(CYAN)📦 Installing black and flake8...$(NC)"
+	@echo "$(CYAN)📦 Installing dependencies...$(NC)"
 	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install black flake8
+	$(VENV_PIP) install ruff requests python-dotenv
 	@echo "$(BOLD)$(GREEN)✅ Virtual environment ready$(NC)"
 
-# Format code with black
+# Format code with ruff
 .PHONY: format
 format: $(VENV_DIR)
 	@echo "$(BOLD)$(GREEN)🎨 Formatting Python code...$(NC)"
-	$(VENV_BIN)/black $(SCRIPT)
+	$(VENV_BIN)/ruff format $(SCRIPTS_DIR)
 	@echo "$(GREEN)✅ Formatting complete$(NC)"
 
-# Lint code with flake8
+# Lint code with ruff
 .PHONY: lint
 lint: $(VENV_DIR)
 	@echo "$(BOLD)$(GREEN)🔍 Linting Python code...$(NC)"
-	$(VENV_BIN)/flake8 $(SCRIPT) --max-line-length=100 --extend-ignore=E203,W503
+	$(VENV_BIN)/ruff check $(SCRIPTS_DIR)
+	$(VENV_BIN)/ruff format --check $(SCRIPTS_DIR)
 	@echo "$(GREEN)✅ Linting complete$(NC)"
 
 # First-time setup with guidance

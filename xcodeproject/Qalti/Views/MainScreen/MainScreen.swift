@@ -263,6 +263,28 @@ struct MainScreen: View, Loggable {
         )
         .ignoresSafeArea()
         .legacy_containerBackground(.thick)
+        // A run that stopped because something needs configuring: the inline status strip is too
+        // small and too easily missed for these, and there is a specific place to send the user.
+        .alert(
+            suiteRunner.runBlockingError?.title ?? "",
+            isPresented: Binding(
+                get: { suiteRunner.runBlockingError != nil },
+                set: { if !$0 { suiteRunner.runBlockingError = nil } }
+            ),
+            presenting: suiteRunner.runBlockingError
+        ) { blocking in
+            if blocking.remedy == .openSettings {
+                Button("Open Settings") {
+                    suiteRunner.runBlockingError = nil
+                    showSettings(reason: .credentialsRequired)
+                }
+            }
+            Button("Dismiss", role: .cancel) {
+                suiteRunner.runBlockingError = nil
+            }
+        } message: { blocking in
+            Text(blocking.message)
+        }
         .overlay(
             // Blocking overlays
             Group {
