@@ -1,12 +1,19 @@
+//
+//  CredentialsService.swift
+//  Qalti
+//
+//  Created by Pavel Akhrameev on 06.03.26.
+//
+
 import Foundation
 import Logging
 
 // MARK: - Callback Token (now using shared CallbackToken from CallbackToken.swift)
 
-public class CredentialsService: ObservableObject, Loggable {
-    
+public class CredentialsService: CredentialsServicing, ObservableObject, Loggable {
+
     // MARK: - Errors
-    
+
     enum CredentialsError: Error, LocalizedError {
         case missingCredentials
 
@@ -42,17 +49,18 @@ public class CredentialsService: ObservableObject, Loggable {
         // Load OpenRouter key and S3 settings from Keychain on init
         self.openRouterKey = keychainManager.loadOpenRouterKey()
         self.s3Settings = keychainManager.loadS3Settings()
-        
+
         // Update credentials state based on OpenRouter key
         updateCredentialsState()
     }
 
     // MARK: - CLI Helper
     /// Inject an API key directly for headless CLI runs.
-    /// Does not modify credentials state or persist in keychain.
+    /// Updates the credentials-available flag jointly with the OpenRouter key;
+    /// does not persist to keychain.
     func setApiKeyForCLI(_ key: String) {
         self.apiKey = key
-        self.hasCredentials = !key.isEmpty
+        updateCredentialsState()
     }
 
     /// Computed bearer value used by backend services. Returns API key if present, otherwise OpenRouter key.
@@ -102,8 +110,11 @@ public class CredentialsService: ObservableObject, Loggable {
     // MARK: - Private Methods
 
     private func updateCredentialsState() {
-        // Credentials are available if an OpenRouter key exists.
-        self.hasCredentials = (openRouterKey != nil && !openRouterKey!.isEmpty)
+        // Credentials are available if either a CLI-injected API key or a
+        // stored OpenRouter key is present. Keep this in sync with `bearer`.
+        let hasApiKey = !(apiKey ?? "").isEmpty
+        let hasOpenRouterKey = !(openRouterKey ?? "").isEmpty
+        self.hasCredentials = hasApiKey || hasOpenRouterKey
     }
 
     private func notifyCredentialsChanged() {

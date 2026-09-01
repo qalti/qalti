@@ -6,25 +6,39 @@ import OpenAI
 @MainActor
 class TestRunner: Loggable {
 
+    /// Cap on honored server `Retry-After` to avoid hour-long stalls.
+    static let maxServerHintDelay: TimeInterval = 300
+
+    nonisolated static func effectiveRetryDelay(strategyDelay: TimeInterval, serverHint: TimeInterval?) -> TimeInterval {
+        if let serverHint, serverHint > 0 {
+            return min(serverHint, maxServerHintDelay)
+        }
+        return strategyDelay
+    }
+
     private let executionMode: AppExecutionMode
     private let runHistory: RunHistory
     private let recordVideo: Bool
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     private let idbManager: IdbManaging
     private let errorCapturer: ErrorCapturing
     private let fileManager: FileSystemManaging
     private var cliRecordingSession: GRPCRecordingSessionProtocol?
     private let cliRecorderFactory: ((URL) -> GRPCRecordingSessionProtocol)?
+    private let retryStrategy: RetryStrategy
+    private let delayProvider: DelayProvider
 
     init(
         executionMode: AppExecutionMode,
         runHistory: RunHistory,
         recordVideo: Bool,
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         idbManager: IdbManaging,
         errorCapturer: ErrorCapturing,
         fileManager: FileSystemManaging = FileManager.default,
-        cliRecorderFactory: ((URL) -> GRPCRecordingSessionProtocol)? = nil
+        cliRecorderFactory: ((URL) -> GRPCRecordingSessionProtocol)? = nil,
+        retryStrategy: RetryStrategy = RetryStrategyFactory.create(for: .production),
+        delayProvider: DelayProvider = SystemDelayProvider()
     ) {
         self.executionMode = executionMode
         self.runHistory = runHistory
@@ -34,6 +48,8 @@ class TestRunner: Loggable {
         self.idbManager = idbManager
         self.fileManager = fileManager
         self.cliRecorderFactory = cliRecorderFactory
+        self.retryStrategy = retryStrategy
+        self.delayProvider = delayProvider
     }
 
     enum AvailableModel: String, CaseIterable {
@@ -48,6 +64,7 @@ class TestRunner: Loggable {
         case gemini3proPreview = "google/gemini-3-pro-preview"
         case gemini3flashPreview = "google/gemini-3-flash-preview"
         case gemini3proImagePreview = "google/gemini-3-pro-image-preview"
+        case openrouterFree = "openrouter/free"
 
         static var allCases: [AvailableModel] {
             return [
@@ -60,7 +77,8 @@ class TestRunner: Loggable {
                 .grok4,
                 .gpt5mini,
                 .gpt5nano,
-                .gpt5
+                .gpt5,
+                .openrouterFree
             ]
         }
 
@@ -90,6 +108,8 @@ class TestRunner: Loggable {
                 return "Claude 4 Sonnet"
             case .claudeHaiku45:
                 return "Claude 4.5 Haiku"
+            case .openrouterFree:
+                return "Free Models Router (free)"
             }
         }
 
@@ -137,6 +157,8 @@ class TestRunner: Loggable {
                 self = .grok4
             case "claude haiku 4.5", "claude-haiku-4.5", "haiku 4.5", "haiku-4.5":
                 self = .claudeHaiku45
+            case "free", "openrouter-free", "open router free", "open-router-free", "openrouter", "open router", "open-router free":
+                self = .openrouterFree
             default:
                 return nil
             }
@@ -269,13 +291,15 @@ class TestRunner: Loggable {
         await setStatus("Starting test...")
         await updateRunStatus(.running, preferredURL: normalizedURL)
 
-        let result = await executeTest(
-            runtime: runtime,
-            testURL: normalizedURL,
-            model: model,
-            testContent: test,
-            workingDirectory: workingDirectory
-        )
+        let result = await executeTestWithRetry(testURL: normalizedURL) {
+            await self.executeTest(
+                runtime: runtime,
+                testURL: normalizedURL,
+                model: model,
+                testContent: test,
+                workingDirectory: workingDirectory
+            )
+        }
         return result
     }
 
@@ -296,6 +320,94 @@ class TestRunner: Loggable {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             if self?.testStatus == "Test stopped" { self?.testStatus = nil }
+        }
+    }
+
+    private struct AttemptError: LocalizedError {
+        let message: String
+        var errorDescription: String? { message }
+    }
+
+    /// Executes a test with configurable retry strategy for handling rate limits and temporary failures
+    func executeTestWithRetry(
+        testURL: URL,
+        singleAttemptExecutor: () async -> RunCompletion
+    ) async -> RunCompletion {
+
+        var lastFailureSummary: RunSummary? = nil
+        var lastError: String? = nil
+
+        for attempt in 1...retryStrategy.maxAttempts {
+            logger.debug("Executing test attempt \(attempt)/\(retryStrategy.maxAttempts)")
+
+            let result = await singleAttemptExecutor()
+
+            // Check if the result indicates a retryable failure
+            switch result {
+            case .success, .cancelled:
+                // Success or user cancellation - don't retry
+                return result
+
+            case .failure(let summary, let error):
+                lastFailureSummary = summary
+                lastError = error
+
+                let attemptError = AttemptError(message: error)
+
+                // Check if this error is retryable according to our strategy,
+                // and only bother if there are more attempts remaining.
+                guard attempt < retryStrategy.maxAttempts,
+                      retryStrategy.shouldRetry(attempt: attempt, error: attemptError) else {
+                    // Error is not retryable or max attempts exceeded
+                    logger.info("Error not retryable or max attempts exceeded: \(error)")
+                    await setError(error)
+                    return result
+                }
+
+                if let strategyDelay = retryStrategy.nextDelay(attempt: attempt) {
+                    let serverHint = self.agent?.lastRateLimitHint?.retryAfter
+                    let delay = Self.effectiveRetryDelay(strategyDelay: strategyDelay, serverHint: serverHint)
+                    let source = serverHint != nil ? "server Retry-After" : "strategy"
+                    logger.info("Retrying in \(delay)s via \(source) (attempt \(attempt)/\(retryStrategy.maxAttempts))")
+
+                    await setStatus("Rate limited, retrying in \(Int(delay))s (attempt \(attempt)/\(retryStrategy.maxAttempts))...")
+
+                    do {
+                        try await delayProvider.delay(delay)
+                    } catch is CancellationError {
+                        logger.info("Delay cancelled before retry attempt \(attempt + 1)")
+                        return .cancelled(summary, reason: CancellationReason.taskCancelled.rawValue)
+                    } catch {
+                        logger.error("Delay failed with non-cancellation error: \(error); returning last failure")
+                        await setError(error.localizedDescription)
+                        return .failure(summary, error: error.localizedDescription)
+                    }
+
+                    // Check for cancellation after delay
+                    if let agent = self.agent, agent.isCancelled {
+                        return .cancelled(summary, reason: CancellationReason.taskCancelled.rawValue)
+                    }
+
+                    await setStatus("Retrying test... (attempt \(attempt + 1))")
+                } else {
+                    // No more retry delays available
+                    logger.info("No more retry delays available after attempt \(attempt)")
+                    await setError(error)
+                    return result
+                }
+            }
+        }
+
+        // If we exhausted all retries, return the last failure summary (with context)
+        if let lastSummary = lastFailureSummary, let lastErr = lastError {
+            await setError(lastErr)
+            return .failure(lastSummary, error: lastErr)
+        } else {
+            // Fallback: create a new summary if somehow no failure was recorded
+            let summary = await makeRunSummary(testURL: testURL, testRunURL: nil, videoURL: nil)
+            let errorMessage = lastError ?? "Maximum retry attempts (\(retryStrategy.maxAttempts)) exceeded"
+            await setError(errorMessage)
+            return .failure(summary, error: errorMessage)
         }
     }
 

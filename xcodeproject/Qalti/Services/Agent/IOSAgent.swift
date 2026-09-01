@@ -58,6 +58,67 @@ class IOSAgent: Loggable {
         }
     }
 
+    /// Information extracted from rate limit response headers
+    struct RateLimitInfo {
+        let retryAfter: TimeInterval
+        let limit: Int?
+        let remaining: Int?
+        let resetTime: Date?
+        let headers: [String: Any]
+
+        init(from response: HTTPURLResponse) {
+            // Normalize header keys to lowercase strings
+            let rawHeaders = response.allHeaderFields
+            var normalizedHeaders: [String: Any] = [:]
+            for (key, value) in rawHeaders {
+                let keyString = String(describing: key).lowercased()
+                normalizedHeaders[keyString] = value
+            }
+            headers = normalizedHeaders
+
+            // Parse Retry-After header (seconds or HTTP date), case-insensitive, handle NSNumber
+            let retryAfterValue = headers["retry-after"]
+            if let retryAfterString = retryAfterValue as? String {
+                if let seconds = TimeInterval(retryAfterString) {
+                    retryAfter = seconds
+                } else if let date = DateFormatter.parseHTTPDate(retryAfterString) {
+                    retryAfter = max(0, date.timeIntervalSinceNow)
+                } else {
+                    retryAfter = 60.0 // Default fallback
+                }
+            } else if let retryAfterNumber = retryAfterValue as? NSNumber {
+                retryAfter = retryAfterNumber.doubleValue
+            } else {
+                retryAfter = 60.0 // Default for 429 without Retry-After
+            }
+
+            // Parse rate limit headers (various formats, case-insensitive)
+            limit = (headers["x-ratelimit-limit"] as? String).flatMap(Int.init) ??
+                   (headers["x-rate-limit-limit"] as? String).flatMap(Int.init)
+
+            remaining = (headers["x-ratelimit-remaining"] as? String).flatMap(Int.init) ??
+                       (headers["x-rate-limit-remaining"] as? String).flatMap(Int.init)
+
+            if let resetString = headers["x-ratelimit-reset"] as? String ?? headers["x-rate-limit-reset"] as? String,
+               let resetTimestamp = TimeInterval(resetString) {
+                resetTime = Date(timeIntervalSince1970: resetTimestamp)
+            } else {
+                resetTime = nil
+            }
+        }
+        
+        var description: String {
+            var parts: [String] = []
+            if let limit = limit, let remaining = remaining {
+                parts.append("limit: \(limit), remaining: \(remaining)")
+            }
+            if let resetTime = resetTime {
+                parts.append("resets at: \(DateFormatter.formatHTTPDate(resetTime))")
+            }
+            return parts.isEmpty ? "rate limited" : parts.joined(separator: ", ")
+        }
+    }
+
     enum Constants {
         static let iPhoneImageSize = 512
         static let iPadImageSize = 1024
@@ -72,12 +133,14 @@ class IOSAgent: Loggable {
         private var _timeout: Bool = false
         private var _lastStatusCode: Int? = nil
         private var _lastErrorBody: String? = nil
+        private var _lastRateLimitInfo: RateLimitInfo?
 
         var insufficientBalance: Bool { stateQueue.sync { _insufficientBalance } }
         var authenticationFailed: Bool { stateQueue.sync { _authenticationFailed } }
         var timeout: Bool { stateQueue.sync { _timeout } }
         var lastStatusCode: Int? { stateQueue.sync { _lastStatusCode } }
         var lastErrorBody: String? { stateQueue.sync { _lastErrorBody } }
+        var lastRateLimitInfo: RateLimitInfo? { stateQueue.sync { _lastRateLimitInfo } }
 
         func intercept(response: URLResponse?, request: URLRequest, data: Data?) -> (response: URLResponse?, data: Data?) {
             guard let response = response as? HTTPURLResponse else { return (response, data) }
@@ -94,6 +157,10 @@ class IOSAgent: Loggable {
             case 504:
                 stateQueue.sync { _timeout = true }
                 return (response, nil)
+            case 429:
+                let info = RateLimitInfo(from: response)
+                stateQueue.sync { _lastRateLimitInfo = info }
+                return (response, data)
             case 402:
                 stateQueue.sync { _insufficientBalance = true }
                 return (response, nil)
@@ -128,10 +195,13 @@ class IOSAgent: Loggable {
     var apiCallCounter: Int = 0
     let logDirectory: URL
 
+    /// Most recent 429 `Retry-After` hint, read by `TestRunner` to override blind backoff.
+    private(set) var lastRateLimitHint: RateLimitInfo?
+
     private let commandExecutorTools: CommandExecutorToolsForAgent
     private let workingDirectoryForBash: URL
     private let testDirectory: URL
-    private let credentialsService: CredentialsService
+    private let credentialsService: any CredentialsServicing
     let errorCapturer: ErrorCapturing
     private let timeout: TimeInterval
     private var ongoingChatRequest: CancellableRequest? = nil
@@ -150,7 +220,7 @@ class IOSAgent: Loggable {
         elementLocator: UIElementLocator,
         workingDirectoryForBash: URL,
         testDirectory: URL,
-        credentialsService: CredentialsService,
+        credentialsService: any CredentialsServicing,
         errorCapturer: ErrorCapturing,
         timeout: TimeInterval = 240.0,
         runHistory: RunHistory
@@ -174,9 +244,7 @@ class IOSAgent: Loggable {
 
         // Create log directory path
         let downloadsPath = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let dateString = dateFormatter.string(from: Date())
+        let dateString = DateFormatter.formatLogFileName(Date())
         logDirectory = downloadsPath.appendingPathComponent("test_run_logs").appendingPathComponent(dateString)
     }
 
@@ -228,7 +296,10 @@ class IOSAgent: Loggable {
                 preparedQuery: preparedQuery,
                 toolCount: tools.count,
                 iteration: iteration,
-                maxRetries: 3
+                // Internal retries are intentionally disabled (maxRetries: 0); retry logic
+                // is handled at the higher-level TestRunner layer. If transient non-rate-limit
+                // failures become a problem, consider restoring a small retry budget here.
+                maxRetries: 0
             )
 
             guard streamed.toolCalls.isEmpty == false else {
@@ -328,6 +399,10 @@ class IOSAgent: Loggable {
             } catch {
                 errorCapturer.capture(error: error)
                 var effectiveError: Swift.Error = error
+
+                if let hint = preparedQuery.errorCheckingMiddleware.lastRateLimitInfo {
+                    self.lastRateLimitHint = hint
+                }
 
                 let nsError = error as NSError
                 if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {

@@ -41,6 +41,9 @@ help:
 	@echo "  $(WHITE)clean$(NC)          - Remove virtual environment"
 	@echo "  $(WHITE)info$(NC)           - Show environment information"
 	@echo ""
+	@echo "$(BOLD)Testing:$(NC)"
+	@echo "  $(CYAN)test$(NC)           - Run unit tests on macOS"
+	@echo ""
 	@echo "$(BOLD)$(GREEN)Quick start: make build$(NC)"
 
 # Fast incremental build (most common use case)
@@ -134,6 +137,12 @@ info:
 	@echo "  $(CYAN)Working directory:$(NC) $(PWD)"
 	@echo "  $(CYAN)Build script:$(NC) $(SCRIPT)"
 	@echo "  $(CYAN)Xcode script:$(NC) $(XCODE_SCRIPT)"
+
+# Run unit tests on macOS
+.PHONY: test
+test:
+	@echo "$(BOLD)$(CYAN)🧪 Running unit tests...$(NC)"
+	xcodebuild test -project xcodeproject/Qalti.xcodeproj -scheme Qalti -destination 'platform=macOS,arch=arm64'
 
 #
 # Additional targets (less commonly used)

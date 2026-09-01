@@ -107,18 +107,18 @@ struct AppLogFormatter: LogFormattable {
     /// Do not mutate this formatter after initialization.
     private static let tsFull: DateFormatter = {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = .current
         // Example: 2025-11-11T16:23:37.123+0200 (millisecond precision)
         f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = .current
         return f
     }()
     private static let tsTimeOnly: DateFormatter = {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = .current
         // Example: 16:23:37.1
         f.dateFormat = "HH:mm:ss.S"
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = .current
         return f
     }()
 

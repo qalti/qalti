@@ -21,6 +21,7 @@ final class CLIReportPathTests: XCTestCase {
         // Pre-calculate the expected timestamp string
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy_MM_dd_HHmmss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(secondsFromGMT: 0) // IMPORTANT for deterministic tests
         expectedTimestamp = formatter.string(from: fixedDate)
     }

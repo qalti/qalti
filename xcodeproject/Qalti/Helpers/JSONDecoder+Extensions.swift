@@ -26,18 +26,18 @@ extension JSONDecoder {
 
             // --- Formatter 1: High Precision ---
             let formatterWithFractionalSeconds = DateFormatter()
+            formatterWithFractionalSeconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             formatterWithFractionalSeconds.locale = Locale(identifier: "en_US_POSIX")
             formatterWithFractionalSeconds.timeZone = TimeZone(secondsFromGMT: 0)
-            formatterWithFractionalSeconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
             if let date = formatterWithFractionalSeconds.date(from: dateString) {
                 return date
             }
 
             // --- Formatter 2: Low Precision ---
             let formatterWithoutFractionalSeconds = DateFormatter()
+            formatterWithoutFractionalSeconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
             formatterWithoutFractionalSeconds.locale = Locale(identifier: "en_US_POSIX")
             formatterWithoutFractionalSeconds.timeZone = TimeZone(secondsFromGMT: 0)
-            formatterWithoutFractionalSeconds.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
             if let date = formatterWithoutFractionalSeconds.date(from: dateString) {
                 return date
             }

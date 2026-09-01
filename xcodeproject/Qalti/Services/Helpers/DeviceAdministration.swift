@@ -128,6 +128,7 @@ class DeviceAdministration {
 #if os(macOS)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM:dd:yyyy"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         let dateString = dateFormatter.string(from: Date())
         let appleScript = """
         do shell script "systemsetup -setusingnetworktime off" with administrator privileges
