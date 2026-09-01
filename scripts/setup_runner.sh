@@ -6,8 +6,7 @@ set -euo pipefail
 # - Installs allurectl locally
 # - Optionally downloads simulator/real-device app bundles from URLs
 
-QALTI_VERSION="${QALTI_VERSION:-0.5.5}"
-DMG_URL="${QALTI_DMG_URL:-https://app.qalti.com/releases/Qalti-${QALTI_VERSION}.dmg}"
+DMG_URL="${QALTI_DMG_URL:-https://github.com/qalti/qalti/releases/latest/download/Qalti.dmg}"
 
 SIMULATOR_APP_ZIP="${SIMULATOR_APP_ZIP:-SyncUps-simulator.zip}"
 REAL_DEVICE_APP_ZIP="${REAL_DEVICE_APP_ZIP:-SyncUps-real-device.zip}"

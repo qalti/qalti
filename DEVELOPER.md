@@ -82,11 +82,9 @@ xcodeproject/DerivedData_local/Build/Products/Debug/Qalti.app/Contents/Resources
 This step requires your OpenRouter API key and a simulator app build.
 
 1) Create or copy your OpenRouter API key from https://openrouter.ai/keys
-2) Download demo app build (SyncUps):
+2) Build the open-source [SyncUps app](https://github.com/pointfreeco/syncups) for the iOS Simulator.
 
-```bash
-curl -L -o SyncUps-simulator.zip https://app.qalti.com/SyncUps/SyncUps-simulator.zip
-```
+Export or zip its simulator `.app` bundle as `SyncUps-simulator.zip`.
 
 3) Export `OPENROUTER_API_KEY` and run a sample test:
 
