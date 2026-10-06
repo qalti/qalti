@@ -34,6 +34,9 @@ struct QaltiScheduler: ParsableCommand {
     @Flag(name: [.customShort("v"), .long], help: "Enable verbose logging")
     var verbose: Bool = false
 
+    @Flag(name: [.long], help: "Slim booted worker simulators via simslim if it's installed (optional; falls back to stock simulators if the binary isn't found)")
+    var slimWorkers: Bool = false
+
     // Real devices mode: when provided, skip simulator management and run over listed UDIDs
     @Flag(name: [.long], help: "Run tests over listed real device UDIDs instead of simulators")
     var realDevices: Bool = false
@@ -151,6 +154,7 @@ struct QaltiScheduler: ParsableCommand {
             Log.v("[Scheduler] Cloned workers: \(workerUDIDs.joined(separator: ", "))")
 
             try SimctlService.bootSimulators(udids: workerUDIDs, verbose: verbose)
+            SimslimService.slimWorkersIfRequested(udids: workerUDIDs, enabled: slimWorkers)
         }
 
         // Install termination cleanup (Ctrl+C etc.) after UDIDs are known

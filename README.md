@@ -128,6 +128,21 @@ It demonstrates:
 - optional real-device run
 - optional Allure upload and report artifact publishing
 
+### Optional: slimming worker simulators
+
+`QaltiScheduler --slim-workers` runs [simslim](https://github.com/MobAI-App/simslim) against
+all worker simulators in parallel once every worker has booted, disabling daemons they don't
+need so more workers fit in memory on the same Mac. It's off by default and never a hard
+dependency: if the binary
+isn't found (checked via `QALTI_SIMSLIM_PATH`, then `PATH`), the scheduler logs one line and
+continues with stock simulators; a per-device slim failure is logged and skipped the same way,
+without failing the run.
+
+```bash
+export QALTI_SIMSLIM_PATH=/path/to/simslim   # optional; otherwise resolved from PATH
+QaltiScheduler --slim-workers ...
+```
+
 CI preview (4 tests running in parallel):
 
 ![CI demo with 4 parallel tests](./imgs/ci-4-tests-demo.gif)
